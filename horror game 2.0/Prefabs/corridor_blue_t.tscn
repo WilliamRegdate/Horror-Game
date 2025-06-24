@@ -1,0 +1,57 @@
+[gd_scene load_steps=6 format=4 uid="uid://rfriv1x45xpq"]
+
+[ext_resource type="Texture2D" uid="uid://b6dh4p0kan3oq" path="res://Assets/Models/corridor_Blue_T_BlueSection.png" id="1_quuy6"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_fch02"]
+data = PackedVector3Array(3, -2.1, 2.9999, -3, -2.1, -3, 2.9999, -2.1, -3, 3, -2.1, 2.9999, -3, -2.1, 3, -3, -2.1, -3, 3, 2.7, 2.9999, -3, 2.7, -3, -3, 2.7, 3, 3, 2.7, 2.9999, 2.9999, 2.7, -3, -3, 2.7, -3, -3, -2.1, -3, -3, 2.6999, 2.9999, -3, 2.6999, -3, -3, -2.1, -3, -3, -2.1, 2.9999, -3, 2.6999, 2.9999)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u5ban"]
+resource_name = "Material"
+cull_mode = 2
+albedo_texture = ExtResource("1_quuy6")
+roughness = 0.5
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_18cvd"]
+_surfaces = [{
+"aabb": AABB(-3, -2.1, -3, 6, 4.8, 6),
+"format": 34896613377,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkA"),
+"name": "Material",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("//8AAP7/AAAAAAAAAAAAAP7/AAAAAAAAAAAAAP//AAD//////v8AAAAA//8AAAAAAAD/////AAD+////AAAAAAAAAAAAAAAAAAD+//7/AAAAAP7/AAAAAAAAAAD+/wAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_1lc63"]
+resource_name = "corridor_Blue_T_Cube_001"
+_surfaces = [{
+"aabb": AABB(-3, -2.1, -3, 6, 4.8, 6),
+"attribute_data": PackedByteArray("29QWqfL/GoDb1BqA6f8Wqf//EoDe1CWp3tQSgP//JanT1P//9n/AvLvUwLwOgP//"),
+"format": 34896613399,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAALAAkA"),
+"material": SubResource("StandardMaterial3D_u5ban"),
+"name": "Material",
+"primitive": 3,
+"uv_scale": Vector4(0.884495, 0.928352, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("//8AAP7/AAAAAAAAAAAAAP7/AAAAAAAAAAAAAP//AAD//////v//vwAA//8AAP+/AAD//////7/+////AAD/vwAAAAAAAP+/AAD+//7//78AAP7/AAD/vwAAAAD+//+//78AAP+/AAD/vwAA/78AAAAA/38AAP9/AAD/fwAA/3//fwAA/38AAP9/AAD/fwAA")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_18cvd")
+
+[node name="Corridor_Blue_T" type="CollisionShape3D"]
+shape = SubResource("ConcavePolygonShape3D_fch02")
+metadata/Door_0 = Vector3(0, 0, 6)
+metadata/Door_1 = Vector3(0, 0, -6)
+metadata/Door_2 = Vector3(6, 0, 0)
+metadata/Rot_0 = Vector3(0, 90, 0)
+metadata/Rot_1 = Vector3(0, 270, 0)
+metadata/Rot_2 = Vector3(0, 180, 0)
+
+[node name="Corridor_Blue_T" type="MeshInstance3D" parent="."]
+mesh = SubResource("ArrayMesh_1lc63")
+skeleton = NodePath("")

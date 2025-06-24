@@ -1,0 +1,113 @@
+{
+	"corridor_blue_corner": {
+		"scene": "res://Prefabs/corridor_blue_corner.tscn",
+		"doors": [
+			{
+				"position": [
+					6.0,
+					0.0,
+					0.0
+				],
+				"rotation": [
+					0.0,
+					180.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					0.0,
+					0.0,
+					6.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			}
+		]
+	},
+	"corridor_blue_straight": {
+		"scene": "res://Prefabs/corridor_blue_straight.tscn",
+		"doors": [
+			{
+				"position": [
+					6.0,
+					0.0,
+					0.0
+				],
+				"rotation": [
+					0.0,
+					180.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					-6.0,
+					0.0,
+					0.0
+				],
+				"rotation": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		]
+	},
+	"corridor_blue_cross": {
+		"scene": "res://Prefabs/corridor_blue_cross.tscn",
+		"doors": [
+			{
+				"position": [
+					6.0,
+					0.0,
+					0.0
+				],
+				"rotation": [
+					0.0,
+					180.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					-6.0,
+					0.0,
+					0.0
+				],
+				"rotation": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					0.0,
+					0.0,
+					6.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					-6.0,
+					0.0,
+					0.0
+				],
+				"rotation": [
+					0.0,
+					270.0,
+					0.0
+				]
+			}
+		]
+	}
+}
