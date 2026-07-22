@@ -1,0 +1,72 @@
+[gd_scene format=3 uid="uid://dq25677m7ldnh"]
+
+[ext_resource type="PackedScene" uid="uid://couumywvtfcbg" path="res://Prefabs/player.tscn" id="1_eow3j"]
+[ext_resource type="Script" uid="uid://byd8rf33va10d" path="res://Scripts/GameManager.cs" id="1_mfdv2"]
+[ext_resource type="PackedScene" uid="uid://cjncw05vjkgut" path="res://ProceduralGenerator.tscn" id="2_eow3j"]
+[ext_resource type="PackedScene" uid="uid://df7hfxwmhlttd" path="res://Prefabs/Rooms/drill.tscn" id="6_iotsf"]
+[ext_resource type="PackedScene" uid="uid://b50lf3bmukqy6" path="res://Prefabs/monster.tscn" id="7_lc2xo"]
+[ext_resource type="AudioStream" uid="uid://dp5pse2r5yo25" path="res://Assets/Audio/Ambience/Background.wav" id="9_hve3p"]
+[ext_resource type="Script" uid="uid://c62hcyccwsapt" path="res://Scripts/AmbiencePlayer.cs" id="10_mfdv2"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_681nw"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_hve3p"]
+sky_material = SubResource("ProceduralSkyMaterial_681nw")
+radiance_size = 0
+
+[sub_resource type="Environment" id="Environment_nu2kt"]
+background_mode = 1
+background_color = Color(0.114897, 0.114897, 0.114897, 1)
+background_energy_multiplier = 0.87
+sky = SubResource("Sky_hve3p")
+sky_rotation = Vector3(-1.775, -0.682424, 0)
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_sky_contribution = 0.01
+ambient_light_energy = 0.0
+reflected_light_source = 1
+tonemap_mode = 3
+tonemap_exposure = 2.9
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+ssil_normal_rejection = 0.3
+glow_enabled = true
+fog_light_color = Color(0.0148753, 0.0180037, 0.0236408, 1)
+fog_light_energy = 0.0
+fog_density = 0.039
+
+[sub_resource type="CameraAttributesPhysical" id="CameraAttributesPhysical_kgmex"]
+
+[sub_resource type="Compositor" id="Compositor_08u7w"]
+
+[node name="GameManager" type="Node3D" unique_id=1022875171]
+script = ExtResource("1_mfdv2")
+LevelMaker = ExtResource("2_eow3j")
+_player = ExtResource("1_eow3j")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1220312149]
+environment = SubResource("Environment_nu2kt")
+camera_attributes = SubResource("CameraAttributesPhysical_kgmex")
+compositor = SubResource("Compositor_08u7w")
+
+[node name="Node3D" parent="." unique_id=4602757 instance=ExtResource("6_iotsf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.3075, 51.1376, 236.221)
+
+[node name="Monster" parent="." unique_id=433109594 instance=ExtResource("7_lc2xo")]
+transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 77.011, 0, -34.707)
+
+[node name="AmbiencePlayer" type="AudioStreamPlayer3D" parent="." unique_id=2097400499]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.474052, 0, -8.430759)
+stream = ExtResource("9_hve3p")
+attenuation_model = 3
+volume_db = 13.248
+script = ExtResource("10_mfdv2")
+
+[connection signal="StartGame" from="." to="Monster" method="OnStartGame"]
+[connection signal="StartGame" from="." to="Monster/monster_2" method="OnStartGame"]
+[connection signal="StartGame" from="." to="AmbiencePlayer" method="OnStartGame"]
+
+[editable path="Monster"]
+[editable path="Monster/monster_2"]

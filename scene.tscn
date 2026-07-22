@@ -1,86 +1,77 @@
-[gd_scene load_steps=24 format=3 uid="uid://dbuimyue8qpee"]
+[gd_scene format=3 uid="uid://dbuimyue8qpee"]
 
-[ext_resource type="Texture2D" uid="uid://dkmeklct76aar" path="res://icon.svg" id="1_u3cyc"]
 [ext_resource type="Script" uid="uid://b6340n7xwoor0" path="res://Scripts/Player.cs" id="1_ulcgi"]
 [ext_resource type="Script" uid="uid://c7fx1oeba2x8b" path="res://Scripts/PlayerCamera.cs" id="2_nxogm"]
-[ext_resource type="AudioStream" uid="uid://r0ogoov11bjj" path="res://Assets/footstep0.wav" id="4_5juve"]
-[ext_resource type="AudioStream" uid="uid://cjb4x7yuotwpb" path="res://Assets/footstep1.wav" id="5_fy5k1"]
-[ext_resource type="AudioStream" uid="uid://cvow5a3kdpkkl" path="res://Assets/footstep2.wav" id="6_5c1cw"]
-[ext_resource type="AudioStream" uid="uid://bcoq6gje36va5" path="res://Assets/footstep3.wav" id="7_akxrc"]
-[ext_resource type="AudioStream" uid="uid://5xj4sj11rlqx" path="res://Assets/footstep4.wav" id="8_gu47o"]
-[ext_resource type="AudioStream" uid="uid://blfujonia3xdo" path="res://Assets/footstep5.wav" id="9_8hm71"]
-[ext_resource type="AudioStream" uid="uid://yfwa4bgivx7h" path="res://Assets/footstep6.wav" id="10_223my"]
-[ext_resource type="Script" uid="uid://dw42tnk3ynbmu" path="res://Scripts/CorridorController.cs" id="11_5c1cw"]
-[ext_resource type="PackedScene" uid="uid://xkotuuqdmilu" path="res://Assets/Models/monster_2.glb" id="12_5c1cw"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m7jmp"]
-albedo_texture = ExtResource("1_u3cyc")
-
-[sub_resource type="BoxMesh" id="BoxMesh_ulcgi"]
-
-[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_nxogm"]
-points = PackedVector3Array(0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5)
+[ext_resource type="AudioStream" uid="uid://r0ogoov11bjj" path="res://Assets/Audio/Footsteps/footstep0.wav" id="4_5juve"]
+[ext_resource type="AudioStream" uid="uid://cjb4x7yuotwpb" path="res://Assets/Audio/Footsteps/footstep1.wav" id="5_fy5k1"]
+[ext_resource type="AudioStream" uid="uid://cvow5a3kdpkkl" path="res://Assets/Audio/Footsteps/footstep2.wav" id="6_5c1cw"]
+[ext_resource type="AudioStream" uid="uid://bcoq6gje36va5" path="res://Assets/Audio/Footsteps/footstep3.wav" id="7_akxrc"]
+[ext_resource type="AudioStream" uid="uid://5xj4sj11rlqx" path="res://Assets/Audio/Footsteps/footstep4.wav" id="8_gu47o"]
+[ext_resource type="AudioStream" uid="uid://blfujonia3xdo" path="res://Assets/Audio/Footsteps/footstep5.wav" id="9_8hm71"]
+[ext_resource type="AudioStream" uid="uid://dp5pse2r5yo25" path="res://Assets/Audio/Ambience/Background.wav" id="10_17rhs"]
+[ext_resource type="AudioStream" uid="uid://yfwa4bgivx7h" path="res://Assets/Audio/Footsteps/footstep6.wav" id="10_223my"]
+[ext_resource type="PackedScene" uid="uid://dgm1q7oucwbcr" path="res://Prefabs/Rooms/corridorStairs.tscn" id="13_17rhs"]
+[ext_resource type="PackedScene" uid="uid://b50lf3bmukqy6" path="res://Prefabs/monster.tscn" id="13_akxrc"]
+[ext_resource type="Script" uid="uid://c62hcyccwsapt" path="res://Scripts/AmbiencePlayer.cs" id="14_8hm71"]
+[ext_resource type="PackedScene" uid="uid://cpaq6bqx1jxv5" path="res://Prefabs/Rooms/room1.tscn" id="14_8j1ou"]
+[ext_resource type="PackedScene" uid="uid://b7o1hbpx8vr8e" path="res://Prefabs/Rooms/warehouse.tscn" id="15_223my"]
+[ext_resource type="PackedScene" uid="uid://c0mb82j1ha8et" path="res://Prefabs/Rooms/corridorCorner.tscn" id="15_o3hm7"]
+[ext_resource type="PackedScene" uid="uid://dlaa3ttd3nojx" path="res://Prefabs/Rooms/corridorStraight.tscn" id="16_xpof7"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_drvgu"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
 ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
 
-[sub_resource type="Sky" id="Sky_ulcgi"]
+[sub_resource type="Sky" id="Sky_17rhs"]
 sky_material = SubResource("ProceduralSkyMaterial_drvgu")
 radiance_size = 0
 
 [sub_resource type="Environment" id="Environment_nxogm"]
 background_mode = 2
-sky = SubResource("Sky_ulcgi")
-ambient_light_sky_contribution = 0.75
+background_energy_multiplier = 1.85
+sky = SubResource("Sky_17rhs")
+sky_rotation = Vector3(-1.775, -0.682424, 0)
+ambient_light_sky_contribution = 0.3
 ambient_light_energy = 16.0
 reflected_light_source = 1
 tonemap_mode = 2
 glow_enabled = true
-fog_enabled = true
+fog_mode = 1
 fog_light_color = Color(0.0148753, 0.0180037, 0.0236408, 1)
+fog_light_energy = 0.0
+fog_density = 1.0
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_drvgu"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3253y"]
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5c1cw"]
-animation = &"Idle"
+[sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_17rhs"]
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_5c1cw"]
-advance_mode = 2
+[sub_resource type="NavigationMesh" id="NavigationMesh_17rhs"]
+sample_partition_type = 1
+geometry_parsed_geometry_type = 1
+agent_height = 3.5
+agent_radius = 1.0
+agent_max_slope = 51.0
 
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_akxrc"]
-states/End/position = Vector2(614, 117)
-states/Idle/node = SubResource("AnimationNodeAnimation_5c1cw")
-states/Idle/position = Vector2(431, 117)
-states/Start/position = Vector2(221, 117)
-transitions = ["Start", "Idle", SubResource("AnimationNodeStateMachineTransition_5c1cw")]
+[node name="World" type="Node3D" unique_id=1174587495]
 
-[node name="World" type="Node3D"]
-
-[node name="floor" type="StaticBody3D" parent="."]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="floor"]
-transform = Transform3D(40.297, 0, 0, 0, 1, 0, 0, 0, 56.8742, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_m7jmp")
-mesh = SubResource("BoxMesh_ulcgi")
-skeleton = NodePath("")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="floor"]
-transform = Transform3D(40.297, 0, 0, 0, 1, 0, 0, 0, 56.8742, 0, 0, 0)
-shape = SubResource("ConvexPolygonShape3D_nxogm")
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=886100269]
 environment = SubResource("Environment_nxogm")
 
-[node name="Player" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 73.3065, 0)
+[node name="Player" type="CharacterBody3D" parent="." unique_id=170451109 node_paths=PackedStringArray("_collider", "_camera") groups=["Player"]]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 23.05314, 17.30516, 80.15493)
+collision_layer = 4
+floor_constant_speed = true
+floor_max_angle = 0.87266463
+safe_margin = 0.01
 script = ExtResource("1_ulcgi")
 BaseSpeed = 5.0
 JumpHeight = 10.0
+_collider = NodePath("CollisionShape3D")
+_camera = NodePath("PlayerCamera")
 
-[node name="PlayerCamera" type="Camera3D" parent="Player" node_paths=PackedStringArray("_audioPlayer1", "_audioPlayer2")]
+[node name="PlayerCamera" type="Camera3D" parent="Player" unique_id=1142490416]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 script = ExtResource("2_nxogm")
 MouseSensitivity = 0.1
@@ -88,137 +79,122 @@ BobFrequency = 2.0
 BobHeight = 0.06
 BobSway = 0.08
 FootstepSounds = Array[AudioStream]([ExtResource("4_5juve"), ExtResource("5_fy5k1"), ExtResource("6_5c1cw"), ExtResource("7_akxrc"), ExtResource("8_gu47o"), ExtResource("9_8hm71"), ExtResource("10_223my")])
-_audioPlayer1 = NodePath("AudioStreamPlayer3D")
-_audioPlayer2 = NodePath("AudioStreamPlayer3D2")
 
-[node name="AudioListener3D" type="AudioListener3D" parent="Player/PlayerCamera"]
+[node name="AudioListener3D" type="AudioListener3D" parent="Player/PlayerCamera" unique_id=103993784]
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="Player/PlayerCamera"]
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="Player/PlayerCamera" unique_id=2073006817]
 volume_db = 25.0
 
-[node name="AudioStreamPlayer3D2" type="AudioStreamPlayer3D" parent="Player/PlayerCamera"]
+[node name="AudioStreamPlayer3D2" type="AudioStreamPlayer3D" parent="Player/PlayerCamera" unique_id=1323616570]
 volume_db = 39.0
 
-[node name="Torch" type="SpotLight3D" parent="Player/PlayerCamera"]
+[node name="Torch" type="SpotLight3D" parent="Player/PlayerCamera" unique_id=499335252]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 distance_fade_enabled = true
 spot_range = 72.8751
-spot_angle = 16.3053
+spot_angle = 15.0378
 
-[node name="TorchOuter" type="SpotLight3D" parent="Player/PlayerCamera"]
+[node name="TorchOuter" type="SpotLight3D" parent="Player/PlayerCamera" unique_id=962790825]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 light_energy = 0.3
 distance_fade_enabled = true
-spot_range = 72.8751
-spot_angle = 35.978
+spot_range = 70.0256
+spot_angle = 29.3342
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Player"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Player" unique_id=1349815537]
 mesh = SubResource("CapsuleMesh_drvgu")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1368136045]
 shape = SubResource("CapsuleShape3D_3253y")
+debug_color = Color(0.892029, 0.000236611, 0.788447, 0.42)
 
-[node name="LevelMaker" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.60167, 0)
-script = ExtResource("11_5c1cw")
-Rooms = PackedStringArray("corridor_blue_straight", "corridor_blue_corner", "corridor_blue_cross")
-LevelSize = 90
-RoomWeights = PackedInt32Array(20, 2, 8)
+[node name="OmniLight3D" type="OmniLight3D" parent="Player" unique_id=493566904]
+light_energy = 0.005
 
-[node name="monster_2" parent="." instance=ExtResource("12_5c1cw")]
-transform = Transform3D(0.34, 0, 2.16148e-08, 0, 0.34, 0, -2.16148e-08, 0, 0.34, 0.875566, 0.5, 0.295977)
+[node name="Seperation Ray" type="CollisionShape3D" parent="Player" unique_id=592231875]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.30877495)
+shape = SubResource("SeparationRayShape3D_17rhs")
 
-[node name="Head" parent="monster_2/Armature" index="0"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 11.3838, -4.6937)
+[node name="AmbiencePlayer" type="AudioStreamPlayer3D" parent="." unique_id=1979106670]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.474052, 0, -8.430759)
+stream = ExtResource("10_17rhs")
+attenuation_model = 3
+volume_db = 13.248
+autoplay = true
+script = ExtResource("14_8hm71")
 
-[node name="Skeleton3D" parent="monster_2/Armature" index="1"]
-bones/0/position = Vector3(-2.24243e-10, 5.59544, 0.125228)
-bones/0/rotation = Quaternion(-6.56791e-08, 0.997481, 0.0709365, 3.97136e-09)
-bones/0/scale = Vector3(1, 1, 1)
-bones/1/position = Vector3(1.39915e-13, 2.4842, 2.43439e-08)
-bones/1/rotation = Quaternion(0.272546, -1.4528e-07, 5.27356e-16, 0.962143)
-bones/2/position = Vector3(2.91696e-14, 2.12591, -2.65424e-07)
-bones/2/rotation = Quaternion(0.284215, 1.14293e-07, -9.03421e-09, 0.958761)
-bones/3/position = Vector3(-8.92939e-13, 2.5068, 1.14723e-06)
-bones/3/rotation = Quaternion(0.393514, -2.99552e-07, -9.38209e-08, 0.919319)
-bones/4/position = Vector3(-2.5277e-13, 1.07432, -1.44268e-06)
-bones/4/rotation = Quaternion(-0.537356, 1.53103e-07, 1.96033e-07, 0.843356)
-bones/4/scale = Vector3(1, 1, 1)
-bones/5/position = Vector3(1.52932e-07, 2.5068, -1.23216e-07)
-bones/5/rotation = Quaternion(0.0304788, -0.0803131, -0.819126, 0.567145)
-bones/5/scale = Vector3(1, 1, 1)
-bones/6/position = Vector3(-2.9602e-06, 1.70737, -1.52913e-07)
-bones/6/rotation = Quaternion(0.359131, -0.209846, -0.108519, 0.902892)
-bones/6/scale = Vector3(1, 1, 1)
-bones/7/position = Vector3(-6.65598e-07, 5.06535, 1.73524e-07)
-bones/7/rotation = Quaternion(0.310224, -0.00811896, 0.00882753, 0.950588)
-bones/7/scale = Vector3(1, 1, 1)
-bones/8/position = Vector3(-3.60142e-07, 0.550284, -4.06204e-07)
-bones/8/rotation = Quaternion(0.282224, 0.00234578, -0.0108199, 0.959285)
-bones/8/scale = Vector3(1, 1, 1)
-bones/9/position = Vector3(7.03073e-07, 6.04137, -7.52985e-07)
-bones/9/rotation = Quaternion(-0.207305, -0.388964, 0.0763001, 0.894377)
-bones/10/position = Vector3(-5.66352e-07, 2.5068, -1.41503e-08)
-bones/10/rotation = Quaternion(0.0304787, 0.0803131, 0.819126, 0.567145)
-bones/10/scale = Vector3(1, 1, 1)
-bones/11/position = Vector3(1.0359e-06, 1.70737, -6.56382e-07)
-bones/11/rotation = Quaternion(0.359441, 0.209853, 0.108571, 0.90276)
-bones/12/position = Vector3(2.06621e-07, 5.06535, 3.4553e-07)
-bones/12/rotation = Quaternion(0.31001, 0.00811704, -0.00882835, 0.950658)
-bones/12/scale = Vector3(1, 1, 1)
-bones/13/position = Vector3(1.20658e-06, 0.550286, -1.63147e-07)
-bones/13/rotation = Quaternion(0.281988, -0.00234834, 0.0108191, 0.959354)
-bones/14/position = Vector3(7.92483e-07, 6.04137, -5.49308e-08)
-bones/14/rotation = Quaternion(-0.207109, 0.388884, -0.0762314, 0.894463)
-bones/14/scale = Vector3(1, 1, 1)
-bones/15/position = Vector3(0.375378, -0.286998, -0.159509)
-bones/15/rotation = Quaternion(-0.022483, 0.634611, 0.754955, -0.163726)
-bones/15/scale = Vector3(0.999999, 0.999996, 1)
-bones/16/position = Vector3(2.80854e-08, 6.60464, -9.18005e-07)
-bones/16/rotation = Quaternion(-0.534397, -0.0131443, 0.151715, 0.831402)
-bones/16/scale = Vector3(1, 1, 1)
-bones/17/position = Vector3(1.6102e-07, 0.522065, 1.78116e-07)
-bones/17/rotation = Quaternion(-0.645536, 0.0302295, 0.152498, 0.747739)
-bones/18/position = Vector3(5.30176e-07, 8.84763, 3.81804e-08)
-bones/18/rotation = Quaternion(0.888096, 0.0959583, -0.351181, 0.280624)
-bones/18/scale = Vector3(1, 0.999994, 0.999996)
-bones/19/position = Vector3(-0.375378, -0.286998, -0.159509)
-bones/19/rotation = Quaternion(0.0224825, 0.634611, 0.754955, 0.163726)
-bones/19/scale = Vector3(0.999999, 0.999995, 1)
-bones/20/position = Vector3(9.24498e-08, 6.60464, 2.23652e-07)
-bones/20/rotation = Quaternion(-0.534397, 0.0131443, -0.151716, 0.831402)
-bones/20/scale = Vector3(1, 1, 1)
-bones/21/position = Vector3(2.12506e-07, 0.522064, 1.12289e-07)
-bones/21/rotation = Quaternion(-0.645536, -0.0302295, -0.152498, 0.747739)
-bones/21/scale = Vector3(1, 0.999993, 1.00001)
-bones/22/position = Vector3(-7.05489e-09, 8.84763, -7.73937e-08)
-bones/22/rotation = Quaternion(0.888096, -0.0959583, 0.351181, 0.280624)
-bones/22/scale = Vector3(1, 0.999994, 0.999996)
-bones/23/position = Vector3(-2.91198, 4.42268, -9.32215)
-bones/23/scale = Vector3(1, 1, 1)
-bones/24/position = Vector3(-4.33848e-13, 11.147, -3.50925)
-bones/24/rotation = Quaternion(1.43457e-07, -0.676127, 0.736785, -1.31647e-07)
-bones/24/scale = Vector3(1, 1, 1)
-bones/25/position = Vector3(-2.32953, 1.00244, 1.61889)
-bones/26/position = Vector3(-3.50279, 7.62359, -8.68663)
-bones/26/scale = Vector3(4.4744, 1, 1.02756)
-bones/27/position = Vector3(-8.11655e-13, 22.4329, 4.03407)
-bones/27/rotation = Quaternion(-1.3434e-07, 0.72385, 0.689957, -1.40939e-07)
-bones/27/scale = Vector3(1, 1, 1)
-bones/28/position = Vector3(-5.94771, 14.4701, 10.3233)
-bones/28/rotation = Quaternion(0.700435, -0.0355443, -0.0349683, 0.711972)
-bones/28/scale = Vector3(1, 1, 1)
-bones/29/position = Vector3(2.91116, 4.42116, -9.32484)
-bones/29/scale = Vector3(1, 1, 1)
-bones/30/position = Vector3(2.32953, 1.00244, 1.61889)
-bones/31/position = Vector3(3.50279, 7.62359, -8.68663)
-bones/31/scale = Vector3(4.4744, 1, 1.02756)
-bones/32/position = Vector3(5.94771, 14.4701, 10.3233)
-bones/32/rotation = Quaternion(0.700435, 0.0355443, 0.0349683, 0.711972)
-bones/32/scale = Vector3(1, 1, 1)
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=222268990]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.474052, 0, -8.430759)
+navigation_mesh = SubResource("NavigationMesh_17rhs")
 
-[node name="AnimationTree" type="AnimationTree" parent="monster_2"]
-tree_root = SubResource("AnimationNodeStateMachine_akxrc")
-anim_player = NodePath("../AnimationPlayer")
+[node name="Node3D" parent="NavigationRegion3D" unique_id=180003488 instance=ExtResource("15_223my")]
 
-[editable path="monster_2"]
+[node name="Node3D17" parent="NavigationRegion3D" unique_id=990504072 instance=ExtResource("15_223my")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -55)
+
+[node name="Node3D18" parent="NavigationRegion3D" unique_id=1841795904 instance=ExtResource("15_223my")]
+transform = Transform3D(1, 0, 0, 0, -1, -8.742278e-08, 0, 8.742278e-08, -1, 0, -3.3556023, -100)
+
+[node name="Node3D2" parent="NavigationRegion3D" unique_id=875715979 instance=ExtResource("15_223my")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 55)
+
+[node name="Node3D3" parent="NavigationRegion3D" unique_id=78532552 instance=ExtResource("13_17rhs")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 65, 0, 65)
+skeleton = NodePath("../..")
+
+[node name="Node3D4" parent="NavigationRegion3D" unique_id=1977971370 instance=ExtResource("13_17rhs")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 65, 5, 70)
+skeleton = NodePath("../..")
+
+[node name="Node3D5" parent="NavigationRegion3D" unique_id=1208741404 instance=ExtResource("13_17rhs")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 65, 10, 75)
+skeleton = NodePath("../..")
+
+[node name="Node3D6" parent="NavigationRegion3D" unique_id=223885055 instance=ExtResource("13_17rhs")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 5, 0, 65)
+skeleton = NodePath("../..")
+
+[node name="Node3D7" parent="NavigationRegion3D" unique_id=1411048862 instance=ExtResource("13_17rhs")]
+transform = Transform3D(1.3113416e-07, 0, -1, 0, 1, 0, 1, 0, 1.3113416e-07, 10, 5, 70)
+skeleton = NodePath("../..")
+
+[node name="Node3D8" parent="NavigationRegion3D" unique_id=2131374047 instance=ExtResource("13_17rhs")]
+transform = Transform3D(1.3113416e-07, 0, -1, 0, 1, 0, 1, 0, 1.3113416e-07, 15, 10, 70)
+skeleton = NodePath("../..")
+
+[node name="Node3D9" parent="NavigationRegion3D" unique_id=2144592592 instance=ExtResource("14_8j1ou")]
+transform = Transform3D(1, 0, -1.7484555e-07, 0, 1, 0, 1.7484555e-07, 0, 1, 40, 15, 105)
+skeleton = NodePath("../..")
+
+[node name="Node3D10" parent="NavigationRegion3D" unique_id=959148265 instance=ExtResource("15_o3hm7")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 5, 5, 70)
+skeleton = NodePath("../..")
+
+[node name="Node3D14" parent="NavigationRegion3D" unique_id=130398529 instance=ExtResource("15_o3hm7")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 40, 15, 70)
+skeleton = NodePath("../..")
+
+[node name="Node3D11" parent="NavigationRegion3D" unique_id=2129368531 instance=ExtResource("16_xpof7")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 20, 15, 70)
+skeleton = NodePath("../..")
+
+[node name="Node3D12" parent="NavigationRegion3D" unique_id=477133049 instance=ExtResource("16_xpof7")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 25, 15, 70)
+skeleton = NodePath("../..")
+
+[node name="Node3D13" parent="NavigationRegion3D" unique_id=2120975667 instance=ExtResource("16_xpof7")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 30, 15, 70)
+skeleton = NodePath("../..")
+
+[node name="Node3D15" parent="NavigationRegion3D" unique_id=623283912 instance=ExtResource("16_xpof7")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 35, 15, 70)
+skeleton = NodePath("../..")
+
+[node name="Node3D16" parent="NavigationRegion3D" unique_id=1786434947 instance=ExtResource("16_xpof7")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 40, 15, 75)
+skeleton = NodePath("../..")
+
+[node name="Monster" parent="." unique_id=1139946715 node_paths=PackedStringArray("_player") instance=ExtResource("13_akxrc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.327179, -0.70518947, 21.061832)
+floor_block_on_wall = false
+_player = NodePath("../Player")

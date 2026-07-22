@@ -24,27 +24,34 @@ public struct RoomData
         Room = room;
         Doors = new List<DoorData>();
     }
-}
 
+    // Copy constructor
+    public RoomData(RoomData other)
+    {
+        Room = other.Room;
+        Doors = new List<DoorData>(other.Doors);
+    }
+}
+//Class responsible for loading Rooms from the JSON and keeping track of them
 public class RoomManager
 {
     public List<RoomData> Rooms = new List<RoomData>();
 
     //Json File as a string
-    private string JsonFile;
+    private string _jsonFile;
     public RoomManager()
     {
         //load json file into a string
-        string jsonPath = "res://Json/Rooms.Json";
+        string jsonPath = "res://Json/Rooms.json";
         FileAccess file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
-        JsonFile = file.GetAsText();
+        _jsonFile = file.GetAsText();
         file.Close();
     }
 
     public void AddRoom(string roomName)
     {
         // Parse JSON string
-        Variant parsed = Json.ParseString(JsonFile);
+        Variant parsed = Json.ParseString(_jsonFile);
         if (parsed.VariantType != Variant.Type.Dictionary)
         {
             GD.PrintErr("rooms.json root is not a dictionary.");
@@ -86,7 +93,7 @@ public class RoomManager
 
                 var position = new Vector3(pos[0].AsSingle(), pos[1].AsSingle(), pos[2].AsSingle());
                 var rotation = new Vector3(rot[0].AsSingle(), rot[1].AsSingle(), rot[2].AsSingle());
-                
+
                 newRoom.Doors.Add(new DoorData(position, rotation));
             }
         }

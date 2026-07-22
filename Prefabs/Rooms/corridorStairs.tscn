@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://dgm1q7oucwbcr"]
+
+[ext_resource type="Material" uid="uid://b4fk1wsfi5mrs" path="res://Assets/Materials/Environment.tres" id="1_mnkly"]
+[ext_resource type="ArrayMesh" uid="uid://plpfqsjcljv1" path="res://Assets/Models/Environment/Room objects/corridorStairs.obj" id="2_0a7k0"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_y8xgx"]
+vertices = PackedVector3Array(-1.25, 3.1078234, -2.515131, -1.25, -1.8921766, 2.484869, 1.25, -1.8921766, 2.484869, 1.25, 3.1078234, -2.515131)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
+agent_radius = 1.0
+agent_max_slope = 50.0
+edge_max_error = 0.1
+detail_sample_distance = 1.35
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mnkly"]
+size = Vector3(4.5, 0.26940918, 9.700142)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_0a7k0"]
+data = PackedVector3Array(-2.5, 2.4998999, -2.5, -2.5, 2.4998999, 2.5444, -2.5, 7.5, -2.5, -2.5, 7.5, -2.5, -2.5, 2.4998999, 2.5444, -2.5, 7.5, 2.5444, -2.5, 7.5, -2.5, -2.5, 7.5, 2.4998999, 2.4998999, 7.5, -2.5, 2.4998999, 7.5, -2.5, -2.5, 7.5, 2.4998999, 2.5, 7.5, 2.5444, -2.5, -2.5, -2.5, -2.5, -2.5, 2.4998999, -2.5, 2.4998999, -2.5, -2.5, 2.4998999, -2.5, -2.5, -2.5, 2.4998999, -2.5, 2.4998999, 2.4998999, 2.5, 2.4998999, 2.5444, 2.5, -2.5, 2.4998999, 2.4998999, 2.4998999, -2.5, 2.4998999, 2.4998999, -2.5, 2.5, -2.5, 2.4998999, 2.4998999, -2.5, -2.5, 2.5, 2.4998999, 2.4998999, 2.5, 2.4998999, -2.5, 2.5, 7.4997997, 2.4998999, 2.5, 7.4997997, 2.4998999, 2.5, 2.4998999, -2.5, 2.5, 7.4997997, -2.5, -2.5, 7.5, 2.5444, -2.5, 2.4998999, 2.5444, 2.5, 7.5, 2.5444, 2.5, 7.5, 2.5444, -2.5, 2.4998999, 2.5444, 2.5, 2.4998999, 2.5444, -2.5, 2.4998999, -2.4878, 2.5, 2.4998999, -2.4878, -2.5, -2.5, 2.4998999, -2.5, -2.5, 2.4998999, 2.5, 2.5112, -2.4878, 2.5, -2.5, 2.4998999)
+
+[node name="Node3D" type="MeshInstance3D" unique_id=730162457]
+material_override = ExtResource("1_mnkly")
+mesh = ExtResource("2_0a7k0")
+surface_material_override/0 = ExtResource("1_mnkly")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1185275613]
+navigation_mesh = SubResource("NavigationMesh_y8xgx")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D" unique_id=1906664759]
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=610166797]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, -0.70710677, 0, 0.70710677, 0.70710677, 0, -0.11740792, 0.009637624)
+shape = SubResource("BoxShape3D_mnkly")
+disabled = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=1480154150]
+shape = SubResource("ConcavePolygonShape3D_0a7k0")

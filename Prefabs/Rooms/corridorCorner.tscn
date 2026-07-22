@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://c0mb82j1ha8et"]
+
+[ext_resource type="Material" uid="uid://b4fk1wsfi5mrs" path="res://Assets/Materials/Environment.tres" id="1_8i0ys"]
+[ext_resource type="ArrayMesh" uid="uid://cqxlybudo4pu6" path="res://Assets/Models/Environment/Room objects/corridorCorner.obj" id="2_ud5ut"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_y8xgx"]
+vertices = PackedVector3Array(-1.25, -2, 2.5, 1.25, -2, 2.5, 1.25, -2, 2, 2, -2, 1.25, 2.5, -2, 1.25, 2.5, -2, -1.25, -1.25, -2, -1.25)
+polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(5, 4, 3), PackedInt32Array(2, 0, 3), PackedInt32Array(3, 0, 6), PackedInt32Array(3, 6, 5)]
+agent_radius = 1.0
+edge_max_error = 1.0
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_8i0ys"]
+data = PackedVector3Array(-2.5, -2.5, 2.5, -2.5, -2.5, -2.5, 2.5, -2.5, 2.4999, 2.5, -2.5, 2.4999, -2.5, -2.5, -2.5, 2.4999, -2.5, -2.5, 2.4999, 2.5, -2.5, -2.5, 2.5, -2.5, 2.5, 2.5, 2.4999, 2.5, 2.5, 2.4999, -2.5, 2.5, -2.5, -2.5, 2.5, 2.5, 2.4999, -2.5, -2.5, -2.5, -2.5, -2.5, 2.4999, 2.5, -2.5, 2.4999, 2.5, -2.5, -2.5, -2.5, -2.5, -2.5, 2.5, -2.5, -2.5, -2.5, -2.5, -2.5, -2.5, 2.5, -2.5, 2.5, -2.5, -2.5, 2.5, -2.5, -2.5, -2.5, 2.5, -2.5, 2.5, 2.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8i0ys"]
+size = Vector3(5, 1, 6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ud5ut"]
+size = Vector3(6, 1, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_24347"]
+size = Vector3(1, 6, 1)
+
+[node name="Node3D" type="MeshInstance3D" unique_id=950175104]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 0)
+material_override = ExtResource("1_8i0ys")
+mesh = ExtResource("2_ud5ut")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1019213372]
+navigation_mesh = SubResource("NavigationMesh_y8xgx")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D" unique_id=436346151]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=1241726408]
+shape = SubResource("ConcavePolygonShape3D_8i0ys")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=1255360865]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0.5)
+shape = SubResource("BoxShape3D_8i0ys")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=459477379]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, -3, 0)
+shape = SubResource("BoxShape3D_ud5ut")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=370459987]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.75, -0.5, 2.75)
+shape = SubResource("BoxShape3D_24347")

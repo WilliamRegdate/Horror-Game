@@ -1,0 +1,706 @@
+using Godot;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public partial class ProceduralGenerator : Node
+{
+    [Export] string[] Rooms;
+
+    [Export] string[] Corridors;
+    [Export] int TotalRooms;
+    [Export] Vector3I LevelBounds;
+    [Export] int[] RoomWeights;
+    public RoomManager roomManager;
+
+    private List<Aabb> _placedRoomBounds = new(); // world-space AABBs of every room placed so far
+    private int _totalWeight;
+    private const int MaxPlacementAttempts = 8; // how many different room types to try before giving up on a door
+    private const int ClusterAmount = 5; //how many room clusters to have  
+
+    //corridors
+    [Export] PackedScene _corridorStraight;
+    [Export] PackedScene _corridorCorner;
+    [Export] PackedScene _corridorStairs;
+
+    private List<RoomCluster> _roomClusters;
+
+    public override void _Ready() //create a level
+    {
+        //prep room cluster list
+        _roomClusters = new();
+
+        //add rooms from the list to the room manager
+        roomManager = new();
+        foreach (string item in Rooms)
+        {
+            roomManager.AddRoom(item);
+        }
+        foreach (int weight in RoomWeights)
+        {
+            _totalWeight += weight;
+        }
+
+        for (int c = 0; c < ClusterAmount; c++)
+        {
+            RoomCluster cluster = GenerateCluster();
+            if (cluster != null)
+            {
+                _roomClusters.Add(cluster);
+            }
+        }
+        LinkClusters();
+    }
+
+    // Attempts to generate one full cluster (a chain of TotalRooms rooms) at a random,
+    // non-overlapping starting position within LevelBounds. Returns null if no valid
+    // starting position could be found after MaxPlacementAttempts tries.
+    private RoomCluster GenerateCluster()
+    {
+        for (int attempt = 0; attempt < MaxPlacementAttempts; attempt++)
+        {
+            Vector3 startPosition = new Vector3(
+                GD.RandRange(-LevelBounds.X, LevelBounds.X) * 5,
+                GD.RandRange(0, 50) * 5,
+                GD.RandRange(-LevelBounds.Z, LevelBounds.Z) * 5
+            );
+
+            // Tentatively spawn the first room of the cluster and check it doesn't
+            // overlap anything already placed (by an earlier cluster).
+            Node3D firstRoomNode = SpawnRoomAt(startPosition, Vector3.Zero, out List<DoorData> firstRoomDoors);
+            Aabb firstRoomBounds = GetWorldAabb(firstRoomNode);
+
+            if (OverlapsAnyPlacedRoom(firstRoomBounds))
+            {
+                // This starting position doesn't work — discard and try a new random spot.
+                firstRoomNode.QueueFree();
+                continue;
+            }
+
+            // Starting position is good — commit the first room and build out the rest
+            // of the chain from it, same as the original single-cluster logic.
+            _placedRoomBounds.Add(firstRoomBounds);
+            List<DoorData> openDoors = firstRoomDoors;
+
+            for (int i = 1; i < TotalRooms; i++)
+            {
+                if (openDoors.Count == 0)
+                {
+                    GD.PrintErr("No open doors left to attach a new room to.");
+                    break;
+                }
+
+                DoorData parentDoor = openDoors[0];
+                openDoors.RemoveAt(0);
+
+                Node3D newRoomNode = SpawnRoomAttachedTo(parentDoor, out List<DoorData> newDoors);
+
+                if (newRoomNode == null)
+                {
+                    // Every room type we tried at this door overlapped an existing room.
+                    // Skip this door and move on rather than getting stuck.
+                    GD.PrintErr("Could not place a non-overlapping room at this door; skipping.");
+                    continue;
+                }
+
+                _placedRoomBounds.Add(GetWorldAabb(newRoomNode));
+
+                foreach (var item in newDoors)
+                {
+                    openDoors.Add(item);
+                }
+            }
+
+            // The cluster's remaining open doors become its external attachment points,
+            // used later to connect this cluster to others.
+            return new RoomCluster(openDoors);
+        }
+
+        // Couldn't find a non-overlapping starting position after several tries.
+        GD.PrintErr("Could not find a non-overlapping starting position for a new cluster; skipping it.");
+        return null;
+    }
+
+    // Spawns a room directly at the given world position/rotation (used for the very first room).
+    private Node3D SpawnRoomAt(Vector3 position, Vector3 rotationDegrees, out List<DoorData> resultingDoors)
+    {
+        int random = GetWeightedIndex();
+        RoomData newRoom = roomManager.Rooms[random];
+        // Deep-copy the door list so removing doors for this instance doesn't
+        // mutate the shared master list in roomManager.Rooms.
+        newRoom.Doors = new List<DoorData>(roomManager.Rooms[random].Doors);
+
+        Node3D newRoomNode = newRoom.Room.Instantiate<Node3D>();
+        AddChild(newRoomNode);
+        newRoomNode.Position = position;
+        newRoomNode.RotationDegrees = rotationDegrees;
+
+        resultingDoors = GetWorldDoors(newRoom, newRoomNode);
+        return newRoomNode;
+    }
+
+    // Spawns a new room and aligns one of its doors to the given parent door.
+    // Tries up to MaxPlacementAttempts different room types if a placement overlaps
+    // an already-placed room. Returns null (with resultingDoors empty) if none fit.
+    private Node3D SpawnRoomAttachedTo(DoorData parentDoor, out List<DoorData> resultingDoors)
+    {
+        //close gap in doors
+        parentDoor.Position += new Quaternion(Vector3.Up, Mathf.DegToRad(parentDoor.Rotation.Y)) * new Vector3(-5,0,0);
+        for (int attempt = 0; attempt < MaxPlacementAttempts; attempt++)
+        {
+            //pick a room
+            int random = GetWeightedIndex();
+            RoomData newRoom = roomManager.Rooms[random];
+            // Deep-copy the door list so removing doors for this instance doesn't
+            // mutate the shared master list in roomManager.Rooms.
+            newRoom.Doors = new List<DoorData>(roomManager.Rooms[random].Doors);
+
+            Node3D candidateNode = newRoom.Room.Instantiate<Node3D>();
+            AddChild(candidateNode); // must be in the tree for AABB/transform queries to be meaningful
+
+            // Pick a door on the new room to connect with the parent door, also remove it from
+            // the list of room doors (on our local copy only) as it is now used.
+            int doorIndex = GD.RandRange(0, newRoom.Doors.Count - 1);
+            DoorData childDoor = newRoom.Doors[doorIndex];
+            newRoom.Doors.RemoveAt(doorIndex);
+
+            // The child door must face the opposite direction of the parent door once placed,
+            // so the room's rotation = parentDoor.Rotation - childDoor.Rotation + 180 (around Y).
+            float roomYaw = parentDoor.Rotation.Y - childDoor.Rotation.Y + 180f;
+            Vector3 roomRotation = new Vector3(0, roomYaw, 0);
+            candidateNode.RotationDegrees = roomRotation;
+
+            Vector3 rotatedChildDoorOffset = candidateNode.Quaternion * childDoor.Position;
+            candidateNode.Position = parentDoor.Position - rotatedChildDoorOffset;
+
+            Aabb candidateBounds = GetWorldAabb(candidateNode);
+            candidateBounds.Size -= new Vector3(0.3f,0.3f,0.3f);
+
+            if (OverlapsAnyPlacedRoom(candidateBounds))
+            {
+                // Doesn't fit — discard this candidate and try a different room type.
+                candidateNode.QueueFree();
+                continue;
+            }
+
+            // Accepted: keep candidateNode as a child of the generator (already added above).
+            resultingDoors = GetWorldDoors(newRoom, candidateNode);
+            return candidateNode;
+        }
+
+        // Exhausted all attempts without finding a non-overlapping room type.
+        resultingDoors = new List<DoorData>();
+        return null;
+    }
+
+    // Computes the world-space bounding box of a room by scanning its MeshInstance3D children
+    // and merging their (already-transformed) AABBs.
+    private Aabb GetWorldAabb(Node3D roomNode)
+    {
+        Aabb? combined = null;
+        CollectMeshAabbs(roomNode, ref combined);
+
+        // Fallback: if a room scene has no MeshInstance3D nodes at all, treat it as a
+        // zero-size box at its origin so it never blocks placement (better than crashing).
+        return combined ?? new Aabb(roomNode.GlobalPosition, Vector3.Zero);
+    }
+
+    private void CollectMeshAabbs(Node node, ref Aabb? combined)
+    {
+        if (node is MeshInstance3D meshInstance && meshInstance.Mesh != null)
+        {
+            // GetAabb() is in the mesh's local space; transform by the instance's global
+            // transform to get a world-space box, since rooms can be positioned/rotated freely.
+            Aabb localAabb = meshInstance.Mesh.GetAabb();
+            Aabb worldAabb = meshInstance.GlobalTransform * localAabb;
+
+            combined = combined.HasValue ? combined.Value.Merge(worldAabb) : worldAabb;
+        }
+
+        foreach (Node child in node.GetChildren())
+        {
+            CollectMeshAabbs(child, ref combined);
+        }
+    }
+
+    // Checks a candidate world-space AABB against every room placed so far.
+    // Aabb.Intersects() defaults to non-inclusive edges, so rooms that only touch
+    // at a shared wall (as connected rooms will) don't register as overlapping.
+    private bool OverlapsAnyPlacedRoom(Aabb candidateBounds)
+    {
+        foreach (Aabb placed in _placedRoomBounds)
+        {
+            if (placed.Intersects(candidateBounds))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Converts a room's local door list into world-space DoorData, excluding the door
+    // that's no longer "open" doesn't matter here since caller already removed/replaced as needed.
+    private List<DoorData> GetWorldDoors(RoomData room, Node3D roomNode)
+    {
+        List<DoorData> doors = new();
+        foreach (var item in room.Doors)
+        {
+
+            Vector3 worldPos = roomNode.Quaternion * item.Position;
+            worldPos += roomNode.Position;
+            //worldPos = worldPos.Round();
+
+            Vector3 worldRot = new Vector3(0, item.Rotation.Y + roomNode.RotationDegrees.Y, 0);
+
+            doors.Add(new DoorData(worldPos, worldRot));
+        }
+        return doors;
+    }
+
+    private int GetWeightedIndex()
+    {
+        float roll = (float)GD.RandRange(0, _totalWeight);
+        float cumulative = 0.0f;
+        for (int i = 0; i < RoomWeights.Length; i++)
+        {
+            cumulative += RoomWeights[i];
+            if (roll <= cumulative)
+            {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private void LinkClusters()
+    {
+        bool allClustersConnected = false;
+        // Tracks pairs we've already tried so a failed link doesn't get retried forever.
+        var failedPairs = new HashSet<(int, int)>();
+
+        while (!allClustersConnected)
+        {
+            //find least connected room cluster
+            int smallest = int.MaxValue;
+            int smallestI = 0;
+            for (int i = 0; i < _roomClusters.Count; i++)
+            {
+                if (_roomClusters[i].links < smallest)
+                {
+                    smallest = _roomClusters[i].links;
+                    smallestI = i;
+                }
+            }
+            RoomCluster room1 = _roomClusters[smallestI];
+
+            //find closest adjacent room cluster (excluding itself and any pair already tried and failed)
+            float smallestDist = float.MaxValue;
+            int room2Index = -1;
+            for (int i = 0; i < _roomClusters.Count; i++)
+            {
+                if (i == smallestI)
+                    continue;
+
+                var pairKey = (Math.Min(smallestI, i), Math.Max(smallestI, i));
+                if (failedPairs.Contains(pairKey))
+                    continue;
+
+                Vector3 currentVector = _roomClusters[i].Center - room1.Center;
+                float currentLength = currentVector.LengthSquared();
+                if (currentLength < smallestDist)
+                {
+                    smallestDist = currentLength;
+                    room2Index = i;
+                }
+            }
+
+            if (room2Index == -1)
+            {
+                // No untried cluster pairs remain involving room1 — every option failed.
+                GD.PrintErr("LinkClusters: no remaining valid cluster pairs to try; stopping.");
+                break;
+            }
+            RoomCluster room2 = _roomClusters[room2Index];
+
+            //pick 2 closest doors
+            //pick the door of room cluster 1 closest to middle of room cluster 2
+            float smallestDoorDist = float.MaxValue;
+            DoorData door1 = room1.Doors[0];
+            Vector3 room1To2 = room2.Center - room1.Center;
+            for (int i = 0; i < room1.Doors.Count; i++)
+            {
+                Vector3 currentVector = room1To2 - room1.Doors[i].Position;
+                float currentLength = currentVector.LengthSquared();
+                if (currentLength < smallestDoorDist)
+                {
+                    smallestDoorDist = currentLength;
+                    door1 = room1.Doors[i];
+                }
+            }
+            //find the door in room cluster 2 closest to door1
+            smallestDoorDist = float.MaxValue;
+            DoorData door2 = room2.Doors[0];
+            for (int i = 0; i < room2.Doors.Count; i++)
+            {
+                Vector3 currentVector = room2.Doors[i].Position - door1.Position;
+                float currentLength = currentVector.LengthSquared();
+                if (currentLength < smallestDoorDist)
+                {
+                    smallestDoorDist = currentLength;
+                    door2 = room2.Doors[i];
+                }
+            }
+
+            List<DoorData> path = LinkDoors(door1, door2);
+            bool first = true;
+            foreach (var door in path)
+            {
+                GD.Print(door.Position, door.Rotation);
+                var cube = new MeshInstance3D();
+                cube.Mesh = new BoxMesh();
+                cube.Position = door.Position;
+                if (first == true)
+                {
+                    cube.Scale *= 2;
+                    first = false;
+                }
+
+                AddChild(cube);
+            }
+
+            if (path.Count == 0)
+            {
+                // This pair couldn't be linked — remember that and try a different pair next time.
+                failedPairs.Add((Math.Min(smallestI, room2Index), Math.Max(smallestI, room2Index)));
+            }
+            else
+            {
+                room1.Doors.Remove(door1);
+                room2.Doors.Remove(door2);
+                room1.links++;
+                room2.links++;
+                PlaceCorridors(path);
+            }
+
+            //check connections
+            allClustersConnected = true;
+            foreach (var cluster in _roomClusters)
+            {
+                if (cluster.links < 1)
+                {
+                    allClustersConnected = false;
+                }
+            }
+
+            // Safety valve: if every possible pair has failed, stop instead of looping forever.
+            int maxPossiblePairs = _roomClusters.Count * (_roomClusters.Count - 1) / 2;
+            if (failedPairs.Count >= maxPossiblePairs)
+            {
+                GD.PrintErr("LinkClusters: exhausted all possible cluster pairs; some clusters may remain unconnected.");
+                break;
+            }
+        }
+    }
+    private const float GridCellSize = 5f;
+
+    // Flat horizontal moves (no change in height).
+    private static readonly Vector3I[] FlatDirections = new Vector3I[]
+    {
+        new Vector3I(1, 0, 0), new Vector3I(-1, 0, 0),
+        new Vector3I(0, 0, 1), new Vector3I(0, 0, -1),
+    };
+
+    // Stair moves: advance one cell horizontally while also rising/falling one cell in Y.
+    // Each one is meant to be filled by a staircase prefab spanning a 2x1x2 (or similar) volume.
+    private static readonly Vector3I[] StairDirections = new Vector3I[]
+    {
+        // up
+        new Vector3I(1, 1, 0), new Vector3I(-1, 1, 0),
+        new Vector3I(0, 1, 1), new Vector3I(0, 1, -1),
+        // down
+        new Vector3I(1, -1, 0), new Vector3I(-1, -1, 0),
+        new Vector3I(0, -1, 1), new Vector3I(0, -1, -1),
+    };
+
+    private static readonly Vector3I[] GridDirections12 =
+        FlatDirections.Concat(StairDirections).ToArray();
+
+    /// <summary>
+    /// Finds a path of grid cells linking two doors using A* on a 5x5x5 grid, treating
+    /// already-placed rooms as obstacles. Movement is 12-directional: 4 flat horizontal
+    /// moves, plus 8 diagonal stair moves that rise/fall one cell while advancing one cell
+    /// horizontally (meant to be filled by a staircase prefab).
+    /// </summary>
+    /// <returns>Empty list if no path could be found (or doors aren't grid-aligned); otherwise
+    /// a list of DoorData representing each corridor segment's position and facing direction,
+    /// ordered from door1 to door2 (exclusive of the two room doors themselves).</returns>
+    private List<DoorData> LinkDoors(DoorData door1, DoorData door2)
+    {
+        if (!TryWorldToGrid(door1.Position, out Vector3I startCell) ||
+            !TryWorldToGrid(door2.Position, out Vector3I endCell))
+        {
+            GD.PrintErr($"LinkDoors: door positions are not aligned to the {GridCellSize}-unit grid. " +
+                        $"door1={door1.Position}, door2={door2.Position}");
+            return new List<DoorData>();
+        }
+
+        if (startCell == endCell)
+        {
+            // Doors already occupy the same cell — nothing to link.
+            return new List<DoorData>();
+        }
+
+        var openSet = new List<Vector3I> { startCell };
+        var cameFrom = new Dictionary<Vector3I, Vector3I>();
+        var gScore = new Dictionary<Vector3I, float> { [startCell] = 0f };
+        var fScore = new Dictionary<Vector3I, float> { [startCell] = Heuristic(startCell, endCell) };
+        var closedSet = new HashSet<Vector3I>();
+
+        
+        while (openSet.Count > 0)
+        {
+            // Pick the open node with the lowest fScore. (Linear scan — fine for the
+            // small search spaces a single corridor link will realistically need;
+            // swap for a priority queue if levels get large.)
+            Vector3I current = openSet[0];
+            float bestF = fScore.TryGetValue(current, out var f0) ? f0 : float.MaxValue;
+            for (int i = 1; i < openSet.Count; i++)
+            {
+                float f = fScore.TryGetValue(openSet[i], out var fi) ? fi : float.MaxValue;
+                if (f < bestF)
+                {
+                    bestF = f;
+                    current = openSet[i];
+                }
+            }
+
+            if (current == endCell)
+            {
+                Vector3I previousDir = cameFrom.TryGetValue(current, out Vector3I from)
+                ? current - from
+                : Vector3I.Zero;
+                //on last move door must face opposite direction as door2
+                if (new Quaternion(Vector3.Up, Mathf.DegToRad(door1.Rotation.Y)) * Vector3.Forward == previousDir)
+                {
+                    
+                }
+                return ReconstructPath(cameFrom, current, startCell, endCell, door1, door2);  
+            }
+
+            openSet.Remove(current);
+            closedSet.Add(current);
+
+            // Determine the exact move that produced `current`, if any, so we can forbid
+            // immediately reversing it (e.g. an up-stair immediately followed by a down-stair
+            // back to the same cell). Looked up fresh per-node from cameFrom rather than
+            // tracked as mutable state, since A* doesn't expand nodes in strict path order.
+            Vector3I incomingDir = cameFrom.TryGetValue(current, out Vector3I cameFromCell)
+                ? current - cameFromCell
+                : Vector3I.Zero;
+            Vector3I forbiddenDir = -incomingDir;
+            bool arrivedViaStair = incomingDir.Y != 0;
+
+            foreach (Vector3I dir in GridDirections12)
+            {
+                if (current == door1.Position)
+                {
+                    //on first move door must face same direction as door1
+                    if (new Quaternion(Vector3.Up, Mathf.DegToRad(door1.Rotation.Y)) * Vector3.Forward != dir)
+                    {
+                        continue;
+                    }
+                }
+                //forbid going back in the direction just came from
+                if (new Vector3I(dir.X, 0, dir.Z) == new Vector3I(forbiddenDir.X, 0, forbiddenDir.Z) && incomingDir != Vector3I.Zero)
+                    continue;
+
+                bool isStairMove = dir.Y != 0;
+
+                // Stairs must be followed by a move in the same direction same
+                if (arrivedViaStair && new Vector3(dir.X,0,dir.Z) != new Vector3(incomingDir.X,0,incomingDir.Z))
+                    continue;
+
+                Vector3I neighbor = current + dir;
+
+                if (closedSet.Contains(neighbor))
+                    continue;
+
+                // Don't path through the destination room/door's own cell origin checks —
+                // the end cell is allowed even if it's technically "inside" a door's room edge.
+                bool blocked = isStairMove
+                    ? IsStairMoveBlocked(current, neighbor)
+                    : IsCellBlocked(neighbor);
+
+                if (neighbor != endCell && blocked)
+                    continue;
+
+                // Flat moves cover exactly one cell (GridCellSize). Stair moves cover one
+                // cell horizontally AND one cell vertically at once, so their actual travel
+                // distance is the diagonal, not a flat GridCellSize step.
+                float moveCost = isStairMove
+                    ? GridCellSize * Mathf.Sqrt(2f)
+                    : GridCellSize;
+
+                float tentativeG = gScore[current] + moveCost;
+
+                if (!gScore.TryGetValue(neighbor, out float neighborG) || tentativeG < neighborG)
+                {
+                    cameFrom[neighbor] = current;
+                    gScore[neighbor] = tentativeG;
+                    fScore[neighbor] = tentativeG + Heuristic(neighbor, endCell);
+
+                    if (!openSet.Contains(neighbor))
+                    {
+                        openSet.Add(neighbor);
+                    }
+                }
+            }
+        }
+
+        // No path found.
+        GD.PrintErr("LinkDoors: no valid path found between doors.");
+        return new List<DoorData>();
+    }
+
+    // Manhattan distance scaled by grid cell size — admissible heuristic for 6-directional movement.
+    private float Heuristic(Vector3I a, Vector3I b)
+    {
+        return (Mathf.Abs(a.X - b.X) + Mathf.Abs(a.Y - b.Y) + Mathf.Abs(a.Z - b.Z)) * GridCellSize;
+    }
+
+    // Converts a world position to a grid cell coordinate, failing if it doesn't land
+    // exactly on a grid point (within a small epsilon for floating point error).
+    private bool TryWorldToGrid(Vector3 worldPos, out Vector3I cell)
+    {
+        const float epsilon = 0.01f;
+        Vector3 cellF = worldPos / GridCellSize;
+        Vector3 rounded = new Vector3(Mathf.Round(cellF.X), Mathf.Round(cellF.Y), Mathf.Round(cellF.Z));
+
+        if ((cellF - rounded).Length() > epsilon)
+        {
+            cell = Vector3I.Zero;
+            return false;
+        }
+
+        cell = new Vector3I((int)rounded.X, (int)rounded.Y, (int)rounded.Z);
+        return true;
+    }
+
+    private Vector3 GridToWorld(Vector3I cell)
+    {
+        return new Vector3(cell.X, cell.Y, cell.Z) * GridCellSize;
+    }
+
+    // Checks whether a grid cell overlaps any already-placed room, using a cube AABB
+    // matching the grid cell size, centered on the cell's world position.
+    private bool IsCellBlocked(Vector3I cell)
+    {
+        Vector3 worldPos = GridToWorld(cell);
+        Vector3 halfSize = new Vector3(GridCellSize, GridCellSize, GridCellSize) * 0.4f;
+        Aabb cellBounds = new Aabb(worldPos - halfSize, new Vector3(GridCellSize, GridCellSize, GridCellSize));
+
+        return OverlapsAnyPlacedRoom(cellBounds);
+    }
+
+    // Checks whether a stair move is blocked. A stair move advances one cell horizontally
+    // while rising/falling one cell in Y, so the staircase prefab occupies the combined
+    // volume of both the starting cell and the destination cell (a 2x1x2-cell footprint).
+    // We check the union of both cells' boxes rather than assuming a fixed axis layout.
+    private bool IsStairMoveBlocked(Vector3I from, Vector3I to)
+    {
+        Vector3 fromWorld = GridToWorld(from);
+        Vector3 toWorld = GridToWorld(to);
+        Vector3 halfCell = new Vector3(GridCellSize, GridCellSize, GridCellSize) * 0.4f;
+
+        Aabb fromBounds = new Aabb(fromWorld - halfCell, new Vector3(GridCellSize, GridCellSize, GridCellSize));
+        Aabb toBounds = new Aabb(toWorld - halfCell, new Vector3(GridCellSize, GridCellSize, GridCellSize));
+        Aabb combined = fromBounds.Merge(toBounds);
+
+        return OverlapsAnyPlacedRoom(combined);
+    }
+
+    // Walks cameFrom back from the end cell to the start cell, then builds the result list
+    // of DoorData (one entry per intermediate cell, oriented toward the next cell in the path).
+    private List<DoorData> ReconstructPath(Dictionary<Vector3I, Vector3I> cameFrom, Vector3I current,
+        Vector3I startCell, Vector3I endCell, DoorData door1, DoorData door2)
+    {
+        List<Vector3I> cellPath = new() { current };
+        while (cameFrom.TryGetValue(current, out Vector3I prev))
+        {
+            current = prev;
+            cellPath.Add(current);
+        }
+        cellPath.Reverse(); // now starts at startCell, ends at endCell
+
+        List<DoorData> result = new();
+        for (int i = 0; i < cellPath.Count; i++)
+        {
+            Vector3 worldPos = GridToWorld(cellPath[i]);
+
+            // Face toward the next cell in the path (or the previous one, for the final cell).
+            Vector3I facingDir = (i < cellPath.Count - 1)
+                ? cellPath[i + 1] - cellPath[i]
+                : cellPath[i] - cellPath[i - 1];
+
+            float yaw = Mathf.RadToDeg(Mathf.Atan2(facingDir.X, facingDir.Z));
+            result.Add(new DoorData(worldPos, new Vector3(0, yaw, 0)));
+        }
+
+        return result;
+    }
+
+    private void PlaceCorridors(List<DoorData> path)
+    {
+        
+        DoorData previous = path[0];
+        Node3D node;
+        foreach(var door in path)
+        {
+            if (door.Rotation == previous.Rotation)
+            {
+                node = _corridorStraight.Instantiate<Node3D>();
+                AddChild(node);
+
+                if(door.Position.Y > previous.Position.Y) // uphill stairs
+                {
+                    node = _corridorStairs.Instantiate<Node3D>();
+                    AddChild(node);
+                    node.Position = new Vector3(door.Position.X, door.Position.Y -5, door.Position.Z);
+                    node.RotationDegrees = new Vector3(0,door.Rotation.Y + 180,0);
+                }
+                else if (door.Position.Y < previous.Position.Y) // downhill stairs
+                {
+                    node = _corridorStairs.Instantiate<Node3D>();
+                    AddChild(node);
+                    node.Position = new Vector3(door.Position.X, door.Position.Y, door.Position.Z);
+                    node.RotationDegrees = door.Rotation;
+                }
+                else // flat
+                {
+                    node = _corridorStraight.Instantiate<Node3D>();
+                    AddChild(node);
+                    node.Position = door.Position;
+                    node.RotationDegrees = door.Rotation;
+                }
+            }
+            else
+            {
+                node = _corridorCorner.Instantiate<Node3D>();
+                AddChild(node);
+                node.Position = door.Position;
+                node.RotationDegrees = door.Rotation;
+                if (door.Rotation > previous.Rotation)
+                {
+                    node.RotationDegrees += new Vector3(0,90,0);
+                }
+                else
+                {
+                    
+                }
+            }
+            
+            previous = door;
+        }
+        
+    }
+}

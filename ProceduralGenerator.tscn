@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://cjncw05vjkgut"]
+
+[ext_resource type="Script" uid="uid://c7rilo72kf206" path="res://Scripts/ProceduralGenerator.cs" id="1_fj0im"]
+[ext_resource type="PackedScene" uid="uid://dlaa3ttd3nojx" path="res://Prefabs/Rooms/corridorStraight.tscn" id="2_bst7p"]
+[ext_resource type="PackedScene" uid="uid://c0mb82j1ha8et" path="res://Prefabs/Rooms/corridorCorner.tscn" id="3_f7fte"]
+[ext_resource type="PackedScene" uid="uid://dgm1q7oucwbcr" path="res://Prefabs/Rooms/corridorStairs.tscn" id="4_rlpbo"]
+[ext_resource type="PackedScene" uid="uid://bgdmx7ajlyytq" path="res://Prefabs/Rooms/wall.tscn" id="5_goavb"]
+
+[node name="LevelMaker" type="StaticBody3D" unique_id=427530219]
+script = ExtResource("1_fj0im")
+Rooms = PackedStringArray("room1", "room2", "room3", "room4", "room5", "room6", "warehouse", "junction1", "corridorStraight", "corridorCorner", "staircase1")
+TotalRoomsPerCluster = 30
+LevelBounds = Vector3i(10, 10, 10)
+RoomWeights = PackedInt32Array(10, 10, 10, 10, 10, 0, 10, 2, 0, 0, 5)
+_corridorStraight = ExtResource("2_bst7p")
+_corridorCorner = ExtResource("3_f7fte")
+_corridorStairs = ExtResource("4_rlpbo")
+_wall = ExtResource("5_goavb")

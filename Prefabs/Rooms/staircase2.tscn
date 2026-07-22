@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://1yo3mgpon8r"]
+
+[node name="Node3D" type="MeshInstance3D" unique_id=688697879]
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1012382818]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D" unique_id=946215839]

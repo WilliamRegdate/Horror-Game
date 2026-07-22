@@ -1,0 +1,387 @@
+[gd_scene format=3 uid="uid://bk2jbucofqqit"]
+
+[ext_resource type="Shader" uid="uid://c6eh4ntm5vtc8" path="res://Scripts/Shaders/vhs.gdshader" id="1_5yleq"]
+[ext_resource type="Script" uid="uid://byx8umpirnsv3" path="res://Scripts/MainMenu.cs" id="1_dolsu"]
+[ext_resource type="AudioStream" uid="uid://su6l45t2r8ii" path="res://Assets/Audio/Ambience/Horror_title.wav" id="2_ylpcl"]
+[ext_resource type="FontFile" uid="uid://c45rhuei47ung" path="res://Assets/Fonts/Teletactile-3zavL.ttf" id="3_cx167"]
+[ext_resource type="PackedScene" uid="uid://df7hfxwmhlttd" path="res://Prefabs/Rooms/drill.tscn" id="3_ylpcl"]
+[ext_resource type="Theme" uid="uid://87sp4rn4eiee" path="res://MenuTheme.tres" id="5_n4eug"]
+[ext_resource type="Script" uid="uid://bvykotri8rdls" path="res://MenuPlayerSpawner.cs" id="7_dlksc"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_cx167"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_ulcgi"]
+sky_material = SubResource("ProceduralSkyMaterial_cx167")
+radiance_size = 0
+
+[sub_resource type="Environment" id="Environment_dolsu"]
+background_mode = 1
+background_color = Color(0.114897, 0.114897, 0.114897, 1)
+background_energy_multiplier = 0.0
+sky = SubResource("Sky_ulcgi")
+sky_rotation = Vector3(-1.775, -0.682424, 0)
+ambient_light_sky_contribution = 0.01
+ambient_light_energy = 0.0
+reflected_light_source = 1
+tonemap_mode = 3
+tonemap_exposure = 2.9
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+ssil_normal_rejection = 0.3
+glow_enabled = true
+fog_enabled = true
+fog_light_color = Color(0, 0, 0, 1)
+fog_light_energy = 0.0
+fog_density = 0.039
+
+[sub_resource type="CameraAttributesPhysical" id="CameraAttributesPhysical_n4eug"]
+
+[sub_resource type="Compositor" id="Compositor_dlksc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y8xgx"]
+shader = ExtResource("1_5yleq")
+shader_parameter/pixel_size = 1.50000002375
+shader_parameter/lod_blur = 0.400000019
+shader_parameter/chroma_offset_px = 1.6510000784225
+shader_parameter/saturation = 0.750000035625
+shader_parameter/contrast = 1.09200002812
+shader_parameter/shadow_lift = 0.06
+shader_parameter/scanline_strength = 0.0370000017575
+shader_parameter/vignette_strength = 0.39600001881
+shader_parameter/noise_strength = 0.042000001995
+shader_parameter/noise_speed = 5.0
+shader_parameter/base_jitter_px = 0.11200000532
+shader_parameter/base_jitter_speed = 10.3110004897725
+shader_parameter/glitchiness = 0.2270000107825
+shader_parameter/glitch_rate = 5.24800024928
+shader_parameter/glitch_shift_px = 2.270000107825
+shader_parameter/glitch_window_min = 0.0490000023275
+shader_parameter/glitch_window_max = 0.174000008265
+shader_parameter/blue_band_start_y = 0.18000000855
+shader_parameter/blue_band_speed = 0.06
+shader_parameter/blue_band_width = 0.035
+shader_parameter/blue_band_strength = 0.1
+shader_parameter/blue_band_glitch = 0.25
+shader_parameter/blue_band_distort_px = 1.2
+
+[node name="Menu" type="Node3D" unique_id=750598287 node_paths=PackedStringArray("_playMenu", "_optionsMenu", "_partyMenu", "_loadProgress", "_startGameButton")]
+script = ExtResource("1_dolsu")
+_playMenu = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu")
+_optionsMenu = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu")
+_partyMenu = NodePath("CanvasLayer2/HSplitContainer/Party Menu")
+_loadProgress = NodePath("CanvasLayer2/HSplitContainer/Party Menu/ProgressBar")
+_startGameButton = NodePath("CanvasLayer2/HSplitContainer/Party Menu/StartButton")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=871504934]
+environment = SubResource("Environment_dolsu")
+camera_attributes = SubResource("CameraAttributesPhysical_n4eug")
+compositor = SubResource("Compositor_dlksc")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=350763814]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1123171151]
+material = SubResource("ShaderMaterial_y8xgx")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="AudioListener2D" type="AudioListener2D" parent="CanvasLayer" unique_id=1118427068]
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="CanvasLayer" unique_id=1973478868]
+stream = ExtResource("2_ylpcl")
+autoplay = true
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=897591210]
+transform = Transform3D(0.8038574, 0.11094832, -0.5843832, 0, 0.9824505, 0.18652354, 0.59482205, -0.14993833, 0.7897501, -45.43061, 12.369792, 7.2382336)
+
+[node name="Node3D" parent="." unique_id=972607526 instance=ExtResource("3_ylpcl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8691568, 0, -128.47746)
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="." unique_id=1641591656]
+layer = 0
+
+[node name="HSplitContainer" type="HSplitContainer" parent="CanvasLayer2" unique_id=943984017]
+anchors_preset = -1
+anchor_right = 1.0240161
+anchor_bottom = 1.0
+offset_left = 51.555542
+offset_top = 18.0
+offset_right = -58.666626
+offset_bottom = -44.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("5_n4eug")
+split_offsets = PackedInt32Array(146, 874)
+split_offset = 146
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer" unique_id=1519465539]
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("5_n4eug")
+theme_override_constants/separation = 10
+metadata/_edit_use_anchors_ = true
+
+[node name="PlayButton" type="Button" parent="CanvasLayer2/HSplitContainer/VBoxContainer" unique_id=368621142]
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("5_n4eug")
+theme_override_colors/font_color = Color(0.8745098, 0.8745098, 0.8745098, 1)
+theme_override_colors/font_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+theme_override_fonts/font = ExtResource("3_cx167")
+theme_override_font_sizes/font_size = 32
+toggle_mode = true
+text = "PLAY▶"
+flat = true
+alignment = 0
+
+[node name="OptionsButton" type="Button" parent="CanvasLayer2/HSplitContainer/VBoxContainer" unique_id=92607928]
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("5_n4eug")
+theme_override_colors/font_color = Color(0.8745098, 0.8745098, 0.8745098, 1)
+theme_override_colors/font_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+theme_override_fonts/font = ExtResource("3_cx167")
+theme_override_font_sizes/font_size = 24
+toggle_mode = true
+text = "options"
+flat = true
+alignment = 0
+
+[node name="QuitButton" type="Button" parent="CanvasLayer2/HSplitContainer/VBoxContainer" unique_id=1298226122]
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("5_n4eug")
+theme_override_colors/font_color = Color(0.8745098, 0.8745098, 0.8745098, 1)
+theme_override_colors/font_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+theme_override_fonts/font = ExtResource("3_cx167")
+theme_override_font_sizes/font_size = 24
+text = "quit"
+flat = true
+alignment = 0
+
+[node name="VSplitContainer" type="VSplitContainer" parent="CanvasLayer2/HSplitContainer" unique_id=1045546778]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="PlayMenu" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer" unique_id=1073192589]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="Host" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu" unique_id=1991082901]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme = ExtResource("5_n4eug")
+theme_override_colors/font_color = Color(0.8745098, 0.8745098, 0.8745098, 1)
+theme_override_colors/font_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+theme_override_fonts/font = ExtResource("3_cx167")
+theme_override_font_sizes/font_size = 16
+text = "|Host
+"
+flat = true
+alignment = 0
+
+[node name="Join" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu" unique_id=2036771179]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme = ExtResource("5_n4eug")
+theme_override_colors/font_color = Color(0.8745098, 0.8745098, 0.8745098, 1)
+theme_override_colors/font_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+theme_override_fonts/font = ExtResource("3_cx167")
+theme_override_font_sizes/font_size = 16
+toggle_mode = true
+text = "|Join"
+flat = true
+alignment = 0
+
+[node name="OptionsMenu" type="TabContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer" unique_id=803791236]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+current_tab = 0
+
+[node name="Display" type="TabBar" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu" unique_id=1457509678]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+metadata/_tab_index = 0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display" unique_id=16106007]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -0.09649658
+offset_top = 0.33333334
+offset_right = -0.09649658
+offset_bottom = 0.33332825
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer" unique_id=2094134272]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("5_n4eug")
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer" unique_id=1798828556]
+layout_mode = 2
+text = "Resolution"
+
+[node name="OptionButton" type="OptionButton" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer" unique_id=446952947]
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "1920x1080"
+popup/item_0/id = 0
+popup/item_1/text = "1600x900"
+popup/item_1/id = 1
+popup/item_2/text = "1280x720"
+popup/item_2/id = 2
+
+[node name="Controls" type="TabBar" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu" unique_id=476812439]
+visible = false
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+metadata/_tab_index = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls" unique_id=60023678]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer" unique_id=282240092]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("5_n4eug")
+theme_override_constants/separation = 10
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1832668699]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="HSlider2" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=911653867]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="HSlider3" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1382122295]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="HSlider4" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1470194202]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="HSlider5" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1812634272]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="HSlider6" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=527553657]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="HSlider7" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1210539284]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="HSlider8" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=821820927]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="HSlider9" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1353941221]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="HSlider10" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1668015800]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="HSlider11" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=261490041]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="HSlider12" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=2089298393]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="HSlider13" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1295620863]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="Party Menu" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer" unique_id=236164692]
+layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("5_n4eug")
+
+[node name="Label" type="Label" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=1358285769]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+text = "Tour Group    "
+
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=130963561]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="Players" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=215472306]
+layout_mode = 2
+
+[node name="LeaveGroup" type="Button" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=451030988]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+theme_override_colors/font_color = Color(0.8745098, 0.8745098, 0.8745098, 1)
+theme_override_colors/font_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+theme_override_fonts/font = ExtResource("3_cx167")
+theme_override_font_sizes/font_size = 17
+text = "leave group"
+flat = true
+alignment = 0
+
+[node name="HSeparator2" type="HSeparator" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=652915904]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+
+[node name="StartButton" type="Button" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=26648571]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+theme_override_colors/font_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+text = "Start Tour"
+
+[node name="ProgressBar" type="ProgressBar" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=592902969]
+layout_mode = 2
+size_flags_vertical = 4
+theme = ExtResource("5_n4eug")
+show_percentage = false
+
+[node name="Label2" type="Label" parent="CanvasLayer2/HSplitContainer/Party Menu/ProgressBar" unique_id=62270323]
+layout_mode = 0
+offset_top = 8.0
+offset_right = 183.0
+offset_bottom = 25.0
+text = "Loading..."
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=762956721]
+spawn_path = NodePath("../CanvasLayer2/HSplitContainer/Party Menu/Players")
+script = ExtResource("7_dlksc")
+
+[connection signal="toggled" from="CanvasLayer2/HSplitContainer/VBoxContainer/PlayButton" to="." method="ToggledPlaySignal"]
+[connection signal="toggled" from="CanvasLayer2/HSplitContainer/VBoxContainer/OptionsButton" to="." method="ToggledOptionsSignal"]
+[connection signal="pressed" from="CanvasLayer2/HSplitContainer/VBoxContainer/QuitButton" to="." method="PressedQuitSignal"]
+[connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/Host" to="." method="PressedHostSignal"]
+[connection signal="toggled" from="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/Join" to="." method="ToggledJoinSignal"]
+[connection signal="pressed" from="CanvasLayer2/HSplitContainer/Party Menu/StartButton" to="." method="PressedStartGameSignal"]

@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://dlaa3ttd3nojx"]
+
+[ext_resource type="Material" uid="uid://b4fk1wsfi5mrs" path="res://Assets/Materials/Environment.tres" id="1_bhurj"]
+[ext_resource type="ArrayMesh" uid="uid://ceuyh1fvdxe7g" path="res://Assets/Models/Environment/Room objects/corridorStraight.obj" id="1_hbmmq"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_y8xgx"]
+vertices = PackedVector3Array(-1.25, -2, -2.5, -1.25, -2, 2.5, 1.25, -2, 2.5, 1.25, -2, -2.5)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
+agent_radius = 1.0
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_bhurj"]
+data = PackedVector3Array(-2.5, -2.5, -2.5, 2.4999, -2.5, -2.5, -2.5, -2.5, 2.5, -2.5, -2.5, 2.5, 2.4999, -2.5, -2.5, 2.5, -2.5, 2.4999, 2.5, 2.5, 2.4999, 2.4999, 2.5, -2.5, -2.5, 2.5, 2.5, -2.5, 2.5, 2.5, 2.4999, 2.5, -2.5, -2.5, 2.5, -2.5, 2.5, -2.5, 2.4999, 2.4999, -2.5, -2.5, 2.5, 2.5, 2.4999, 2.5, 2.5, 2.4999, 2.4999, -2.5, -2.5, 2.4999, 2.5, -2.5, -2.5, 2.4999, -2.5, -2.5, -2.5, -2.5, -2.5, 2.4999, 2.5, -2.5, 2.4999, 2.5, -2.5, -2.5, -2.5, -2.5, -2.5, 2.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bhurj"]
+size = Vector3(5, 1, 7)
+
+[node name="Node3D" type="MeshInstance3D" unique_id=673997291]
+material_override = ExtResource("1_bhurj")
+mesh = ExtResource("1_hbmmq")
+surface_material_override/0 = ExtResource("1_bhurj")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=787104294]
+navigation_mesh = SubResource("NavigationMesh_y8xgx")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D" unique_id=300291445]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=1072232026]
+shape = SubResource("ConcavePolygonShape3D_bhurj")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=1729440888]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0)
+shape = SubResource("BoxShape3D_bhurj")
+disabled = true

@@ -1,0 +1,6 @@
+[gd_resource type="Theme" format=3 uid="uid://87sp4rn4eiee"]
+
+[ext_resource type="FontFile" uid="uid://c45rhuei47ung" path="res://Assets/Fonts/Teletactile-3zavL.ttf" id="1_xf8wu"]
+
+[resource]
+default_font = ExtResource("1_xf8wu")

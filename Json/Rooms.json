@@ -1,51 +1,22 @@
 {
-	"corridor_blue_corner": {
-		"scene": "res://Prefabs/corridor_blue_corner.tscn",
+	"corridorCorner": {
+		"scene": "res://Prefabs/Rooms/corridorCorner.tscn",
 		"doors": [
 			{
 				"position": [
-					6.0,
 					0.0,
-					0.0
+					0.0,
+					5.0
 				],
 				"rotation": [
 					0.0,
-					180.0,
+					-90.0,
 					0.0
 				]
 			},
 			{
 				"position": [
-					0.0,
-					0.0,
-					6.0
-				],
-				"rotation": [
-					0.0,
-					90.0,
-					0.0
-				]
-			}
-		]
-	},
-	"corridor_blue_straight": {
-		"scene": "res://Prefabs/corridor_blue_straight.tscn",
-		"doors": [
-			{
-				"position": [
-					6.0,
-					0.0,
-					0.0
-				],
-				"rotation": [
-					0.0,
-					180.0,
-					0.0
-				]
-			},
-			{
-				"position": [
-					-6.0,
+					5.0,
 					0.0,
 					0.0
 				],
@@ -57,12 +28,135 @@
 			}
 		]
 	},
-	"corridor_blue_cross": {
-		"scene": "res://Prefabs/corridor_blue_cross.tscn",
+	"corridorStraight": {
+		"scene": "res://Prefabs/Rooms/corridorStraight.tscn",
 		"doors": [
 			{
 				"position": [
-					6.0,
+					0.0,
+					0.0,
+					5.0
+				],
+				"rotation": [
+					0.0,
+					-90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					0.0,
+					0.0,
+					-5.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			}
+		]
+	},
+	"warehouse": {
+		"scene": "res://Prefabs/Rooms/warehouse.tscn",
+		"doors": [
+			{
+				"position": [
+					5.0,
+					0.0,
+					5.0
+				],
+				"rotation": [
+					0.0,
+					-90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					65.0,
+					0.0,
+					10.0
+				],
+				"rotation": [
+					0.0,
+					-90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					5.0,
+					0.0,
+					-50.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					65.0,
+					0.0,
+					-50.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			}
+		]
+	},
+	"room1": {
+		"scene": "res://Prefabs/Rooms/room1.tscn",
+		"doors": [
+			{
+				"position": [
+					0.0,
+					0.0,
+					5.0
+				],
+				"rotation": [
+					0.0,
+					-90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					25.0,
+					0.0,
+					-30.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					0.0,
+					0.0,
+					-30.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			}
+		]
+	},
+	"junction1": {
+		"scene": "res://Prefabs//Rooms/junction1.tscn",
+		"doors": [
+			{
+				"position": [
+					-10.0,
 					0.0,
 					0.0
 				],
@@ -74,7 +168,7 @@
 			},
 			{
 				"position": [
-					-6.0,
+					10.0,
 					0.0,
 					0.0
 				],
@@ -88,7 +182,125 @@
 				"position": [
 					0.0,
 					0.0,
-					6.0
+					10.0
+				],
+				"rotation": [
+					0.0,
+					-90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					0.0,
+					0.0,
+					-10.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			}
+		]
+	},
+	"room2": {
+		"scene": "res://Prefabs//Rooms/room2.tscn",
+		"doors": [
+			{
+				"position": [
+					-15.0,
+					0.0,
+					0.0
+				],
+				"rotation": [
+					0.0,
+					180.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					15.0,
+					0.0,
+					0.0
+				],
+				"rotation": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					0.0,
+					0.0,
+					15.0
+				],
+				"rotation": [
+					0.0,
+					-90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					0.0,
+					0.0,
+					-15.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			}
+		]
+	},
+	"room3": {
+		"scene": "res://Prefabs//Rooms/room3.tscn",
+		"doors": [
+			{
+				"position": [
+					40.0,
+					0.0,
+					0.0
+				],
+				"rotation": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					-5.0,
+					0.0,
+					0.0
+				],
+				"rotation": [
+					0.0,
+					180.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					5.0,
+					0.0,
+					5.0
+				],
+				"rotation": [
+					0.0,
+					-90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					5.0,
+					0.0,
+					-5.0
 				],
 				"rotation": [
 					0.0,
@@ -98,16 +310,157 @@
 			},
 			{
 				"position": [
-					-6.0,
+					30.0,
 					0.0,
+					-5.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					30.0,
+					0.0,
+					5.0
+				],
+				"rotation": [
+					0.0,
+					-90.0,
+					0.0
+				]
+			}
+		]
+	},
+	"room4": {
+		"scene": "res://Prefabs//Rooms/room4.tscn",
+		"doors": [
+			{
+				"position": [
+					0.0,
+					0.0,
+					5.0
+				],
+				"rotation": [
+					0.0,
+					-90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					30.0,
+					0.0,
+					-40.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			}	
+		]
+	},
+	"room5": {
+		"scene": "res://Prefabs//Rooms/room5.tscn",
+		"doors": [
+			{
+				"position": [
+					30.0,
+					0.0,
+					-20.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					5.0,
+					0.0,
+					-20.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			}	
+		]
+	},
+	"room6": {
+		"scene": "res://Prefabs//Rooms/room6.tscn",
+		"doors": [
+			{
+				"position": [
+					0.0,
+					0.0,
+					5.0
+				],
+				"rotation": [
+					0.0,
+					-90.0,
+					0.0
+				]
+			}
+
+		]
+	},
+	"staircase1": {
+		"scene": "res://Prefabs//Rooms/staircase1.tscn",
+		"doors": [
+			{
+				"position": [
+					0.0,
+					0.0,
+					15.0
+				],
+				"rotation": [
+					0.0,
+					-90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					0.0,
+					0.0,
+					-15.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					-15.0,
+					10.0,
 					0.0
 				],
 				"rotation": [
 					0.0,
-					270.0,
+					180.0,
 					0.0
 				]
-			}
+			},
+			{
+				"position": [
+					0.0,
+					20.0,
+					-15.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			}	
 		]
 	}
 }

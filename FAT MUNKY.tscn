@@ -1,0 +1,118 @@
+[gd_scene format=3 uid="uid://b4m4pq0eksbtu"]
+
+[ext_resource type="Script" uid="uid://c2i2kx02tocjr" path="res://Munky/animated_speech.gd" id="1_xyrfm"]
+[ext_resource type="Script" uid="uid://b6340n7xwoor0" path="res://Scripts/Player.cs" id="2_hysij"]
+[ext_resource type="Script" uid="uid://c7fx1oeba2x8b" path="res://Scripts/PlayerCamera.cs" id="3_yqfol"]
+[ext_resource type="AudioStream" uid="uid://r0ogoov11bjj" path="res://Assets/Audio/Footsteps/footstep0.wav" id="4_v3rdk"]
+[ext_resource type="AudioStream" uid="uid://cjb4x7yuotwpb" path="res://Assets/Audio/Footsteps/footstep1.wav" id="5_whhfg"]
+[ext_resource type="AudioStream" uid="uid://cvow5a3kdpkkl" path="res://Assets/Audio/Footsteps/footstep2.wav" id="6_vpssb"]
+[ext_resource type="AudioStream" uid="uid://bcoq6gje36va5" path="res://Assets/Audio/Footsteps/footstep3.wav" id="7_m7d1q"]
+[ext_resource type="AudioStream" uid="uid://5xj4sj11rlqx" path="res://Assets/Audio/Footsteps/footstep4.wav" id="8_xyrfm"]
+[ext_resource type="AudioStream" uid="uid://blfujonia3xdo" path="res://Assets/Audio/Footsteps/footstep5.wav" id="9_keick"]
+[ext_resource type="AudioStream" uid="uid://yfwa4bgivx7h" path="res://Assets/Audio/Footsteps/footstep6.wav" id="10_qq3mt"]
+[ext_resource type="AudioStream" uid="uid://du5i3lswdbu0s" path="res://Munky/munky music.wav" id="11_yqfol"]
+[ext_resource type="Script" uid="uid://c62hcyccwsapt" path="res://Scripts/AmbiencePlayer.cs" id="12_v3rdk"]
+[ext_resource type="AudioStream" uid="uid://nny8wyiqgcjg" path="res://Munky/munky1.wav" id="13_v3rdk"]
+[ext_resource type="AudioStream" uid="uid://dvr66bsgecoop" path="res://Munky/munky2.wav" id="14_xyrfm"]
+[ext_resource type="AudioStream" uid="uid://6n0mt045igqk" path="res://Munky/munky3.wav" id="15_keick"]
+[ext_resource type="AudioStream" uid="uid://l48x0ugj2nau" path="res://Munky/munky4.wav" id="16_qq3mt"]
+[ext_resource type="AudioStream" uid="uid://bdq1whg1fgfdi" path="res://Munky/munky5.wav" id="17_dcsm6"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_dcsm6"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_17xq2"]
+
+[sub_resource type="AudioStreamPlaylist" id="AudioStreamPlaylist_v3rdk"]
+shuffle = true
+loop = false
+
+[node name="Node3D" type="Node3D" unique_id=82171411]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=684560810]
+transform = Transform3D(0.99999976, 0, 0, 0, 1, 0, 0, 0, 0.99999976, -0.31529903, 0.12934685, -0.060571194)
+use_collision = true
+size = Vector3(26.868713, 1, 26.71521)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=263566868]
+
+[node name="Label" type="Label" parent="CanvasLayer" unique_id=1100678547 node_paths=PackedStringArray("audio_player")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -158.0
+offset_top = 202.0
+offset_right = 159.0
+offset_bottom = 303.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_transform_enabled = true
+offset_transform_pivot_ratio = Vector2(0, 0)
+text = "ME FAT MUNKY"
+autowrap_mode = 2
+script = ExtResource("1_xyrfm")
+audio_player = NodePath("../../AudioStreamPlayer2D")
+sounds = Array[AudioStream]([ExtResource("13_v3rdk"), ExtResource("14_xyrfm"), ExtResource("15_keick"), ExtResource("16_qq3mt"), ExtResource("17_dcsm6")])
+shake_amount = 0.2
+speed = 1.5
+
+[node name="Player" type="CharacterBody3D" parent="." unique_id=2035870612 groups=["Player"]]
+transform = Transform3D(-0.382167, 0, 0.924093, 0, 1, 0, -0.924093, 0, -0.382167, 0, 7.464, 0)
+safe_margin = 0.01
+script = ExtResource("2_hysij")
+BaseSpeed = 5.0
+JumpHeight = 10.0
+
+[node name="PlayerCamera" type="Camera3D" parent="Player" unique_id=2062093610 node_paths=PackedStringArray("_audioPlayer1", "_audioPlayer2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+script = ExtResource("3_yqfol")
+MouseSensitivity = 0.1
+BobFrequency = 2.0
+BobHeight = 0.06
+BobSway = 0.08
+FootstepSounds = Array[AudioStream]([ExtResource("4_v3rdk"), ExtResource("5_whhfg"), ExtResource("6_vpssb"), ExtResource("7_m7d1q"), ExtResource("8_xyrfm"), ExtResource("9_keick"), ExtResource("10_qq3mt")])
+_audioPlayer1 = NodePath("AudioStreamPlayer3D")
+_audioPlayer2 = NodePath("AudioStreamPlayer3D2")
+
+[node name="AudioListener3D" type="AudioListener3D" parent="Player/PlayerCamera" unique_id=205987977]
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="Player/PlayerCamera" unique_id=1977942298]
+volume_db = 25.0
+
+[node name="AudioStreamPlayer3D2" type="AudioStreamPlayer3D" parent="Player/PlayerCamera" unique_id=270627806]
+volume_db = 39.0
+
+[node name="Torch" type="SpotLight3D" parent="Player/PlayerCamera" unique_id=1441759371]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+distance_fade_enabled = true
+spot_range = 72.8751
+spot_angle = 15.0378
+
+[node name="TorchOuter" type="SpotLight3D" parent="Player/PlayerCamera" unique_id=127887032]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+light_energy = 0.3
+distance_fade_enabled = true
+spot_range = 70.0256
+spot_angle = 29.3342
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Player" unique_id=1442596363]
+mesh = SubResource("CapsuleMesh_dcsm6")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=408321016]
+shape = SubResource("CapsuleShape3D_17xq2")
+debug_color = Color(0.892029, 0.000236611, 0.788447, 0.42)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Player" unique_id=2083614697]
+light_energy = 0.005
+
+[node name="AmbiencePlayer" type="AudioStreamPlayer3D" parent="." unique_id=963949491]
+stream = ExtResource("11_yqfol")
+attenuation_model = 3
+autoplay = true
+script = ExtResource("12_v3rdk")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=38249137]
+stream = SubResource("AudioStreamPlaylist_v3rdk")
+volume_db = 19.873
+pitch_scale = 0.9

@@ -1,0 +1,199 @@
+[gd_scene format=3 uid="uid://b50lf3bmukqy6"]
+
+[ext_resource type="Script" uid="uid://ds0x3o4xex2gp" path="res://Scripts/MonsterAI.cs" id="1_7jf71"]
+[ext_resource type="PackedScene" uid="uid://seidjyu0lna0" path="res://Assets/Models/monster_2.blend" id="2_og4gj"]
+[ext_resource type="Script" uid="uid://lxualqoxpyqb" path="res://Scripts/Monster.cs" id="3_vrexm"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3253y"]
+radius = 0.6329346
+height = 1.2658691
+
+[node name="Monster" type="CharacterBody3D" unique_id=433109594 node_paths=PackedStringArray("_checkForPlayer", "_monster", "_agent")]
+wall_min_slide_angle = 0.0
+floor_constant_speed = true
+floor_max_angle = 0.80285144
+floor_snap_length = 1.0
+safe_margin = 0.01
+script = ExtResource("1_7jf71")
+_checkForPlayer = NodePath("monster_2/PlayerChecker")
+_monster = NodePath("monster_2")
+_agent = NodePath("NavigationAgent3D")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1447364782]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5558975, 0)
+shape = SubResource("CapsuleShape3D_3253y")
+disabled = true
+debug_color = Color(0.892029, 0.000236611, 0.788447, 0.42)
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=205892437]
+path_desired_distance = 0.3
+target_desired_distance = 1.5
+debug_enabled = true
+debug_path_custom_color = Color(1, 0, 1, 1)
+debug_path_custom_point_size = 10.17
+
+[node name="monster_2" parent="." unique_id=1659373829 node_paths=PackedStringArray("_ikTargets", "_ikPoles", "_feet", "_spineTarget") instance=ExtResource("2_og4gj")]
+transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 0, -6.7425733, 0)
+script = ExtResource("3_vrexm")
+_ikTargets = [NodePath("../IK_ArmTarget_L"), NodePath("../IK_ArmTarget_R"), NodePath("../IK_LegTarget_L"), NodePath("../IK_LegTarget_R")]
+_ikPoles = [NodePath("IK_ArmPole_L"), NodePath("IK_ArmPole_R"), NodePath("IK_LegPole_L"), NodePath("IK_Legpole_R")]
+_feet = [NodePath("Armature/Skeleton3D/Hand_L"), NodePath("Armature/Skeleton3D/Hand_R"), NodePath("Armature/Skeleton3D/Foot_L"), NodePath("Armature/Skeleton3D/Foot_R"), NodePath("IK_SpineTarget")]
+_spineTarget = NodePath("IK_SpineTarget")
+
+[node name="Armature" parent="monster_2" index="0" unique_id=315912628]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="Skeleton3D" parent="monster_2/Armature" index="0" unique_id=1877986447]
+animate_physical_bones = false
+bones/9/position = Vector3(-0.2108059, 5.9325504, 10.414015)
+bones/9/rotation = Quaternion(0.6298865, -0.07264288, -0.01869953, 0.77305645)
+bones/9/scale = Vector3(0.99999976, 0.99999976, 0.9999999)
+bones/14/position = Vector3(0.22844982, 5.786989, 10.512326)
+bones/14/rotation = Quaternion(0.63367784, 0.010944218, 0.058086626, 0.7713356)
+bones/14/scale = Vector3(1.0000002, 0.9999998, 1.0000005)
+bones/18/position = Vector3(-2.1631105, 1.1133623, -8.576041)
+bones/18/rotation = Quaternion(0.64907515, -0.056290053, -0.014761536, 0.7584953)
+bones/18/scale = Vector3(0.9999996, 1.0000027, 0.9999989)
+bones/22/position = Vector3(2.544591, -3.5573826, -6.7987976)
+bones/22/rotation = Quaternion(0.6515865, -0.0063684406, 0.052707598, 0.7567142)
+bones/22/scale = Vector3(1.0000001, 1.0000042, 1.0000001)
+
+[node name="FABRIK3D" type="FABRIK3D" parent="monster_2/Armature/Skeleton3D" index="1" unique_id=701193572]
+min_distance = 0.0
+angular_delta_limit = 0.8140215631301553
+deterministic = true
+setting_count = 1
+settings/0/target_node = NodePath("../../../IK_SpineTarget")
+settings/0/root_bone_name = "Root"
+settings/0/root_bone = 0
+settings/0/end_bone_name = "Neck"
+settings/0/end_bone = 3
+settings/0/extend_end_bone = false
+settings/0/joint_count = 4
+settings/0/joints/0/rotation_axis = 3
+settings/0/joints/0/limitation = null
+settings/0/joints/1/rotation_axis = 3
+settings/0/joints/1/limitation = null
+settings/0/joints/2/rotation_axis = 3
+settings/0/joints/2/limitation = null
+settings/0/joints/3/rotation_axis = 3
+settings/0/joints/3/limitation = null
+
+[node name="IK" type="TwoBoneIK3D" parent="monster_2/Armature/Skeleton3D" index="2" unique_id=78829416]
+setting_count = 4
+settings/0/target_node = NodePath("../../../../IK_ArmTarget_L")
+settings/0/pole_node = NodePath("../../../IK_ArmPole_L")
+settings/0/root_bone_name = "UpperArm.L"
+settings/0/root_bone = 6
+settings/0/middle_bone_name = "Elbow.L"
+settings/0/middle_bone = 7
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "LowerArm.L"
+settings/0/end_bone = 8
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = true
+settings/0/end_bone/direction = 6
+settings/0/end_bone/length = 6.0
+settings/1/target_node = NodePath("../../../../IK_ArmTarget_R")
+settings/1/pole_node = NodePath("../../../IK_ArmPole_R")
+settings/1/root_bone_name = "UpperArm.R"
+settings/1/root_bone = 11
+settings/1/middle_bone_name = "Elbow.R"
+settings/1/middle_bone = 12
+settings/1/pole_direction = 0
+settings/1/end_bone_name = "LowerArm.R"
+settings/1/end_bone = 13
+settings/1/use_virtual_end = false
+settings/1/extend_end_bone = true
+settings/1/end_bone/direction = 6
+settings/1/end_bone/length = 6.0
+settings/2/target_node = NodePath("../../../../IK_LegTarget_L")
+settings/2/pole_node = NodePath("../../../IK_LegPole_L")
+settings/2/root_bone_name = "UpperLeg.L"
+settings/2/root_bone = 15
+settings/2/middle_bone_name = "Knee.L"
+settings/2/middle_bone = 16
+settings/2/pole_direction = 0
+settings/2/end_bone_name = "LowerLeg.L"
+settings/2/end_bone = 17
+settings/2/use_virtual_end = false
+settings/2/extend_end_bone = true
+settings/2/end_bone/direction = 6
+settings/2/end_bone/length = 8.5
+settings/3/target_node = NodePath("../../../../IK_LegTarget_R")
+settings/3/pole_node = NodePath("../../../IK_Legpole_R")
+settings/3/root_bone_name = "UpperLeg.R"
+settings/3/root_bone = 19
+settings/3/middle_bone_name = "Knee.R"
+settings/3/middle_bone = 20
+settings/3/pole_direction = 0
+settings/3/end_bone_name = "LowerLeg.R"
+settings/3/end_bone = 21
+settings/3/use_virtual_end = false
+settings/3/extend_end_bone = true
+settings/3/end_bone/direction = 6
+settings/3/end_bone/length = 8.5
+
+[node name="Hand_L" type="BoneAttachment3D" parent="monster_2/Armature/Skeleton3D" index="3" unique_id=1978882579]
+transform = Transform3D(0.9973119, -0.06961915, -0.022833131, 0.019548971, -0.047494825, 0.9986794, -0.070611745, -0.99644154, -0.04600617, -2.9290004, 13.877522, -9.722953)
+rotation_edit_mode = 1
+bone_name = "Hand.L"
+bone_idx = 9
+override_pose = true
+
+[node name="Foot_L" type="BoneAttachment3D" parent="monster_2/Armature/Skeleton3D" index="4" unique_id=1510921754]
+transform = Transform3D(0.9973114, -0.06961908, -0.022833088, 0.0067363745, -0.22319031, 0.97474974, -0.0729575, -0.9722838, -0.2221214, -2.9850001, 9.491751, 9.609939)
+rotation_edit_mode = 1
+bone_name = "Foot.L"
+bone_idx = 18
+override_pose = true
+
+[node name="Hand_R" type="BoneAttachment3D" parent="monster_2/Armature/Skeleton3D" index="5" unique_id=374919932]
+transform = Transform3D(0.99731207, -0.06961915, -0.02283312, 0.019548967, -0.047494974, 0.9986799, -0.07061176, -0.99644166, -0.046006307, 2.9286113, 14.037313, -9.797998)
+rotation_edit_mode = 1
+bone_name = "Hand.R"
+bone_idx = 14
+override_pose = true
+
+[node name="Foot_R" type="BoneAttachment3D" parent="monster_2/Armature/Skeleton3D" index="6" unique_id=882409313]
+transform = Transform3D(0.9973119, -0.06961914, -0.022833109, 0.006736373, -0.22319052, 0.9747509, -0.07295753, -0.9722847, -0.22212161, 2.985004, 14.036989, 7.4978843)
+rotation_edit_mode = 1
+bone_name = "Foot.R"
+bone_idx = 22
+override_pose = true
+
+[node name="PlayerChecker" type="RayCast3D" parent="monster_2" unique_id=1219386205]
+transform = Transform3D(-0.49999988, 5.6859675e-14, 1.94707e-07, -1.9469469e-07, -0.005609758, -0.49996844, 2.184482e-09, -0.49996856, 0.00560987, -3.8550343e-14, 6.001566, -0.86665034)
+target_position = Vector3(0, 3.205, 0)
+collision_mask = 5
+hit_back_faces = false
+debug_shape_thickness = 1
+
+[node name="IK_ArmPole_L" type="Node3D" parent="monster_2" unique_id=440931462]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 14.20517, 12.558)
+
+[node name="IK_ArmPole_R" type="Node3D" parent="monster_2" unique_id=900886583]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 14.20517, 12.559)
+
+[node name="IK_LegPole_L" type="Node3D" parent="monster_2" unique_id=1730421708]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 23.125156, 0)
+
+[node name="IK_Legpole_R" type="Node3D" parent="monster_2" unique_id=666600655]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 23.125156, 0)
+
+[node name="IK_SpineTarget" type="Node3D" parent="monster_2" unique_id=2052389062]
+transform = Transform3D(1, 0, 0, 0, -1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 6.420249, -0.9547074)
+
+[node name="IK_ArmTarget_L" type="Node3D" parent="." unique_id=1596285547]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -3.008)
+
+[node name="IK_ArmTarget_R" type="Node3D" parent="." unique_id=1621553346]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -3.0070329)
+
+[node name="IK_LegTarget_L" type="Node3D" parent="." unique_id=1918728284]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.028, 0.7898042, 4.249632)
+
+[node name="IK_LegTarget_R" type="Node3D" parent="." unique_id=1773882307]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0278655, -0.0014418066, 1.9921663)
+
+[editable path="monster_2"]
