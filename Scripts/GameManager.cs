@@ -2,51 +2,64 @@ using Godot;
 using System;
 using System.Threading.Tasks;
 
-
 public partial class GameManager : Node3D
 {
-	[Export] public PackedScene LevelMaker;
-	[Export] private PackedScene _player;
+    [Export] public PackedScene LevelMaker;
+    public ProceduralGenerator Generator;
+    [Signal] public delegate void WorldReadyEventHandler();
 
-	public ProceduralGenerator Generator;
-	[Signal] public delegate void WorldReadyEventHandler();
     public override void _Ready()
-    {
-		GD.Print($"GameManager._Ready called — instance {GetInstanceId()}");
-		var events = GetNode<MainMenu>("/root/Menu");
-    	events.StartGame += OnStartGame;
+	{
+
 		Generator = LevelMaker.Instantiate() as ProceduralGenerator;
 		Generator.PrewarmAabbCache();
-        Task.Run(() =>
-        {  
-            try
+
+		if (!Multiplayer.IsServer()) return; // clients wait for the server's data instead
+
+		Task.Run(() =>
+		{
+			try
 			{
 				Generator.Generate();
-				CallDeferred(nameof(OnGenerationComplete), Generator);
+				CallDeferred(nameof(OnGenerationComplete));
 			}
 			catch (Exception e)
 			{
 				GD.PrintErr("Generation failed: ", e);
 			}
-        });
-    }
-	[Signal] public delegate void StartGameEventHandler();
+		});
+	}
 
-    private void OnGenerationComplete(Node generatorObj)
+
+	private void OnGenerationComplete()
 	{
-		var generator = (ProceduralGenerator)generatorObj;
-		AddChild(generator);
-		
-		generator.BuildFromPlacements();
+		AddChild(Generator);
+		Generator.BuildFromPlacements();
 		EmitSignal(SignalName.WorldReady);
 	}
-	private void OnStartGame()
+	public void OnStartGame()
 	{
-		Node playerInstance =_player.Instantiate();
-		AddChild(playerInstance);
+		if (!Multiplayer.IsServer()) return;
 
-		playerInstance.AddToGroup("Player");
+		CanvasLayer filter = GetNode("CanvasLayer") as CanvasLayer;
+		filter.Show();
+		
+		//send generation data to clients
+		var (sceneIndices, positions, rotations) = Generator.ExportPlacements();
+		Rpc(nameof(ReceivePlacements), sceneIndices, positions, rotations);
+		
+	}
 
-		EmitSignal(SignalName.StartGame);
+	[Rpc(MultiplayerApi.RpcMode.Authority)]
+	private void ReceivePlacements(int[] sceneIndices, Vector3[] positions, Vector3[] rotations)
+	{
+		if (Multiplayer.IsServer()) return; // server already built its own copy directly above
+
+		CanvasLayer filter = GetNode("CanvasLayer") as CanvasLayer;
+		filter.Show();
+
+		AddChild(Generator);
+		Generator.LoadPlacements(sceneIndices, positions, rotations);
+		Generator.BuildFromPlacements();
 	}
 }

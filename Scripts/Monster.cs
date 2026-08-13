@@ -29,8 +29,8 @@ public class Leg
 
 public partial class Monster : Node3D
 {
-    public Node3D Player;
-    private BoneLookAtVectorModifier _lookAtPlayerModifier;
+    //public Node3D Player;
+    private BoneLookAtVectorModifier _lookAtPlayersModifier;
 
     [Export] public Node3D[] _ikTargets;
     [Export] private Node3D[] _ikPoles;
@@ -64,24 +64,27 @@ public partial class Monster : Node3D
         //Position = new Vector3(0, -3f, -1);
         Position = new Vector3(0, -4.5f, 0);
     }
-    //calls once world is ready and set up
-    public void OnStartGame()
-	{
+    //calls once world is ready and set up 
+    private void OnPlayerSpawned(Node node)
+    {
+        if (_lookAtPlayersModifier != null)
+        {
+            _lookAtPlayersModifier.AddTarget((Node3D)node);
+            
+        } 
+        if (!node.IsInGroup("Player")) return;
+
         Skeleton3D skeleton = GetChild(0).GetChild(0) as Skeleton3D;
         if (skeleton == null)
         {
             GD.PrintErr("_Skeleton is null");
             return;
         }
-		Player = GetTree().GetFirstNodeInGroup("Player") as Node3D;
-        if (Player == null)
-        {
-            GD.PrintErr("Player not found in group");
-            return;
-        }
-        _lookAtPlayerModifier = new(skeleton, Player, "Head");
-        skeleton.AddChild(_lookAtPlayerModifier);
-	}
+
+        _lookAtPlayersModifier = new(skeleton, "Head");
+        skeleton.AddChild(_lookAtPlayersModifier);
+        _lookAtPlayersModifier.AddTarget(node as Node3D);
+    }
 
     public override void _Process(double delta)
     {

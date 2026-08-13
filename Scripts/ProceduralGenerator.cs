@@ -8,7 +8,7 @@ public partial class ProceduralGenerator : Node
 {
     private struct PlacementRecord
     {
-        public PackedScene Scene;
+        public int SceneIndex; //note -1 = wall, -2 = _corridorStraight, -3 = _corridorCorner, -4 = _corridorStairs;
         public Vector3 Position;
         public Vector3 RotationDegrees;
     }
@@ -47,6 +47,7 @@ public partial class ProceduralGenerator : Node
 
     public void PrewarmAabbCache()
     {
+        PropLoader = new();
         RoomManager = new();
         foreach (string item in Rooms)
             RoomManager.AddRoom(item);
@@ -80,7 +81,7 @@ public partial class ProceduralGenerator : Node
         GD.Print($"Generate() called — instance {GetInstanceId()}, placements before: {_placements.Count}");
         rng = new RandomNumberGenerator();
         rng.Randomize();
-        PropLoader = new();
+        
 
         float stageCompletion; 
         for (int c = 0; c < ClusterAmount; c++)
@@ -117,7 +118,6 @@ public partial class ProceduralGenerator : Node
     // starting position could be found after MaxPlacementAttempts tries.
     private RoomCluster GenerateCluster()
     {
-
         for (int attempt = 0; attempt < MaxPlacementAttempts; attempt++)
         {
             Vector3 startPosition = new Vector3(
@@ -181,7 +181,7 @@ public partial class ProceduralGenerator : Node
     }
     private void CloseDoor(DoorData door)
     {
-        _placements.Add(new PlacementRecord { Scene = _wall, Position = door.Position, RotationDegrees = door.Rotation });
+        _placements.Add(new PlacementRecord { SceneIndex = -1, Position = door.Position, RotationDegrees = door.Rotation });
     }
 
     // Spawns a room directly at the given world position/rotation (used for the very first room).
@@ -195,7 +195,7 @@ public partial class ProceduralGenerator : Node
             RoomData roomTemplate = RoomManager.Rooms[random];
             List<DoorData> localDoors = new List<DoorData>(roomTemplate.Doors); // truly local copy
 
-            PlacementRecord _candidateRecord = new PlacementRecord { Scene = roomTemplate.Room};
+            PlacementRecord _candidateRecord = new PlacementRecord { SceneIndex = random};
 
             int doorIndex = rng.RandiRange(0, localDoors.Count - 1);
             DoorData childDoor = localDoors[doorIndex];
@@ -235,7 +235,7 @@ public partial class ProceduralGenerator : Node
             new Basis(Vector3.Up, Mathf.DegToRad(rotationDegrees.Y)), position);
         Aabb worldAabb = placementTransform * localAabb;
 
-        _placements.Add(new PlacementRecord { Scene = roomTemplate.Room, Position = position, RotationDegrees = rotationDegrees });
+        _placements.Add(new PlacementRecord { SceneIndex = random, Position = position, RotationDegrees = rotationDegrees });
 
         resultingDoors = GetWorldDoors(new List<DoorData>(roomTemplate.Doors), position, rotationDegrees);
         return worldAabb;
@@ -716,13 +716,15 @@ public partial class ProceduralGenerator : Node
             Vector3 dirIn  = current - previous;
             Vector3 dirOut = next - current;
 
-            PackedScene scene;
+            int sceneIndex; //note -1 = _wall, -2 = _corridorStraight, -3 = _corridorCorner, -4 = _corridorStairs;
+            PackedScene scene; 
             Vector3 position;
             float rotY;
 
             if (dirIn.Dot(dirOut) == 0) // corner
             {
                 scene = _corridorCorner;
+                sceneIndex = -3;
                 position = current;
                 Vector3 flatIn  = new(dirIn.X,  0, dirIn.Z);
                 Vector3 flatOut = new(dirOut.X, 0, dirOut.Z);
@@ -730,6 +732,7 @@ public partial class ProceduralGenerator : Node
             }
             else if (dirIn.Y < 0) // downhill stair
             {
+                sceneIndex = -4;
                 scene = _corridorStairs;
                 position = current;
                 Vector3 flatIn = new(dirIn.X, 0, dirIn.Z);
@@ -737,6 +740,7 @@ public partial class ProceduralGenerator : Node
             }
             else if (dirIn.Y > 0) // uphill stair
             {
+                sceneIndex = -4;
                 scene = _corridorStairs;
                 position = current - Vector3.Up * 5;
                 Vector3 flatIn = new(dirIn.X, 0, dirIn.Z);
@@ -744,13 +748,14 @@ public partial class ProceduralGenerator : Node
             }
             else // flat straight
             {
+                sceneIndex = -2;
                 scene = _corridorStraight;
                 position = current;
                 rotY = GetStraightRotationY(dirIn);
             }
 
             Vector3 rotationDegrees = new(0, rotY, 0);
-            _placements.Add(new PlacementRecord { Scene = scene, Position = position, RotationDegrees = rotationDegrees });
+            _placements.Add(new PlacementRecord { SceneIndex = sceneIndex, Position = position, RotationDegrees = rotationDegrees });
 
             Aabb localAabb = GetOrCacheLocalAabb(scene);
             Transform3D placementTransform = new Transform3D(new Basis(Vector3.Up, Mathf.DegToRad(rotY)), position);
@@ -834,16 +839,71 @@ public partial class ProceduralGenerator : Node
         }
         return result;
     }
+
+    private int _buildIndex = 0;
     public void BuildFromPlacements()
     {
-        Node3D node = _placements[0].Scene.Instantiate<Node3D>();
-        node.Position = _placements[0].Position.Round();
-        node.RotationDegrees = _placements[0].RotationDegrees.Round();
+        if (_buildIndex >= _placements.Count)
+            return;
+
+        var record = _placements[_buildIndex];
+        Node3D node = GetScenefromIndex(record.SceneIndex).Instantiate<Node3D>();
+        node.Position = record.Position.Round();
+        node.RotationDegrees = record.RotationDegrees.Round();
         AddChild(node);
-        _placements.RemoveAt(0);
-        if (_placements.Count > 0)
-        {
+        _buildIndex++;
+
+        if (_buildIndex < _placements.Count)
             CallDeferred(nameof(BuildFromPlacements));
+    }
+    private PackedScene GetScenefromIndex(int i)
+    {
+        //note -1 = _wall, -2 = _corridorStraight, -3 = _corridorCorner, -4 = _corridorStairs;
+        switch(i)
+        {
+            case -1:
+                return _wall ;
+            case -2:
+                return _corridorStraight;
+            case -3:
+                return _corridorCorner;
+            case -4:
+                return _corridorStairs;
+            default:
+                return RoomManager.Rooms[i].Room;
+        }
+    }
+
+    // Adjust "RoomPrefabs" to whatever your actual exported prefab array is called —
+    // the one Generate() picks PlacementRecord.Scene values from.
+    public (int[] sceneIndices, Vector3[] positions, Vector3[] rotations) ExportPlacements()
+    {
+        int count = _placements.Count;
+        var sceneIndices = new int[count];
+        var positions = new Vector3[count];
+        var rotations = new Vector3[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            sceneIndices[i] = _placements[i].SceneIndex;
+            positions[i] = _placements[i].Position;
+            rotations[i] = _placements[i].RotationDegrees;
+        }
+
+        return (sceneIndices, positions, rotations);
+    }
+
+    public void LoadPlacements(int[] sceneIndices, Vector3[] positions, Vector3[] rotations)
+    {
+        _placements.Clear();
+        for (int i = 0; i < sceneIndices.Length; i++)
+        {
+            _placements.Add(new PlacementRecord
+            {
+                SceneIndex = sceneIndices[i],
+                Position = positions[i],
+                RotationDegrees = rotations[i]
+            });
         }
     }
 }

@@ -13,8 +13,6 @@ public class PropData
         Shape = shape;
         Scene = scene;
     }
-    
-
 }
 
 public class PropLoader

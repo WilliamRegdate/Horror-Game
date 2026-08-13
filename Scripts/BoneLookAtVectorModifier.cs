@@ -1,31 +1,50 @@
+using System.Collections.Generic;
 using Godot;
 
 public partial class BoneLookAtVectorModifier : SkeletonModifier3D
 {
-    public Node3D Target;
     private Skeleton3D _skeleton;
+    private List<Node3D> targets = new();
+
+    private Node3D _target;
     private int _boneIndex = -1;
-    public BoneLookAtVectorModifier(Skeleton3D skeleton, Node3D target, string boneName)
+    public BoneLookAtVectorModifier(Skeleton3D skeleton, string boneName)
     {
-        if (target == null) GD.PrintErr("target pos is null");
-        Target = target;
-        
         _skeleton = skeleton;
         if (_skeleton != null)
         {
             _boneIndex = _skeleton.FindBone(boneName);
         }
     }
+    public void AddTarget(Node3D node)
+    {
+        targets.Add(node);
+    }
     private Quaternion _currentRot = Quaternion.Identity;
 
     public override void _ProcessModificationWithDelta(double delta)
     {
-        if (!Active || _skeleton == null || Target == null || _boneIndex == -1)
+        if (!Active || _skeleton == null || targets.Count == 0 || _boneIndex == -1)
             return;
 
-        Vector3 targetLocal = _skeleton.GlobalTransform.AffineInverse() * Target.GlobalPosition;
         Transform3D currentGlobalPose = _skeleton.GetBoneGlobalPose(_boneIndex);
         Vector3 currentPos = currentGlobalPose.Origin;
+
+        //get bone global position relative to root node
+        Vector3 globalBonePos = currentPos + GlobalPosition;
+
+        //look at closest target
+        float closest = float.PositiveInfinity;
+        foreach (var target in targets)
+        {
+            if (closest > (target.Position - globalBonePos).LengthSquared())
+            {
+                closest = (target.Position - globalBonePos).LengthSquared();
+                _target = target;
+            }
+        }
+
+        Vector3 targetLocal = _skeleton.GlobalTransform.AffineInverse() * _target.GlobalPosition;
 
         Transform3D rotationToTarget = Transform3D.Identity;
         rotationToTarget = rotationToTarget.LookingAt(targetLocal - currentPos, Vector3.Up);

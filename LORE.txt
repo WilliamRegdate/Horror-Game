@@ -1,0 +1,26 @@
+Setting: 
+	recently Abandoned Facility Facility C black rock research
+	Known for experimentation on Cutting edge mining technology who knows what they are up to and hiding
+	a week ago a large energy signature was detected by long range scans which was then quickly followed by a facility lockdown
+	meaning nothing has been head from any representatives for a week. until today where main power reserves have ran out and people are able to enter 
+	
+	player(s):
+		private elites hired by company after the faciliy C lockdown.
+	
+	Mission brief:
+
+
+	find out what happened to Facility C causing everyone to disappear
+	locate the black box and discover the cause of the Disappearance
+	the source of the energy shockwave should be from something very big so find it and retrieve the black box information
+	the facility power is toast but the according to black rock company sources the visitors entrance runs on 
+	its own power source. meaning THAT is your entry point. As facility C prioritized in state of the art innovation 
+	it was governed internally with a high level of secrecy meaning we dont know how big or what the layout of the facility is.
+	because of this we have fitted each of you with a GPS locator and an interface that will map out the areas you have 
+	explored to prevent you from getting... too lost. Weve also fitted you with a flashlight and protective clothing
+	in case of any gas leaks. Remember find that black box then GET OUT.
+	
+Tasks:
+	turn on the backup power generators
+	find the black box data 
+	then escape.

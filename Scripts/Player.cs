@@ -24,23 +24,24 @@ public partial class Player : CharacterBody3D
 
 	public override void _PhysicsProcess(double delta)
 	{
+		if (!IsMultiplayerAuthority()) return;
 		Vector3 velocity = Velocity;
 
 		//Add the gravity.
-		// if (!IsOnFloor())
-		// {
-		// 	velocity += GetGravity() * (float)delta;
-		// }
+		if (!IsOnFloor())
+		{
+			velocity += GetGravity() * (float)delta;
+		}
 
 		//creative mode flight
-		if (Input.IsActionPressed("game_jump"))
-		{
-			Position += new Vector3(0, Speed*0.05f, 0);
-		}
-		if (Input.IsActionPressed("game_crouch"))
-		{
-			Position += new Vector3(0, -Speed*0.05f, 0);
-		}
+		// if (Input.IsActionPressed("game_jump"))
+		// {
+		// 	Position += new Vector3(0, Speed*0.05f, 0);
+		// }
+		// if (Input.IsActionPressed("game_crouch"))
+		// {
+		// 	Position += new Vector3(0, -Speed*0.05f, 0);
+		// }
 
 		_soundLabel.Text = $"sound level: {SoundLevel}";
 

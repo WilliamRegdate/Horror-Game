@@ -20,7 +20,7 @@ public partial class MonsterAI : CharacterBody3D
 	[Export] private RayCast3D _checkForPlayer;
 	[Export] private Monster _monster;
 	[Export] private NavigationAgent3D _agent;
-	private Node3D _player;
+	private Node3D _player; //TODO: needs to be changed immenently
 
 
 	bool _locked = true;
@@ -32,20 +32,13 @@ public partial class MonsterAI : CharacterBody3D
 	private const float RotationSpeed = 2.0f;
     public override void _Ready()
     {
+		//TODO: _player set to  this node to avoid crashes until _player is changed
+		_player = this;
+		
 		_agent.TargetPosition = Position;
 		_checkForPlayer.AddException(this);
     }
 
-	public void OnStartGame()
-	{
-		_player = GetTree().GetFirstNodeInGroup("Player") as Node3D;
-        if (_player == null)
-        {
-            GD.PrintErr("Player not found in group");
-            return;
-        }
-		_locked = false;
-	}
 	public override void _PhysicsProcess(double delta)
 	{
 		if (Input.IsActionPressed("ui_cancel"))

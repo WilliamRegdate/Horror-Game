@@ -7,7 +7,6 @@
 [ext_resource type="AudioStream" uid="uid://dessem2lx0ax7" path="res://Assets/Audio/Footsteps/footstep_w2.wav" id="5_4qbli"]
 [ext_resource type="AudioStream" uid="uid://d2eqttpp2xrbc" path="res://Assets/Audio/Footsteps/footstep_w3.wav" id="6_08u7w"]
 [ext_resource type="AudioStream" uid="uid://dr7tdaj5xpq6" path="res://Assets/Audio/Footsteps/footstep_w4.wav" id="7_kgmex"]
-[ext_resource type="Shader" uid="uid://c6eh4ntm5vtc8" path="res://Scripts/Shaders/vhs.gdshader" id="11_2xbkd"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_degqt"]
 
@@ -15,36 +14,13 @@
 radius = 0.4345703
 height = 0.8796387
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_y8xgx"]
-shader = ExtResource("11_2xbkd")
-shader_parameter/pixel_size = 1.50000002375
-shader_parameter/lod_blur = 0.400000019
-shader_parameter/chroma_offset_px = 1.6510000784225
-shader_parameter/saturation = 0.750000035625
-shader_parameter/contrast = 1.09200002812
-shader_parameter/shadow_lift = 0.06
-shader_parameter/scanline_strength = 0.0370000017575
-shader_parameter/vignette_strength = 0.39600001881
-shader_parameter/noise_strength = 0.042000001995
-shader_parameter/noise_speed = 5.0
-shader_parameter/base_jitter_px = 0.11200000532
-shader_parameter/base_jitter_speed = 10.3110004897725
-shader_parameter/glitchiness = 0.2270000107825
-shader_parameter/glitch_rate = 5.24800024928
-shader_parameter/glitch_shift_px = 2.270000107825
-shader_parameter/glitch_window_min = 0.0490000023275
-shader_parameter/glitch_window_max = 0.174000008265
-shader_parameter/blue_band_start_y = 0.18000000855
-shader_parameter/blue_band_speed = 0.06
-shader_parameter/blue_band_width = 0.035
-shader_parameter/blue_band_strength = 0.1
-shader_parameter/blue_band_glitch = 0.25
-shader_parameter/blue_band_distort_px = 1.2
-
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_4qbli"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
 
 [node name="Player" type="CharacterBody3D" unique_id=959927640 node_paths=PackedStringArray("_checkForHead", "_collider", "_camera", "_soundLabel") groups=["Player"]]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
@@ -62,7 +38,6 @@ _soundLabel = NodePath("CanvasLayer/Label")
 
 [node name="PlayerCamera" type="Camera3D" parent="." unique_id=1300668449 node_paths=PackedStringArray("_audioPlayer")]
 transform = Transform3D(0.6666667, 0, 0, 0, 0.6666667, 0, 0, 0, 0.6666667, 0, 0.5, 0)
-current = true
 script = ExtResource("2_kgmex")
 MouseSensitivity = 0.1
 BobFrequency = 2.0
@@ -97,22 +72,12 @@ mesh = SubResource("CapsuleMesh_degqt")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=567455900]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.56018066, 0)
 shape = SubResource("CapsuleShape3D_yifnb")
-disabled = true
 
 [node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=96802856]
 light_energy = 0.01
 omni_range = 6.2169394
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=832386445]
-
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1586791436]
-z_index = 1
-material = SubResource("ShaderMaterial_y8xgx")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="Label" type="Label" parent="CanvasLayer" unique_id=1602461363]
 offset_right = 40.0

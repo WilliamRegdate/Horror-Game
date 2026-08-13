@@ -6,7 +6,7 @@
 [ext_resource type="FontFile" uid="uid://c45rhuei47ung" path="res://Assets/Fonts/Teletactile-3zavL.ttf" id="3_cx167"]
 [ext_resource type="PackedScene" uid="uid://df7hfxwmhlttd" path="res://Prefabs/Rooms/drill.tscn" id="3_ylpcl"]
 [ext_resource type="Theme" uid="uid://87sp4rn4eiee" path="res://MenuTheme.tres" id="5_n4eug"]
-[ext_resource type="Script" uid="uid://bvykotri8rdls" path="res://MenuPlayerSpawner.cs" id="7_dlksc"]
+[ext_resource type="Script" uid="uid://bvykotri8rdls" path="res://Scripts/MenuPlayerSpawner.cs" id="7_dlksc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_cx167"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -67,13 +67,15 @@ shader_parameter/blue_band_strength = 0.1
 shader_parameter/blue_band_glitch = 0.25
 shader_parameter/blue_band_distort_px = 1.2
 
-[node name="Menu" type="Node3D" unique_id=750598287 node_paths=PackedStringArray("_playMenu", "_optionsMenu", "_partyMenu", "_loadProgress", "_startGameButton")]
+[node name="Menu" type="Node3D" unique_id=750598287 node_paths=PackedStringArray("_playMenu", "_optionsMenu", "_partyMenu", "_loadProgress", "_startGameButton", "_errorMessage", "_errorBox")]
 script = ExtResource("1_dolsu")
 _playMenu = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu")
 _optionsMenu = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu")
 _partyMenu = NodePath("CanvasLayer2/HSplitContainer/Party Menu")
 _loadProgress = NodePath("CanvasLayer2/HSplitContainer/Party Menu/ProgressBar")
 _startGameButton = NodePath("CanvasLayer2/HSplitContainer/Party Menu/StartButton")
+_errorMessage = NodePath("ErrorLayer/ColorRect/VBoxContainer/ErrorMessage")
+_errorBox = NodePath("ErrorLayer")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=871504934]
 environment = SubResource("Environment_dolsu")
@@ -81,6 +83,7 @@ camera_attributes = SubResource("CameraAttributesPhysical_n4eug")
 compositor = SubResource("Compositor_dlksc")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=350763814]
+layer = 2
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1123171151]
 material = SubResource("ShaderMaterial_y8xgx")
@@ -379,9 +382,53 @@ text = "Loading..."
 spawn_path = NodePath("../CanvasLayer2/HSplitContainer/Party Menu/Players")
 script = ExtResource("7_dlksc")
 
+[node name="ErrorLayer" type="CanvasLayer" parent="." unique_id=1663550498]
+
+[node name="ColorRect" type="ColorRect" parent="ErrorLayer" unique_id=1572223232]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0, 0, 0, 0.39215687)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ErrorLayer/ColorRect" unique_id=951233543]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -85.5
+offset_top = -23.0
+offset_right = 85.5
+offset_bottom = 23.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 0
+theme = ExtResource("5_n4eug")
+theme_override_constants/separation = 4
+
+[node name="ErrorMessage" type="Label" parent="ErrorLayer/ColorRect/VBoxContainer" unique_id=1143140353]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 1
+text = "Error Messege"
+horizontal_alignment = 1
+
+[node name="Button" type="Button" parent="ErrorLayer/ColorRect/VBoxContainer" unique_id=1997614852]
+layout_mode = 2
+text = "OKAY"
+
 [connection signal="toggled" from="CanvasLayer2/HSplitContainer/VBoxContainer/PlayButton" to="." method="ToggledPlaySignal"]
 [connection signal="toggled" from="CanvasLayer2/HSplitContainer/VBoxContainer/OptionsButton" to="." method="ToggledOptionsSignal"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/VBoxContainer/QuitButton" to="." method="PressedQuitSignal"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/Host" to="." method="PressedHostSignal"]
 [connection signal="toggled" from="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/Join" to="." method="ToggledJoinSignal"]
+[connection signal="pressed" from="CanvasLayer2/HSplitContainer/Party Menu/LeaveGroup" to="." method="PressedLeaveGroupSignal"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/Party Menu/StartButton" to="." method="PressedStartGameSignal"]
+[connection signal="pressed" from="ErrorLayer/ColorRect/VBoxContainer/Button" to="ErrorLayer" method="hide"]

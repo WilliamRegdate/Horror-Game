@@ -8,6 +8,11 @@
 radius = 0.6329346
 height = 1.2658691
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_7jf71"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
 [node name="Monster" type="CharacterBody3D" unique_id=433109594 node_paths=PackedStringArray("_checkForPlayer", "_monster", "_agent")]
 wall_min_slide_angle = 0.0
 floor_constant_speed = true
@@ -40,10 +45,10 @@ _ikPoles = [NodePath("IK_ArmPole_L"), NodePath("IK_ArmPole_R"), NodePath("IK_Leg
 _feet = [NodePath("Armature/Skeleton3D/Hand_L"), NodePath("Armature/Skeleton3D/Hand_R"), NodePath("Armature/Skeleton3D/Foot_L"), NodePath("Armature/Skeleton3D/Foot_R"), NodePath("IK_SpineTarget")]
 _spineTarget = NodePath("IK_SpineTarget")
 
-[node name="Armature" parent="monster_2" index="0" unique_id=315912628]
+[node name="Armature" parent="monster_2" index="0" unique_id=560883450]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 
-[node name="Skeleton3D" parent="monster_2/Armature" index="0" unique_id=1877986447]
+[node name="Skeleton3D" parent="monster_2/Armature" index="0" unique_id=2008868488]
 animate_physical_bones = false
 bones/9/position = Vector3(-0.2108059, 5.9325504, 10.414015)
 bones/9/rotation = Quaternion(0.6298865, -0.07264288, -0.01869953, 0.77305645)
@@ -195,5 +200,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.028, 0.7898042, 4.249632)
 
 [node name="IK_LegTarget_R" type="Node3D" parent="." unique_id=1773882307]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0278655, -0.0014418066, 1.9921663)
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1433022182]
+replication_config = SubResource("SceneReplicationConfig_7jf71")
 
 [editable path="monster_2"]

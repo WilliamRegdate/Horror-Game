@@ -25,19 +25,23 @@ public partial class PlayerCamera : Camera3D
 
     public override void _Ready()
     {
+        if (IsMultiplayerAuthority())
+            Current = true;
+        // Audio needs to run on every instance — other players need to hear your footsteps
+        _audioPlayer.Stream = new AudioStreamPolyphonic();
+        _audioPlayer.Play();
+        _polyphonic = _audioPlayer.GetStreamPlayback() as AudioStreamPlaybackPolyphonic;
+
+        if (!Current) return; // input/mouse-capture only matters for your own view
         Input.MouseMode = Input.MouseModeEnum.Captured;
         _player = GetParent<Player>();
         _originalPosition = Position;
         _standHeight = Position.Y;
-
-        // assign a polyphonic stream and grab the playback handle
-        _audioPlayer.Stream = new AudioStreamPolyphonic();
-        _audioPlayer.Play();
-        _polyphonic = _audioPlayer.GetStreamPlayback() as AudioStreamPlaybackPolyphonic;
     }
 
     public override void _Input(InputEvent @event)
     {
+
         if (@event is InputEventMouseMotion mouseMotion)
         {
             _mouseDelta = mouseMotion.Relative;
@@ -46,6 +50,7 @@ public partial class PlayerCamera : Camera3D
 
     public override void _Process(double delta)
     {
+        if (!IsMultiplayerAuthority()) return;
         float deltaTime = (float)delta;
         
         _rotationX = Mathf.Clamp(_rotationX - _mouseDelta.Y * MouseSensitivity, -90f, 90f);
