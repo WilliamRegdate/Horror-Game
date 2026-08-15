@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Godot;
 
 public partial class BoneLookAtVectorModifier : SkeletonModifier3D
@@ -19,6 +21,7 @@ public partial class BoneLookAtVectorModifier : SkeletonModifier3D
     public void AddTarget(Node3D node)
     {
         targets.Add(node);
+        GD.Print(targets.Count);
     }
     private Quaternion _currentRot = Quaternion.Identity;
 
@@ -50,9 +53,10 @@ public partial class BoneLookAtVectorModifier : SkeletonModifier3D
         rotationToTarget = rotationToTarget.LookingAt(targetLocal - currentPos, Vector3.Up);
 
         Quaternion targetRot = rotationToTarget.Basis.GetRotationQuaternion();
-        float weight = 1f - Mathf.Exp(-(float)delta * 10);
+        float weight = 1f - Mathf.Exp(-(float)delta * 3);
         Quaternion flip = new Quaternion(Vector3.Up, Mathf.Pi);
         targetRot *= flip;
+        _currentRot = _currentRot.Normalized();
         _currentRot = _currentRot.Slerp(targetRot, weight);
         currentGlobalPose.Basis = new Basis(_currentRot);
         _skeleton.SetBoneGlobalPose(_boneIndex, currentGlobalPose);

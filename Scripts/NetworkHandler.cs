@@ -2,7 +2,7 @@ using Godot;
 
 public partial class NetworkHandler : Node
 {
-    const string IP_ADDRESS = "localhost";
+    const string IP_ADDRESS = "192.168.1.153";
     const int PORT = 23000;
     ENetMultiplayerPeer peer;
 

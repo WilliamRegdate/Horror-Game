@@ -35,6 +35,7 @@ _checkForHead = NodePath("RayCast3D")
 _collider = NodePath("CollisionShape3D")
 _camera = NodePath("PlayerCamera")
 _soundLabel = NodePath("CanvasLayer/Label")
+metadata/Player = true
 
 [node name="PlayerCamera" type="Camera3D" parent="." unique_id=1300668449 node_paths=PackedStringArray("_audioPlayer")]
 transform = Transform3D(0.6666667, 0, 0, 0, 0.6666667, 0, 0, 0, 0.6666667, 0, 0.5, 0)

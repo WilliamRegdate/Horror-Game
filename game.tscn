@@ -21,7 +21,7 @@ radiance_size = 0
 [sub_resource type="Environment" id="Environment_nu2kt"]
 background_mode = 1
 background_color = Color(0.114897, 0.114897, 0.114897, 1)
-background_energy_multiplier = 0.87
+background_energy_multiplier = 0.0
 sky = SubResource("Sky_hve3p")
 sky_rotation = Vector3(-1.775, -0.682424, 0)
 ambient_light_color = Color(1, 1, 1, 1)
@@ -35,6 +35,7 @@ ssao_enabled = true
 ssil_enabled = true
 ssil_normal_rejection = 0.3
 glow_enabled = true
+fog_enabled = true
 fog_light_color = Color(0.0148753, 0.0180037, 0.0236408, 1)
 fog_light_energy = 0.0
 fog_density = 0.039
@@ -45,10 +46,10 @@ fog_density = 0.039
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hve3p"]
 shader = ExtResource("9_vef74")
-shader_parameter/pixel_size = 1.2000000095
-shader_parameter/lod_blur = 0.400000019
+shader_parameter/pixel_size = 1.50000002375
+shader_parameter/lod_blur = 0.50000002375
 shader_parameter/chroma_offset_px = 1.50000007125
-shader_parameter/saturation = 0.850000040375
+shader_parameter/saturation = 0.800000038
 shader_parameter/contrast = 1.09200002812
 shader_parameter/shadow_lift = 0.06
 shader_parameter/scanline_strength = 0.0370000017575
@@ -57,7 +58,7 @@ shader_parameter/noise_strength = 0.042000001995
 shader_parameter/noise_speed = 5.0
 shader_parameter/base_jitter_px = 0.11200000532
 shader_parameter/base_jitter_speed = 10.3110004897725
-shader_parameter/glitchiness = 0.2270000107825
+shader_parameter/glitchiness = 0.2930000139175
 shader_parameter/glitch_rate = 5.24800024928
 shader_parameter/glitch_shift_px = 2.270000107825
 shader_parameter/glitch_window_min = 0.0490000023275
@@ -82,7 +83,7 @@ compositor = SubResource("Compositor_08u7w")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.3075, 51.1376, 236.221)
 
 [node name="Monster" parent="." unique_id=433109594 instance=ExtResource("7_lc2xo")]
-transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 77.011, 0, -34.707)
+transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 130.46947, 4.44928, 30.03865)
 
 [node name="AmbiencePlayer" type="AudioStreamPlayer3D" parent="." unique_id=2097400499]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.474052, 0, -8.430759)
@@ -109,6 +110,8 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[connection signal="child_entered_tree" from="Players" to="Monster" method="OnPlayerAdded"]
+[connection signal="child_entered_tree" from="Players" to="Monster/monster_2" method="OnPlayerSpawned"]
 [connection signal="spawned" from="Players" to="Monster/monster_2" method="OnPlayerSpawned"]
 
 [editable path="Monster"]

@@ -15,7 +15,6 @@ public partial class Player : CharacterBody3D
 	[Export] Label _soundLabel;
 
 	//make sound
-	float _soundMultiplier = 1.0f;
 
     public override void _Ready()
     {
@@ -51,20 +50,18 @@ public partial class Player : CharacterBody3D
 			velocity.Y = JumpHeight;
 		}
 
-		if (Input.IsActionJustPressed("ui_cancel"))
-			SaveSceneToDisk(GetTree().Root.GetChild(0), "res://debug_dungeon_snapshot.tscn");
+		// if (Input.IsActionJustPressed("ui_cancel"))
+		// 	SaveSceneToDisk(GetTree().Root.GetChild(0), "res://debug_dungeon_snapshot.tscn");
 		if (Input.IsActionPressed("game_crouch"))
 		{
 			_camera.IsCrouching = true;
 			Speed = BaseSpeed * 0.3f;
 			_collider.Position = new(0, -0.56f, 0);
 			_capsule.Height = 0.88f;
-			_soundMultiplier = 0.05f;
 		}
 		else if (Input.IsActionPressed("game_sprint"))
 		{
 			Speed = BaseSpeed * 5.3f;
-			_soundMultiplier = 5;
 		}
 		
 		else
@@ -75,7 +72,6 @@ public partial class Player : CharacterBody3D
 				_camera.IsCrouching = false;
 				_collider.Position = Vector3.Zero;
 				_capsule.Height = 2.0f;
-				_soundMultiplier = 1.0f;
 			}
 
 		}
@@ -93,9 +89,6 @@ public partial class Player : CharacterBody3D
 			velocity.X = 0.0f;
 			velocity.Z = 0.0f;
 		}
-
-		SoundLevel = direction.LengthSquared() * _soundMultiplier;
-
 		Velocity = velocity;
 		MoveAndSlide();
 	}

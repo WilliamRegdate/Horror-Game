@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Godot;
 
 public enum MonsterState
@@ -16,13 +19,27 @@ public enum MonsterSpeed
 
 public partial class MonsterAI : CharacterBody3D
 {
-	private ImmediateMesh _debugMesh;
+	private class PlayerTracker
+	{
+
+		public double Awareness;  // how aware the monster is of the player (how certain monster is of this players location)
+		public Vector3 LastLocation; // where the monster thinks this player is 
+		public Vector3 PositionLastFrame = new();
+    	public float CurrentSpeed = 0;
+		public PlayerTracker()
+		{
+			Awareness = 0;
+			LastLocation = Vector3.Zero;
+		}
+	} 
+
 	[Export] private RayCast3D _checkForPlayer;
 	[Export] private Monster _monster;
 	[Export] private NavigationAgent3D _agent;
-	private Node3D _player; //TODO: needs to be changed immenently
+	private Dictionary<Player,PlayerTracker> _players = new();
 
-
+	[Export] public Label TestLabel;
+	private Node3D _currentTarget;
 	bool _locked = true;
 	private Vector3 _levelMiddle = new(0,0,0);
 
@@ -30,20 +47,24 @@ public partial class MonsterAI : CharacterBody3D
 
     private bool _hasDestination = false;
 	private const float RotationSpeed = 2.0f;
+
     public override void _Ready()
     {
-		//TODO: _player set to  this node to avoid crashes until _player is changed
-		_player = this;
-		
 		_agent.TargetPosition = Position;
 		_checkForPlayer.AddException(this);
+		_currentTarget = this;
     }
 
+	public void OnPlayerAdded(Node player)
+	{
+		_players.Add(player as Player, new());
+		_locked = false;
+	}
 	public override void _PhysicsProcess(double delta)
 	{
-		if (Input.IsActionPressed("ui_cancel"))
+		if (!IsMultiplayerAuthority())
 		{
-			_state = MonsterState.Escape;
+			return;
 		}
 
 		Vector3 velocity = new();
@@ -78,10 +99,23 @@ public partial class MonsterAI : CharacterBody3D
 	//AI TIME!!
     public override void _Process(double delta)
     {
-		if (_locked)
+	
+		if (_locked || !IsMultiplayerAuthority())
 			return;
 		if (_startState)
 			GD.Print("set state :", _state);
+
+		//work out each player's sound level
+		foreach (var (player, data) in _players)
+		{
+			Vector3 currentPos = player.GlobalPosition;
+			float distanceMoved = currentPos.DistanceTo(data.PositionLastFrame);
+			data.CurrentSpeed = distanceMoved / (float)delta;
+			data.PositionLastFrame = currentPos;
+			float instant = distanceMoved / (float)delta;
+			data.CurrentSpeed = Mathf.Lerp(data.CurrentSpeed, instant, 0.2f);
+			player.SoundLevel = Mathf.Abs(data.CurrentSpeed * 0.2) < 0.5 ? 0f : data.CurrentSpeed  * 0.2f;
+		}
         switch(_state)
 		{
 			case MonsterState.Escape:
@@ -116,7 +150,7 @@ public partial class MonsterAI : CharacterBody3D
 			SetSpeed(MonsterSpeed.Run);
 			_timer = 20;
 			_startState = false;
-			_escapePos = _levelMiddle - _player.Position;
+			_escapePos = _levelMiddle - _currentTarget.Position;
 		}
 		if (_timer < 0)
 		{
@@ -139,36 +173,59 @@ public partial class MonsterAI : CharacterBody3D
 		}
 
 		_agent.TargetPosition = _checkPos;
-
-		_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(_player.GlobalPosition);
-		if (_checkForPlayer.IsColliding())
+		//check for all players
+		foreach (var item in _players)
 		{
-			if (_checkForPlayer.GetCollider() == _player)
+			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(item.Key.GlobalPosition);
+			if (_checkForPlayer.IsColliding())
 			{
-				_startState = true;
-				_state = MonsterState.Chase;	
+				
+				if (_checkForPlayer.GetCollider() is Player)
+				{
+					_startState = true;
+					_state = MonsterState.Chase;	
+					_currentTarget = (Node3D)_checkForPlayer.GetCollider();
+					return;
+				}
 			}
 		}
 	}
+	const double _forcedHintInterval = 180;
 	public void Search(double delta)
 	{
-		
-
 		if (_startState)
 		{
 			SetSpeed(MonsterSpeed.Walk);
 			_startState = false;
 		}
-		_agent.TargetPosition = _player.GlobalPosition;
-		_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(_player.GlobalPosition);
 
-		if (_checkForPlayer.IsColliding())
+		TestLabel.Text = "";
+
+		float currentDistance;
+		//check for all players
+		foreach (var item in _players)
 		{
-			if (_checkForPlayer.GetCollider() == _player)
+			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(item.Key.GlobalPosition);
+			if (_checkForPlayer.IsColliding())
 			{
-				_state = MonsterState.Chase;
-				_startState = true;
-				_timer = 2.5;
+				
+				if (_checkForPlayer.GetCollider() is Player)
+				{
+					// _startState = true;
+					// _state = MonsterState.Chase;	
+					// _currentTarget = (Node3D)_checkForPlayer.GetCollider();
+					// return;
+				}
+			}
+			//get player sounds and add them to monsters awareness
+			item.Value.Awareness += GetSoundLevel(item.Key) * delta;
+			TestLabel.Text += $"Awareness: {item.Value.Awareness}\n";
+			currentDistance = GlobalPosition.DistanceSquaredTo(item.Key.GlobalPosition);
+			
+			if (item.Value.Awareness  > 100)
+			{
+				_agent.TargetPosition = GetHintPosition(item.Key.Position, 1f); // move to target by 50%
+				item.Value.Awareness = 0;
 			}
 		}
 	}
@@ -187,15 +244,15 @@ public partial class MonsterAI : CharacterBody3D
 			_timer -= delta;
 			return;
 		}
-		_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(_player.GlobalPosition);
+		//_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(_player.GlobalPosition);
 		if (_checkForPlayer.IsColliding())
 		{
-			if (_checkForPlayer.GetCollider() == _player)
+		//	if (_checkForPlayer.GetCollider() == _player)
 			{
 				_chaseTime = 2;
 			}
 		}
-		_agent.TargetPosition = _player.GlobalPosition;
+		//_agent.TargetPosition = _player.GlobalPosition;
 		_chaseTime -= delta;
 		if (_chaseTime < 0)
 		{
@@ -214,6 +271,24 @@ public partial class MonsterAI : CharacterBody3D
 		_movespeed = speed;
 		_monster.StepDuration = 1.2f / speed;
 
+	}
+	/// <summary>
+	/// returns the sound level the monster can hear
+	/// </summary>
+	/// <param name="player"></param>
+	/// <returns></returns>
+	private double GetSoundLevel(Player player)
+	{
+		return player.SoundLevel / (1 + 0.4 * GlobalPosition.DistanceSquaredTo(player.GlobalPosition)) * 70000;// * 10000;
+	}
+	/// <summary>
+	/// returns the amount to move towards the target
+	/// </summary>
+	/// <param name="TargetPos"> pos of target in global space</param>
+	/// <returns></returns>
+	private Vector3 GetHintPosition(Vector3 targetPos, float hintAmount)
+	{
+		return GlobalPosition + ((targetPos - GlobalPosition) * hintAmount);
 	}
 
 }

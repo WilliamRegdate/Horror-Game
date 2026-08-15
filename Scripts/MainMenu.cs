@@ -142,7 +142,7 @@ public partial class MainMenu : Node3D
 		GetTree().CurrentScene?.QueueFree();
 		GetTree().CurrentScene = _worldInstance;
 
-		_worldInstance.GetNode<PlayerSpawner>("Players").BeginSpawning(); // adjust path to match your scene tree //TODO change this
+		_worldInstance.GetNode<PlayerSpawner>("Players").BeginSpawning();
 	}
 
 	private void PrintError(string message)

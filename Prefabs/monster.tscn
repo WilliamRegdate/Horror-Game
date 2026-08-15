@@ -12,8 +12,11 @@ height = 1.2658691
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
+properties/1/path = NodePath("monster_2:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
 
-[node name="Monster" type="CharacterBody3D" unique_id=433109594 node_paths=PackedStringArray("_checkForPlayer", "_monster", "_agent")]
+[node name="Monster" type="CharacterBody3D" unique_id=433109594 node_paths=PackedStringArray("_checkForPlayer", "_monster", "_agent", "TestLabel")]
 wall_min_slide_angle = 0.0
 floor_constant_speed = true
 floor_max_angle = 0.80285144
@@ -23,6 +26,7 @@ script = ExtResource("1_7jf71")
 _checkForPlayer = NodePath("monster_2/PlayerChecker")
 _monster = NodePath("monster_2")
 _agent = NodePath("NavigationAgent3D")
+TestLabel = NodePath("Label")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1447364782]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5558975, 0)
@@ -35,7 +39,7 @@ path_desired_distance = 0.3
 target_desired_distance = 1.5
 debug_enabled = true
 debug_path_custom_color = Color(1, 0, 1, 1)
-debug_path_custom_point_size = 10.17
+debug_path_custom_point_size = 40.0
 
 [node name="monster_2" parent="." unique_id=1659373829 node_paths=PackedStringArray("_ikTargets", "_ikPoles", "_feet", "_spineTarget") instance=ExtResource("2_og4gj")]
 transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 0, -6.7425733, 0)
@@ -203,5 +207,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0278655, -0.0014418066, 1.9
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1433022182]
 replication_config = SubResource("SceneReplicationConfig_7jf71")
+
+[node name="Label" type="Label" parent="." unique_id=2118002149]
+anchors_preset = -1
+anchor_top = 0.035
+anchor_right = 0.001
+anchor_bottom = 0.128
+offset_left = 1.0
+offset_top = 30.32
+offset_right = 38.848
+offset_bottom = -6.9440002
 
 [editable path="monster_2"]

@@ -70,9 +70,8 @@ public partial class Monster : Node3D
         if (_lookAtPlayersModifier != null)
         {
             _lookAtPlayersModifier.AddTarget((Node3D)node);
-            
+            return;
         } 
-        if (!node.IsInGroup("Player")) return;
 
         Skeleton3D skeleton = GetChild(0).GetChild(0) as Skeleton3D;
         if (skeleton == null)
