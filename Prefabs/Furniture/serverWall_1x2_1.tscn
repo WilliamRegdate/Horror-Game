@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://bnhwdyr45lknf"]
+
+[ext_resource type="Material" uid="uid://b4fk1wsfi5mrs" path="res://Assets/Materials/Environment.tres" id="1_8qrle"]
+[ext_resource type="ArrayMesh" uid="uid://cl5j3jc0g0bsg" path="res://Assets/Models/Environment/Furniture/serverWall_1x2_1.obj" id="1_ce5n0"]
+
+[node name="Node3D" type="MeshInstance3D" unique_id=1545338]
+material_override = ExtResource("1_8qrle")
+mesh = ExtResource("1_ce5n0")
+surface_material_override/0 = ExtResource("1_8qrle")

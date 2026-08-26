@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://b4fk1wsfi5mrs"]
+
+[ext_resource type="Texture2D" uid="uid://b3klk83fsddh3" path="res://Assets/Textures/blue_section.png" id="1_he775"]
+[ext_resource type="Texture2D" uid="uid://dn6xln6230cx" path="res://Assets/Textures/blue_section_specular.png" id="2_qv8m4"]
+
+[resource]
+albedo_texture = ExtResource("1_he775")
+normal_enabled = true
+normal_texture = ExtResource("2_qv8m4")

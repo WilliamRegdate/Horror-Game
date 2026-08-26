@@ -1,0 +1,52 @@
+{
+	"serverCorner_2x2_1": {
+		"scene": "res://Prefabs/Furniture/serverCorner_2x2_1.tscn",
+		"shape": "corner_2x2"	,
+		"set" : "server"
+	},
+	"serverCorner_2x2_2": {
+		"scene": "res://Prefabs/Furniture/serverCorner_2x2_2.tscn",
+		"shape": "corner_2x2",
+		"set" : "server"
+	},
+	"serverMiddle_2x3_1": {
+		"scene": "res://Prefabs/Furniture/serverMiddle_2x3_1.tscn",
+		"shape": "middle_2x3"	,
+		"set" : "server"
+	},
+	"serverMiddle_2x3_2": {
+		"scene": "res://Prefabs/Furniture/serverMiddle_2x3_2.tscn",
+		"shape": "middle_2x3"	,
+		"set" : "server"
+	},
+	"serverWall_1x2_1": {
+		"scene": "res://Prefabs/Furniture/serverWall_1x2_1.tscn",
+		"shape": "wall_1x2"	,
+		"set" : "server"
+	},
+	"officeCorner_2x2_1": {
+		"scene": "res://Prefabs/Furniture/officeCorner_2x2_1.tscn",
+		"shape": "corner_2x2"	,
+		"set" : "office"
+	},
+	"officeCorner_2x2_2": {
+		"scene": "res://Prefabs/Furniture/officeCorner_2x2_2.tscn",
+		"shape": "corner_2x2",
+		"set" : "office"
+	},
+	"officeMiddle_2x3_1": {
+		"scene": "res://Prefabs/Furniture/officeMiddle_2x3_1.tscn",
+		"shape": "middle_2x3"	,
+		"set" : "office"
+	},
+	"officeMiddle_2x3_2": {
+		"scene": "res://Prefabs/Furniture/officeMiddle_2x3_2.tscn",
+		"shape": "middle_2x3"	,
+		"set" : "office"
+	},
+	"officeWall_1x2_1": {
+		"scene": "res://Prefabs/Furniture/officeWall_1x2_1.tscn",
+		"shape": "wall_1x2"	,
+		"set" : "office"
+	}
+}
