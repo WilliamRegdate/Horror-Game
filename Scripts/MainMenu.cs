@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using Godot;
 
 public partial class MainMenu : Node3D
@@ -15,6 +16,7 @@ public partial class MainMenu : Node3D
 
 	[Export] private Label _errorMessage;
 	[Export] private CanvasLayer _errorBox;
+	[Export] private TextEdit _ipInput;
 
 
 	private NetworkHandler _networkHandler;
@@ -96,27 +98,36 @@ public partial class MainMenu : Node3D
 		_loadProgress.Visible = true;
 		ResourceLoader.LoadThreadedRequest(GameScenePath);
 	}
-	public void ToggledJoinSignal(bool toggledOn)
+	public void PressedJoinSignal()
 	{
+		_networkHandler.IpAddress = _ipInput.Text;
 		if (!_networkHandler.StartClient())
 		{
 			PrintError("Cannot Join server: already connected to a server.\n Try leaving the current server first");
 			return;
 		}
-
-
 		_partyMenu.Visible = true;
 		_loadProgress.Visible = false;
+		CanvasItem ipTextBox = _playMenu.GetChild(2) as CanvasItem;
+		ipTextBox.Visible = false;
+		_playMenu.Visible = false;
+
 
 		//load the Game manager but dont do anything as the host server does that
 		PackedScene packed = ResourceLoader.Load(GameScenePath) as PackedScene;
         _worldInstance = packed.Instantiate() as GameManager;
 		GetTree().Root.AddChild(_worldInstance);
 	}
+	public void ToggledJoinSignal(bool toggledOn)
+	{
+		CanvasItem ipTextBox = _playMenu.GetChild(2) as CanvasItem;
+		ipTextBox.Visible = toggledOn;
+	}
 
 	public void PressedLeaveGroupSignal()
 	{
 		_networkHandler.Disconnect();
+		_worldInstance.QueueFree();
 	}
     public override void _ExitTree()
     {

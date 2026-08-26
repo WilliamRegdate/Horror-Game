@@ -174,7 +174,7 @@ override_pose = true
 [node name="PlayerChecker" type="RayCast3D" parent="monster_2" unique_id=1219386205]
 transform = Transform3D(-0.49999988, 5.6859675e-14, 1.94707e-07, -1.9469469e-07, -0.005609758, -0.49996844, 2.184482e-09, -0.49996856, 0.00560987, -3.8550343e-14, 6.001566, -0.86665034)
 target_position = Vector3(0, 3.205, 0)
-collision_mask = 5
+collision_mask = 7
 hit_back_faces = false
 debug_shape_thickness = 1
 
@@ -191,7 +191,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 23.125156, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 23.125156, 0)
 
 [node name="IK_SpineTarget" type="Node3D" parent="monster_2" unique_id=2052389062]
-transform = Transform3D(1, 0, 0, 0, -1, 8.742278e-08, 0, -8.742278e-08, -1, 0, 6.420249, -0.9547074)
+transform = Transform3D(1, 0, 0, 0, -1, 8.742277e-08, 0, -8.742277e-08, -1, 0, 6.420249, -1.5550367)
 
 [node name="IK_ArmTarget_L" type="Node3D" parent="." unique_id=1596285547]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -3.008)

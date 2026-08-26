@@ -8,7 +8,7 @@ public partial class ProceduralGenerator : Node
 {
     private struct PlacementRecord
     {
-        public int SceneIndex; //note -1 = wall, -2 = _corridorStraight, -3 = _corridorCorner, -4 = _corridorStairs;
+        public int SceneIndex; //note -1 = wall, -2 = _corridorStraight, -3 = _corridorCorner, -4 = _corridorStairs, -5 = _drill, -6 = _elevator;
         public Vector3 Position;
         public Vector3 RotationDegrees;
     }
@@ -23,6 +23,7 @@ public partial class ProceduralGenerator : Node
     public PropLoader PropLoader;
 
     public volatile float Progress = 0f;
+    public Vector3 MonsterSpawn;
 
     private List<PlacementRecord> _placements = new();
     private List<Aabb> _placedRoomBounds = new(); // world-space AABBs of every room placed so far
@@ -34,8 +35,11 @@ public partial class ProceduralGenerator : Node
     [Export] PackedScene _corridorStraight;
     [Export] PackedScene _corridorCorner;
     [Export] PackedScene _corridorStairs;
+
+    [Export] PackedScene _drill;
     //wall
     [Export] PackedScene _wall;
+    [Export] PackedScene _elevator;
 
     private List<RoomCluster> _roomClusters = new();
 
@@ -59,6 +63,8 @@ public partial class ProceduralGenerator : Node
         GetOrCacheLocalAabb(_corridorStraight);
         GetOrCacheLocalAabb(_corridorCorner);
         GetOrCacheLocalAabb(_corridorStairs);
+        GetOrCacheLocalAabb(_drill);
+        GetOrCacheLocalAabb(_elevator);
         
     }
     private Aabb GetOrCacheLocalAabb(PackedScene scene)
@@ -95,6 +101,35 @@ public partial class ProceduralGenerator : Node
             }
             Progress = stageCompletion * 30; // 40% done
         }
+        //create drill room
+        Vector3 furthest = Vector3.Zero;
+        foreach (var cluster in _roomClusters)
+        {
+            foreach (var door in cluster.Doors)
+            {
+                if (door.Position.Z > furthest.Z)
+                    furthest = door.Position;
+            }
+        }
+        furthest = new(furthest.X,furthest.Y,furthest.Z + 20);
+        _placements.Add(new PlacementRecord { SceneIndex = -5, Position = furthest, RotationDegrees = Vector3.Zero });
+        _placements.Add(new PlacementRecord {SceneIndex = 7, Position = furthest, RotationDegrees = Vector3.Zero});
+
+        MonsterSpawn = furthest;
+        Aabb localAabb = GetOrCacheLocalAabb(RoomManager.Rooms[7].Room);
+        Transform3D placementTransform = new Transform3D(new Basis(Vector3.Up, Mathf.DegToRad(0)), furthest);
+        Aabb worldAabb = placementTransform * localAabb;
+        _placedRoomBounds.Add(worldAabb);
+        localAabb = GetOrCacheLocalAabb(_drill);
+        worldAabb = placementTransform * localAabb;
+        _placedRoomBounds.Add(worldAabb);
+
+        List<DoorData> doors = new();
+        doors.Add(new(new(-10 + furthest.X, furthest.Y, furthest.Z    ), new(0,180,0)));
+        doors.Add(new(new( 10 + furthest.X, furthest.Y, furthest.Z    ), new(0,0,0)));
+        doors.Add(new(new(  0 + furthest.X, furthest.Y, furthest.Z -10), new(0,90,0)));
+        _roomClusters.Add(new(doors));
+
         LinkClusters();
 
         //close leftover doors
@@ -125,27 +160,42 @@ public partial class ProceduralGenerator : Node
                 rng.RandiRange(0, LevelBounds.Y) * 5,
                 rng.RandiRange(-LevelBounds.Z, LevelBounds.Z) * 5
             );
+            List<DoorData> openDoors;
 
             if (_firstMove)
             {
                 startPosition = new(0,0,0);
                 _firstMove = false;
+
+                Aabb localAabb = GetOrCacheLocalAabb(_elevator);
+                _placedRoomBounds.Add(localAabb.Grow(-0.15f));
+                _placedRoomBounds.Add(localAabb);
+
+                _placements.Add(new PlacementRecord { SceneIndex = -6, Position = startPosition, RotationDegrees = startPosition });
+                openDoors =
+                [
+                    new(new( 0,  0, -15), new(0,90,0)),
+                    new(new( 15, 0,   0), new(0,0,0)),
+                    new(new(-15, 0,   0), new(0,180,0))
+                ];
             }
-
-            // Tentatively spawn the first room of the cluster and check it doesn't
-            // overlap anything already placed (by an earlier cluster).
-            Aabb firstRoomBounds = SpawnRoomAt(startPosition, Vector3.Zero, out List<DoorData> firstRoomDoors);
-            
-
-            if (OverlapsAnyPlacedRoom(firstRoomBounds))
+            else
             {
-                // This starting position doesn't work — discard and try a new random spot.
-                _placements.RemoveAt(_placements.Count-1);
-                continue;
-            }
+                // Tentatively spawn the first room of the cluster and check it doesn't
+                // overlap anything already placed (by an earlier cluster).
+                Aabb firstRoomBounds = SpawnRoomAt(startPosition, Vector3.Zero, out List<DoorData> firstRoomDoors);
+                
 
-            _placedRoomBounds.Add(firstRoomBounds);
-            List<DoorData> openDoors = firstRoomDoors;
+                if (OverlapsAnyPlacedRoom(firstRoomBounds))
+                {
+                    // This starting position doesn't work — discard and try a new random spot.
+                    _placements.RemoveAt(_placements.Count-1);
+                    continue;
+                }
+
+                _placedRoomBounds.Add(firstRoomBounds);
+                openDoors = firstRoomDoors;
+            }
 
             int roomsPlaced = 1;
             while (roomsPlaced < TotalRoomsPerCluster && openDoors.Count > 0)
@@ -160,8 +210,6 @@ public partial class ProceduralGenerator : Node
                     CloseDoor(parentDoor);
                     continue;
                 }
-
-
 
                 _placedRoomBounds.Add((Aabb)newRoomBounds);
                 roomsPlaced++;
@@ -209,12 +257,10 @@ public partial class ProceduralGenerator : Node
             Transform3D placementTransform = new Transform3D(new Basis(Vector3.Up, Mathf.DegToRad(_candidateRecord.RotationDegrees.Y)), _candidateRecord.Position);
             Aabb worldAabb = placementTransform * localAabb;
 
-            worldAabb.Size -= new Vector3(0.3f, 0.3f, 0.3f);
-
+            worldAabb = worldAabb.Grow(-0.15f);
             if (OverlapsAnyPlacedRoom(worldAabb))
-            {
-                continue;
-            }
+            continue; 
+
             _placements.Add(_candidateRecord);
 
             resultingDoors = GetWorldDoors(localDoors, _candidateRecord.Position, _candidateRecord.RotationDegrees);
@@ -238,6 +284,7 @@ public partial class ProceduralGenerator : Node
         _placements.Add(new PlacementRecord { SceneIndex = random, Position = position, RotationDegrees = rotationDegrees });
 
         resultingDoors = GetWorldDoors(new List<DoorData>(roomTemplate.Doors), position, rotationDegrees);
+        _placedRoomBounds.Add(localAabb.Grow(-0.15f));
         return worldAabb;
     }
 
@@ -869,6 +916,10 @@ public partial class ProceduralGenerator : Node
                 return _corridorCorner;
             case -4:
                 return _corridorStairs;
+            case -5:
+                return _drill;
+            case -6:
+                return _elevator;
             default:
                 return RoomManager.Rooms[i].Room;
         }

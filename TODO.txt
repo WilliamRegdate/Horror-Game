@@ -1,0 +1,17 @@
+gui scale slider
+Fullscreen mode
+
+
+stabalize multiplayer
+player crouch
+prop syncing
+interact functionality
+navigation improvements
+interact button
+chalk
+
+death screen and dying
+sound effects
+
+start game cutscene
+Ending area & cutscene

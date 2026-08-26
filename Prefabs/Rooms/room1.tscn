@@ -13,8 +13,8 @@
 [sub_resource type="BoxMesh" id="BoxMesh_awyd6"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_y8xgx"]
-vertices = PackedVector3Array(2, -2, -26.334082, 1.25, -2, -27.584082, -1.25, -2, -27.584082, -2, -2, -26.334082, 7, -2, -8.584082, 8.5, -2, -8.584082, 8.25, -2, -26.334082, -6.25, -2, -5.8340816, 6.25, -2, -5.8340816, 6.25, -2, -7.8340816, -6.25, -2, -26.334082, 27, -2, -26.334082, 26.25, -2, -27.584082, 23.75, -2, -27.584082, 23, -2, -26.334082, 31.5, -2, -8.584082, 31.5, -2, -26.334082, -1.25, -2, 1.9159184, -1.25, -2, 2.9159184, 1.25, -2, 2.9159184, 1.25, -2, 1.9159184, -6.25, -2, 1.4159184, -2, -2, 1.1659184, 2, -2, 1.1659184, 6.25, -2, 1.4159184)
-polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(3, 0, 4), PackedInt32Array(5, 4, 6), PackedInt32Array(6, 4, 0), PackedInt32Array(9, 8, 7), PackedInt32Array(9, 7, 4), PackedInt32Array(4, 7, 3), PackedInt32Array(3, 7, 10), PackedInt32Array(12, 11, 13), PackedInt32Array(13, 11, 14), PackedInt32Array(14, 11, 15), PackedInt32Array(6, 14, 5), PackedInt32Array(5, 14, 15), PackedInt32Array(11, 16, 15), PackedInt32Array(20, 19, 17), PackedInt32Array(17, 19, 18), PackedInt32Array(22, 21, 7), PackedInt32Array(17, 22, 20), PackedInt32Array(20, 22, 23), PackedInt32Array(23, 22, 7), PackedInt32Array(23, 7, 8), PackedInt32Array(8, 24, 23)]
+vertices = PackedVector3Array(2, -2, -26.334082, 1.25, -2, -27.584082, -1.25, -2, -27.584082, -2, -2, -26.334082, 7, -2, -8.584082, 8.5, -2, -8.584082, 8.25, -2, -26.334082, -6.25, -2, -5.8340816, 6.25, -2, -5.8340816, 6.25, -2, -7.8340816, -6.25, -2, -26.334082, 27, -2, -26.334082, 26.25, -2, -27.584082, 23.75, -2, -27.584082, 23, -2, -26.334082, 31.5, -2, -8.584082, 31.5, -2, -26.334082, -2, -2, 1.1659184, -1.25, -2, 2.4159184, 1.25, -2, 2.4159184, 2, -2, 1.1659184, -6.25, -2, 1.4159184, 6.25, -2, 1.4159184)
+polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(3, 0, 4), PackedInt32Array(5, 4, 6), PackedInt32Array(6, 4, 0), PackedInt32Array(9, 8, 7), PackedInt32Array(9, 7, 4), PackedInt32Array(4, 7, 3), PackedInt32Array(3, 7, 10), PackedInt32Array(12, 11, 13), PackedInt32Array(13, 11, 14), PackedInt32Array(14, 11, 15), PackedInt32Array(6, 14, 5), PackedInt32Array(5, 14, 15), PackedInt32Array(11, 16, 15), PackedInt32Array(18, 17, 19), PackedInt32Array(19, 17, 20), PackedInt32Array(20, 17, 8), PackedInt32Array(8, 17, 7), PackedInt32Array(17, 21, 7), PackedInt32Array(8, 22, 20)]
 agent_height = 3.0
 agent_radius = 1.0
 
@@ -31,10 +31,12 @@ script = ExtResource("3_ff1k4")
 
 [node name="Node3D4" type="MeshInstance3D" parent="." unique_id=750898420]
 transform = Transform3D(-2.18557e-07, 0, -5, 0, 5, 0, 5, 0, -2.18557e-07, -5, 0, -25)
+visible = false
 mesh = SubResource("BoxMesh_h6qtp")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D4" unique_id=1208702540]
 transform = Transform3D(0.5, 0, -1.77636e-15, 0, 0.5, 0, 1.77636e-15, 0, 0.5, 0.4, 0, 0)
+visible = false
 mesh = SubResource("BoxMesh_awyd6")
 
 [node name="PropSpawner" parent="." unique_id=1288809275 instance=ExtResource("3_vk7mh")]
@@ -71,13 +73,16 @@ navigation_mesh = SubResource("NavigationMesh_y8xgx")
 shape = SubResource("ConcavePolygonShape3D_h6qtp")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=1583929708]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 1.2840822)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0.7908561)
 shape = SubResource("BoxShape3D_y8xgx")
+disabled = true
 
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=952903633]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, -26)
 shape = SubResource("BoxShape3D_y8xgx")
+disabled = true
 
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=1064454164]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, -3, -26)
 shape = SubResource("BoxShape3D_y8xgx")
+disabled = true

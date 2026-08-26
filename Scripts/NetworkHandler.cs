@@ -1,12 +1,15 @@
 using Godot;
+using System.Threading.Tasks;
 
 public partial class NetworkHandler : Node
 {
-    const string IP_ADDRESS = "192.168.1.153";
+    public string IpAddress = "";
     const int PORT = 23000;
     ENetMultiplayerPeer peer;
+    private Upnp _upnp;
 
     [Signal] public delegate void ServerStartedEventHandler();
+    [Signal] public delegate void NetworkStoppedEventHandler();
 
     public bool IsNetworkActive()
     {
@@ -31,6 +34,9 @@ public partial class NetworkHandler : Node
 
         Multiplayer.MultiplayerPeer = peer;
         EmitSignal(SignalName.ServerStarted);
+
+        _ = SetupUpnpAsync(PORT); // best-effort, fire-and-forget — LAN hosting works regardless
+
         return true;
     }
 
@@ -42,7 +48,7 @@ public partial class NetworkHandler : Node
         }
 
         peer = new();
-        Error err = peer.CreateClient(IP_ADDRESS, PORT);
+        Error err = peer.CreateClient(IpAddress, PORT);
         if (err != Error.Ok)
         {
             GD.PrintErr($"Failed to create client: {err}");
@@ -54,7 +60,6 @@ public partial class NetworkHandler : Node
         return true;
     }
 
-    [Signal] public delegate void NetworkStoppedEventHandler();
     public void Disconnect()
     {
         if (peer != null)
@@ -62,7 +67,45 @@ public partial class NetworkHandler : Node
             peer.Close();
             peer = null;
         }
+
+        if (_upnp != null)
+        {
+            _upnp.DeletePortMapping(PORT, "UDP");
+            _upnp = null;
+        }
+
         Multiplayer.MultiplayerPeer = null;
         EmitSignal(SignalName.NetworkStopped);
+    }
+
+    private async Task SetupUpnpAsync(int port)
+    {
+        _upnp = new Upnp();
+
+        // Discover() and AddPortMapping() are synchronous and block — keep off the main thread.
+        Upnp.UpnpResult discoverResult = await Task.Run(() => (Upnp.UpnpResult)_upnp.Discover());
+
+        if (discoverResult != Upnp.UpnpResult.Success)
+        {
+            GD.Print($"UPNP discovery failed ({discoverResult}). Hosting still works over LAN or with manual port forwarding.");
+            return;
+        }
+
+        if (_upnp.GetGateway() is not UpnpDevice gateway || !gateway.IsValidGateway())
+        {
+            GD.Print("UPNP: no valid gateway found.");
+            return;
+        }
+
+        Upnp.UpnpResult mapResult = await Task.Run(() =>
+            (Upnp.UpnpResult)_upnp.AddPortMapping(port, port, "MyGame", "UDP"));
+
+        if (mapResult != Upnp.UpnpResult.Success)
+        {
+            GD.PrintErr($"UPNP port mapping failed: {mapResult}");
+            return;
+        }
+
+        GD.Print($"UPNP port mapping succeeded. External IP: {_upnp.QueryExternalAddress()}");
     }
 }

@@ -15,7 +15,7 @@ public partial class MenuPlayerSpawner : MultiplayerSpawner
         Multiplayer.PeerConnected += OnPeerConnected;
         Multiplayer.PeerDisconnected += OnPeerDisconnected;
     }
-
+    
     public override void _ExitTree()
     {
         Multiplayer.PeerConnected -= OnPeerConnected;

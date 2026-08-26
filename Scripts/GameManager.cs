@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 public partial class GameManager : Node3D
 {
     [Export] public PackedScene LevelMaker;
+	[Export] Node3D _monster;
     public ProceduralGenerator Generator;
     [Signal] public delegate void WorldReadyEventHandler();
 
@@ -43,6 +44,7 @@ public partial class GameManager : Node3D
 
 		CanvasLayer filter = GetNode("CanvasLayer") as CanvasLayer;
 		filter.Show();
+		_monster.GlobalPosition = Generator.MonsterSpawn;
 		
 		//send generation data to clients
 		var (sceneIndices, positions, rotations) = Generator.ExportPlacements();

@@ -37,10 +37,12 @@ shape = SubResource("ConcavePolygonShape3D_8i0ys")
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=1255360865]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0.5)
 shape = SubResource("BoxShape3D_8i0ys")
+disabled = true
 
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=459477379]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, -3, 0)
 shape = SubResource("BoxShape3D_ud5ut")
+disabled = true
 
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=370459987]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.75, -0.5, 2.75)

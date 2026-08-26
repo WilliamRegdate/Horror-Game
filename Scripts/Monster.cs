@@ -146,8 +146,8 @@ public partial class Monster : Node3D
         }
         frontTotal *= 0.5f;
         backTotal *= 0.5f;
-        GlobalPosition = new Vector3(GlobalPosition.X,frontTotal*0.5f + backTotal*0.5f -6.5f, GlobalPosition.Z) ;
-        _spineTarget.GlobalPosition = new Vector3(_spineTarget.GlobalPosition.X, frontTotal -5 - Position.Y , _spineTarget.GlobalPosition.Z) ;
+        GlobalPosition = new Vector3(GlobalPosition.X,frontTotal*0.5f + backTotal*0.5f -7.5f, GlobalPosition.Z) ;
+        _spineTarget.GlobalPosition = new Vector3(_spineTarget.GlobalPosition.X, frontTotal -4.5f - Position.Y , _spineTarget.GlobalPosition.Z) ;
         
     }
 

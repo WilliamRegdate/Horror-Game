@@ -462,5 +462,75 @@
 				]
 			}	
 		]
+	},
+	"generator": {
+		"scene": "res://Prefabs//Rooms/generator.tscn",
+		"doors": [
+			{
+				"position": [
+					30.0,
+					0.0,
+					-20.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					5.0,
+					0.0,
+					-20.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			}	
+		]
+	},
+	"drill": {
+		"scene": "res://Prefabs//Rooms/drill.tscn",
+		"doors": [
+			{
+				"position": [
+					-10.0,
+					0.0,
+					0.0
+				],
+				"rotation": [
+					0.0,
+					180.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					10.0,
+					0.0,
+					0.0
+				],
+				"rotation": [
+					0.0,
+					0.0,
+					0.0
+				]
+			},
+			{
+				"position": [
+					0.0,
+					0.0,
+					-10.0
+				],
+				"rotation": [
+					0.0,
+					90.0,
+					0.0
+				]
+			}
+		]
 	}
 }

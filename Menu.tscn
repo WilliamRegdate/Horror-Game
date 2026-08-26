@@ -7,6 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://df7hfxwmhlttd" path="res://Prefabs/Rooms/drill.tscn" id="3_ylpcl"]
 [ext_resource type="Theme" uid="uid://87sp4rn4eiee" path="res://MenuTheme.tres" id="5_n4eug"]
 [ext_resource type="Script" uid="uid://bvykotri8rdls" path="res://Scripts/MenuPlayerSpawner.cs" id="7_dlksc"]
+[ext_resource type="Script" uid="uid://c7f35gv5pu4rs" path="res://Scripts/OptionsMenu.cs" id="8_1igrg"]
+[ext_resource type="Script" uid="uid://vyajwa84ndrp" path="res://Scripts/ResolutionChanger.cs" id="8_5p1lm"]
+[ext_resource type="Script" uid="uid://bw0iecjc28v3v" path="res://Scripts/Menu/EnableFullscreen.cs" id="9_1igrg"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_cx167"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -67,7 +70,7 @@ shader_parameter/blue_band_strength = 0.1
 shader_parameter/blue_band_glitch = 0.25
 shader_parameter/blue_band_distort_px = 1.2
 
-[node name="Menu" type="Node3D" unique_id=750598287 node_paths=PackedStringArray("_playMenu", "_optionsMenu", "_partyMenu", "_loadProgress", "_startGameButton", "_errorMessage", "_errorBox")]
+[node name="Menu" type="Node3D" unique_id=750598287 node_paths=PackedStringArray("_playMenu", "_optionsMenu", "_partyMenu", "_loadProgress", "_startGameButton", "_errorMessage", "_errorBox", "_ipInput")]
 script = ExtResource("1_dolsu")
 _playMenu = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu")
 _optionsMenu = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu")
@@ -76,6 +79,7 @@ _loadProgress = NodePath("CanvasLayer2/HSplitContainer/Party Menu/ProgressBar")
 _startGameButton = NodePath("CanvasLayer2/HSplitContainer/Party Menu/StartButton")
 _errorMessage = NodePath("ErrorLayer/ColorRect/VBoxContainer/ErrorMessage")
 _errorBox = NodePath("ErrorLayer")
+_ipInput = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer/TextEdit")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=871504934]
 environment = SubResource("Environment_dolsu")
@@ -120,8 +124,9 @@ offset_bottom = -44.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("5_n4eug")
-split_offsets = PackedInt32Array(146, 874)
-split_offset = 146
+split_offsets = PackedInt32Array(0, 0)
+dragging_enabled = false
+dragger_visibility = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer" unique_id=1519465539]
 layout_mode = 2
@@ -173,7 +178,10 @@ alignment = 0
 
 [node name="VSplitContainer" type="VSplitContainer" parent="CanvasLayer2/HSplitContainer" unique_id=1045546778]
 layout_mode = 2
+size_flags_horizontal = 3
 theme = ExtResource("5_n4eug")
+dragging_enabled = false
+dragger_visibility = 2
 
 [node name="PlayMenu" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer" unique_id=1073192589]
 layout_mode = 2
@@ -209,6 +217,20 @@ text = "|Join"
 flat = true
 alignment = 0
 
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu" unique_id=124041266]
+visible = false
+layout_mode = 2
+
+[node name="TextEdit" type="TextEdit" parent="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer" unique_id=827194245]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "INPUT IP ADDRESS"
+
+[node name="Button" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer" unique_id=1332855504]
+layout_mode = 2
+text = "OK
+"
+
 [node name="OptionsMenu" type="TabContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer" unique_id=803791236]
 layout_mode = 2
 theme = ExtResource("5_n4eug")
@@ -231,26 +253,62 @@ offset_bottom = 0.33332825
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer" unique_id=2094134272]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer" unique_id=2094134272 node_paths=PackedStringArray("_options")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("5_n4eug")
 theme_override_constants/separation = 10
+script = ExtResource("8_1igrg")
+_options = [NodePath("FullscreenCheckbox2/ResolutionOptions"), NodePath("FullscreenCheckbox/FullscreenOptions")]
 
-[node name="Label" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer" unique_id=1798828556]
+[node name="ApplyOptions" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer" unique_id=1173574795]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Apply
+"
+
+[node name="FullscreenCheckbox2" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer" unique_id=1776508712]
+layout_mode = 2
+
+[node name="Resolution" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer/FullscreenCheckbox2" unique_id=1798828556]
 layout_mode = 2
 text = "Resolution"
 
-[node name="OptionButton" type="OptionButton" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer" unique_id=446952947]
+[node name="ResolutionOptions" type="OptionButton" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer/FullscreenCheckbox2" unique_id=446952947]
 layout_mode = 2
-item_count = 3
+item_count = 6
 popup/item_0/text = "1920x1080"
 popup/item_0/id = 0
 popup/item_1/text = "1600x900"
 popup/item_1/id = 1
 popup/item_2/text = "1280x720"
 popup/item_2/id = 2
+popup/item_3/text = "854x480"
+popup/item_3/id = 3
+popup/item_4/text = "640x360"
+popup/item_4/id = 4
+popup/item_5/text = "256x144"
+popup/item_5/id = 5
+script = ExtResource("8_5p1lm")
+
+[node name="FullscreenCheckbox" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer" unique_id=1245424379]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer/FullscreenCheckbox" unique_id=247723179]
+layout_mode = 2
+text = "Fullscreen"
+
+[node name="FullscreenOptions" type="OptionButton" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer/FullscreenCheckbox" unique_id=1790741881]
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "Windowed"
+popup/item_0/id = 0
+popup/item_1/text = "Windowed Fullscreen"
+popup/item_1/id = 1
+popup/item_2/text = "Fullscreen"
+popup/item_2/id = 2
+script = ExtResource("9_1igrg")
 
 [node name="Controls" type="TabBar" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu" unique_id=476812439]
 visible = false
@@ -429,6 +487,8 @@ text = "OKAY"
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/VBoxContainer/QuitButton" to="." method="PressedQuitSignal"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/Host" to="." method="PressedHostSignal"]
 [connection signal="toggled" from="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/Join" to="." method="ToggledJoinSignal"]
+[connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer/Button" to="." method="PressedJoinSignal"]
+[connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer/ApplyOptions" to="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer" method="ApplySettings"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/Party Menu/LeaveGroup" to="." method="PressedLeaveGroupSignal"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/Party Menu/StartButton" to="." method="PressedStartGameSignal"]
 [connection signal="pressed" from="ErrorLayer/ColorRect/VBoxContainer/Button" to="ErrorLayer" method="hide"]

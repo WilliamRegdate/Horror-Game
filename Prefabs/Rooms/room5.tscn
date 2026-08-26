@@ -63,13 +63,13 @@ script = ExtResource("4_7ocsr")
 _shape = "wall_1x2"
 
 [node name="PropSpawner5" parent="." unique_id=986384125 instance=ExtResource("5_7ocsr")]
-transform = Transform3D(1, 0, 2.842171e-14, 0, 1, 0, -2.842171e-14, 0, 1, 0.031600952, 0, -5.399431)
+transform = Transform3D(1, 0, 2.842171e-14, 0, 1, 0, -2.842171e-14, 0, 1, 0.17667007, 0, -5.592855)
 skeleton = NodePath("../PropSpawner6")
 script = ExtResource("4_7ocsr")
 _shape = "corner_2x2"
 
 [node name="PropSpawner6" parent="." unique_id=1759641015 instance=ExtResource("5_7ocsr")]
-transform = Transform3D(-4.3711402e-08, 0, 1, 0, 1, 0, -1, 0, -4.3711402e-08, 29.532227, 0, -0.034594774)
+transform = Transform3D(-4.3711402e-08, 0, 1, 0, 1, 0, -1, 0, -4.3711402e-08, 29.387157, 0, -0.1313088)
 skeleton = NodePath("../PropSpawner11")
 script = ExtResource("4_7ocsr")
 _shape = "corner_2x2"

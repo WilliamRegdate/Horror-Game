@@ -9,7 +9,8 @@ public enum MonsterState
 	Taunt,
 	Hunt,
 	Chase,
-	Escape
+	Wander,
+	Start
 }
 public enum MonsterSpeed
 {
@@ -39,7 +40,7 @@ public partial class MonsterAI : CharacterBody3D
 	private Dictionary<Player,PlayerTracker> _players = new();
 
 	[Export] public Label TestLabel;
-	private Node3D _currentTarget;
+	private Player _currentTarget;
 	bool _locked = true;
 	private Vector3 _levelMiddle = new(0,0,0);
 
@@ -52,7 +53,8 @@ public partial class MonsterAI : CharacterBody3D
     {
 		_agent.TargetPosition = Position;
 		_checkForPlayer.AddException(this);
-		_currentTarget = this;
+		_currentTarget = new();
+		_timer = 10;
     }
 
 	public void OnPlayerAdded(Node player)
@@ -114,12 +116,15 @@ public partial class MonsterAI : CharacterBody3D
 			data.PositionLastFrame = currentPos;
 			float instant = distanceMoved / (float)delta;
 			data.CurrentSpeed = Mathf.Lerp(data.CurrentSpeed, instant, 0.2f);
-			player.SoundLevel = Mathf.Abs(data.CurrentSpeed * 0.2) < 0.5 ? 0f : data.CurrentSpeed  * 0.2f;
+			player.SoundLevel = Mathf.Abs(data.CurrentSpeed * 0.2) < 0.9 ? 0f : data.CurrentSpeed  * 0.2f;
 		}
+		TestLabel.Text = $"state: {_state}\n";
+		TestLabel.Text += $"timer 1: {_timer}\n";
+		TestLabel.Text += $"timer 2: {_secondaryTimer}\n";
         switch(_state)
 		{
-			case MonsterState.Escape:
-				Escape(delta);
+			case MonsterState.Wander:
+				Wander(delta);
 				break;
 			case MonsterState.Hunt:
 				Hunt(delta);
@@ -133,24 +138,36 @@ public partial class MonsterAI : CharacterBody3D
 			case MonsterState.Taunt:
 				Taunt(delta); 
 				break;
+			case MonsterState.Start:
+				Start(delta); 
+				break;
 		}
     }
 
 	//AI VARS
-	MonsterState _state;
+	MonsterState _state = MonsterState.Start;
 	bool _startState = true;
 	double _timer = 0f;
 
 
-	private Vector3 _escapePos;
-	public void Escape(double delta)
+	public void Start(double delta)
+	{
+		if (_timer < 0)
+			_state = MonsterState.Search;
+		_timer -= delta;
+	}
+
+	//private Vector3 _escapePos;
+	//_escapePos = _levelMiddle - _currentTarget.Position;
+
+	public void Wander(double delta)
 	{
 		if (_startState)
 		{
-			SetSpeed(MonsterSpeed.Run);
-			_timer = 20;
+			SetSpeed(MonsterSpeed.Walk);
+			_timer = 60;
+			_secondaryTimer = 15;
 			_startState = false;
-			_escapePos = _levelMiddle - _currentTarget.Position;
 		}
 		if (_timer < 0)
 		{
@@ -158,8 +175,30 @@ public partial class MonsterAI : CharacterBody3D
 			_startState = true;
 			return;
 		}
+		if (_secondaryTimer < 0)
+		{
+			_secondaryTimer = 15;
+			_agent.TargetPosition = GlobalPosition + new Vector3(GD.RandRange(-30,30), GD.RandRange(-10,10), GD.RandRange(-30,30));
+		}
+		//check for player line of sight
+		foreach (var (player, data) in _players)
+		{
+			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(player.GlobalPosition);
+			if (_checkForPlayer.IsColliding())
+			{
+				if (_checkForPlayer.GetCollider() is Player)
+				{
+					_startState = true;
+					_timer = 0.5;
+					_state = MonsterState.Chase;	
+					_currentTarget = (Player)_checkForPlayer.GetCollider();
+					return;
+				}
+			}
+		}
+		
 		_timer -= delta;
-		_agent.TargetPosition = _escapePos;
+		_secondaryTimer -= delta;
 		_hasDestination = true;
 	}
 	Vector3 _checkPos;
@@ -167,39 +206,13 @@ public partial class MonsterAI : CharacterBody3D
 	{
 		if (_startState)
 		{
+			_timer = 30; // hunt for 30 seconds then give up
 			_checkPos = _agent.TargetPosition;
 			_agent.TargetPosition = _checkPos;
 			_startState = false;
 		}
 
 		_agent.TargetPosition = _checkPos;
-		//check for all players
-		foreach (var item in _players)
-		{
-			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(item.Key.GlobalPosition);
-			if (_checkForPlayer.IsColliding())
-			{
-				
-				if (_checkForPlayer.GetCollider() is Player)
-				{
-					_startState = true;
-					_state = MonsterState.Chase;	
-					_currentTarget = (Node3D)_checkForPlayer.GetCollider();
-					return;
-				}
-			}
-		}
-	}
-	const double _forcedHintInterval = 180;
-	public void Search(double delta)
-	{
-		if (_startState)
-		{
-			SetSpeed(MonsterSpeed.Walk);
-			_startState = false;
-		}
-
-		TestLabel.Text = "";
 
 		float currentDistance;
 		//check for all players
@@ -211,10 +224,59 @@ public partial class MonsterAI : CharacterBody3D
 				
 				if (_checkForPlayer.GetCollider() is Player)
 				{
-					// _startState = true;
-					// _state = MonsterState.Chase;	
-					// _currentTarget = (Node3D)_checkForPlayer.GetCollider();
-					// return;
+					_startState = true;
+					_state = MonsterState.Chase;	
+					_currentTarget = (Player)_checkForPlayer.GetCollider();
+					_timer = 0f;
+					return;
+				}
+			}
+			//get player sounds and add them to monsters awareness
+			item.Value.Awareness += GetSoundLevel(item.Key) * delta;
+			TestLabel.Text += $"Awareness: {item.Value.Awareness}\n";
+			currentDistance = GlobalPosition.DistanceSquaredTo(item.Key.GlobalPosition);
+
+			if (item.Value.Awareness  > 200)
+			{
+				_timer = 20;
+				_agent.TargetPosition = item.Key.Position; // move to target
+				item.Value.Awareness = 0;
+			}
+		}
+		if (_timer > 0)
+		{
+			_timer -= delta;
+			return;
+		}
+		_startState = true;
+		_state = MonsterState.Wander;
+	}
+	const double _forcedHintInterval = 180;
+	public void Search(double delta)
+	{
+		if (_startState)
+		{
+			_timer = 180;
+			SetSpeed(MonsterSpeed.Walk);
+			_startState = false;
+		}
+
+		float currentDistance;
+		//check for all players
+		foreach (var item in _players)
+		{
+			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(item.Key.GlobalPosition);
+			if (_checkForPlayer.IsColliding())
+			{
+				
+				if (_checkForPlayer.GetCollider() is Player)
+				{
+					_startState = true;
+					_state = MonsterState.Chase;	
+					_currentTarget = (Player)_checkForPlayer.GetCollider();
+					_agent.TargetDesiredDistance = 1.5f;
+					_timer = 2.5f;
+					return;
 				}
 			}
 			//get player sounds and add them to monsters awareness
@@ -224,12 +286,27 @@ public partial class MonsterAI : CharacterBody3D
 			
 			if (item.Value.Awareness  > 100)
 			{
-				_agent.TargetPosition = GetHintPosition(item.Key.Position, 1f); // move to target by 50%
+				_agent.TargetPosition = item.Key.Position ;// move to target by 50%
+				_agent.TargetDesiredDistance = GlobalPosition.DistanceTo(item.Key.GlobalPosition) * 0.5f;
 				item.Value.Awareness = 0;
 			}
 		}
+		//force hint every 180 seconds
+		if (_timer < 0)
+		{
+			Vector3 averagePos = new();
+			_timer = _forcedHintInterval;
+			foreach (var (player, data) in _players)
+			{
+				averagePos += player.GlobalPosition;
+			}
+			averagePos /= _players.Count();
+			_agent.TargetPosition = GetHintPosition(averagePos, 0.5f);
+			return;
+		}
+		_timer -= delta;
 	}
-	double _chaseTime;
+	double _secondaryTimer;
 	public void Chase(double delta)
 	{
 		if (_startState)
@@ -237,24 +314,24 @@ public partial class MonsterAI : CharacterBody3D
 			SetSpeed(MonsterSpeed.Run);
 			_agent.TargetPosition = GlobalPosition;
 			_startState = false;
-			_chaseTime = 2.5;
+			_secondaryTimer = 2.5;
 		}
 		if (_timer > 0)
 		{
 			_timer -= delta;
 			return;
 		}
-		//_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(_player.GlobalPosition);
+		_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(_currentTarget.GlobalPosition);
 		if (_checkForPlayer.IsColliding())
 		{
-		//	if (_checkForPlayer.GetCollider() == _player)
+			if (_checkForPlayer.GetCollider() == _currentTarget)
 			{
-				_chaseTime = 2;
+				_secondaryTimer = 2;
 			}
 		}
-		//_agent.TargetPosition = _player.GlobalPosition;
-		_chaseTime -= delta;
-		if (_chaseTime < 0)
+		_agent.TargetPosition = _currentTarget.GlobalPosition;
+		_secondaryTimer -= delta;
+		if (_secondaryTimer < 0)
 		{
 			_startState = true;
 			_state = MonsterState.Hunt;
@@ -279,7 +356,7 @@ public partial class MonsterAI : CharacterBody3D
 	/// <returns></returns>
 	private double GetSoundLevel(Player player)
 	{
-		return player.SoundLevel / (1 + 0.4 * GlobalPosition.DistanceSquaredTo(player.GlobalPosition)) * 70000;// * 10000;
+		return player.SoundLevel / (1 + 0.4 * GlobalPosition.DistanceSquaredTo(player.GlobalPosition)) * 5000;
 	}
 	/// <summary>
 	/// returns the amount to move towards the target

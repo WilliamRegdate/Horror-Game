@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public partial class Player : CharacterBody3D
 {
@@ -9,71 +8,87 @@ public partial class Player : CharacterBody3D
 
 	[Export] private RayCast3D _checkForHead;
 	public float Speed;
-	[Export] private CollisionShape3D _collider;
+	[Export] public CollisionShape3D _collider;
 	private CapsuleShape3D _capsule;
 	[Export] PlayerCamera _camera;
-	[Export] Label _soundLabel;
-
-	//make sound
+	[Export] Node3D _playerMesh; 
+	private bool debugMode;
 
     public override void _Ready()
     {
         _capsule = (CapsuleShape3D)_collider.Shape;
+		if (!IsMultiplayerAuthority()) return;
+		_playerMesh.Hide();
+		_playerMesh.QueueFree();
     }
+
 
 	public override void _PhysicsProcess(double delta)
 	{
+
 		if (!IsMultiplayerAuthority()) return;
 		Vector3 velocity = Velocity;
 
-		//Add the gravity.
-		if (!IsOnFloor())
+		if (Input.IsActionJustPressed("debug"))
 		{
-			velocity += GetGravity() * (float)delta;
+			debugMode = !debugMode;
+			_collider.Disabled = debugMode;
 		}
 
-		//creative mode flight
-		// if (Input.IsActionPressed("game_jump"))
-		// {
-		// 	Position += new Vector3(0, Speed*0.05f, 0);
-		// }
-		// if (Input.IsActionPressed("game_crouch"))
-		// {
-		// 	Position += new Vector3(0, -Speed*0.05f, 0);
-		// }
-
-		_soundLabel.Text = $"sound level: {SoundLevel}";
-
-		// Handle Jump.
-		if (Input.IsActionJustPressed("game_jump") && IsOnFloor())
+		if (debugMode)
 		{
-			velocity.Y = JumpHeight;
+			//creative mode flight
+			if (Input.IsActionPressed("game_jump"))
+			{
+				Position += new Vector3(0, Speed*0.05f, 0);
+			}
+			if (Input.IsActionPressed("game_crouch"))
+			{
+				Position += new Vector3(0, -Speed*0.05f, 0);
+			}
+			if (Input.IsActionPressed("game_sprint"))
+			{
+				Speed = BaseSpeed * 6f;
+			}
 		}
-
-		// if (Input.IsActionJustPressed("ui_cancel"))
-		// 	SaveSceneToDisk(GetTree().Root.GetChild(0), "res://debug_dungeon_snapshot.tscn");
-		if (Input.IsActionPressed("game_crouch"))
-		{
-			_camera.IsCrouching = true;
-			Speed = BaseSpeed * 0.3f;
-			_collider.Position = new(0, -0.56f, 0);
-			_capsule.Height = 0.88f;
-		}
-		else if (Input.IsActionPressed("game_sprint"))
-		{
-			Speed = BaseSpeed * 5.3f;
-		}
-		
 		else
 		{
-			if (!_checkForHead.IsColliding())
+			//Add the gravity.
+			if (!IsOnFloor())
 			{
-				Speed = BaseSpeed;
-				_camera.IsCrouching = false;
-				_collider.Position = Vector3.Zero;
-				_capsule.Height = 2.0f;
+				velocity += GetGravity() * (float)delta;
 			}
 
+			// Handle Jump.
+			if (Input.IsActionJustPressed("game_jump") && IsOnFloor())
+			{
+				velocity.Y = JumpHeight;
+			}
+
+			// if (Input.IsActionJustPressed("ui_cancel"))
+			// 	SaveSceneToDisk(GetTree().Root.GetChild(0), "res://debug_dungeon_snapshot.tscn");
+			if (Input.IsActionPressed("game_crouch"))
+			{
+				_camera.IsCrouching = true;
+				Speed = BaseSpeed * 0.3f;
+				_collider.Position = new(0, -0.5f, 0);
+				_capsule.Height = 0.88f;
+			}
+
+			else if (Input.IsActionPressed("game_sprint"))
+			{
+				Speed = BaseSpeed * 2f;
+			}
+			else
+			{
+				if (!_checkForHead.IsColliding())
+				{
+					Speed = BaseSpeed;
+					_camera.IsCrouching = false;
+					_collider.Position = Vector3.Zero;
+					_capsule.Height = 2.0f;
+				}
+			}
 		}
 
 		Vector2 inputDir = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
