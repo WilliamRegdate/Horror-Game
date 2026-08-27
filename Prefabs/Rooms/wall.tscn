@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://bgdmx7ajlyytq"]
+
+[ext_resource type="Material" uid="uid://b4fk1wsfi5mrs" path="res://Assets/Materials/Environment.tres" id="1_alw1j"]
+[ext_resource type="ArrayMesh" uid="uid://nyxq0ta4a6bl" path="res://Assets/Models/Environment/Room objects/wall.obj" id="1_cregv"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_cregv"]
+data = PackedVector3Array(-2.5, 2.5, 2.5, -2.5, -2.5, 2.5, -2.5, 2.5, -2.5, -2.5, 2.5, -2.5, -2.5, -2.5, 2.5, -2.5, -2.5, -2.5)
+
+[node name="Node3D" type="MeshInstance3D" unique_id=1788038638]
+material_override = ExtResource("1_alw1j")
+mesh = ExtResource("1_cregv")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=214744705]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1197209270]
+shape = SubResource("ConcavePolygonShape3D_cregv")

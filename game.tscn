@@ -1,0 +1,117 @@
+[gd_scene format=3 uid="uid://dq25677m7ldnh"]
+
+[ext_resource type="PackedScene" uid="uid://couumywvtfcbg" path="res://Prefabs/player.tscn" id="1_eow3j"]
+[ext_resource type="Script" uid="uid://byd8rf33va10d" path="res://Scripts/GameManager.cs" id="1_mfdv2"]
+[ext_resource type="PackedScene" uid="uid://cjncw05vjkgut" path="res://ProceduralGenerator.tscn" id="2_eow3j"]
+[ext_resource type="PackedScene" uid="uid://b50lf3bmukqy6" path="res://Prefabs/monster.tscn" id="7_lc2xo"]
+[ext_resource type="Script" uid="uid://n4m0vbc6yu6p" path="res://PlayerSpawner.cs" id="8_j5wjh"]
+[ext_resource type="AudioStream" uid="uid://dp5pse2r5yo25" path="res://Assets/Audio/Ambience/Background.wav" id="9_hve3p"]
+[ext_resource type="Shader" uid="uid://c6eh4ntm5vtc8" path="res://Scripts/Shaders/vhs.gdshader" id="9_vef74"]
+[ext_resource type="Script" uid="uid://c62hcyccwsapt" path="res://Scripts/AmbiencePlayer.cs" id="10_mfdv2"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_681nw"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_hve3p"]
+sky_material = SubResource("ProceduralSkyMaterial_681nw")
+radiance_size = 0
+
+[sub_resource type="Environment" id="Environment_nu2kt"]
+background_mode = 1
+background_color = Color(1, 1, 1, 1)
+background_energy_multiplier = 0.0
+sky = SubResource("Sky_hve3p")
+sky_rotation = Vector3(-1.775, -0.682424, 0)
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_sky_contribution = 0.01
+ambient_light_energy = 0.0
+reflected_light_source = 1
+tonemap_mode = 3
+tonemap_exposure = 2.9
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+ssil_normal_rejection = 0.3
+glow_enabled = true
+fog_enabled = true
+fog_light_color = Color(0.0148753, 0.0180037, 0.0236408, 1)
+fog_light_energy = 0.0
+fog_density = 0.015
+
+[sub_resource type="CameraAttributesPhysical" id="CameraAttributesPhysical_kgmex"]
+
+[sub_resource type="Compositor" id="Compositor_08u7w"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hve3p"]
+shader = ExtResource("9_vef74")
+shader_parameter/pixel_size = 1.50000002375
+shader_parameter/lod_blur = 0.50000002375
+shader_parameter/chroma_offset_px = 1.50000007125
+shader_parameter/saturation = 0.800000038
+shader_parameter/contrast = 1.09200002812
+shader_parameter/shadow_lift = 0.06
+shader_parameter/scanline_strength = 0.0370000017575
+shader_parameter/vignette_strength = 0.39600001881
+shader_parameter/noise_strength = 0.042000001995
+shader_parameter/noise_speed = 5.0
+shader_parameter/base_jitter_px = 0.11200000532
+shader_parameter/base_jitter_speed = 10.3110004897725
+shader_parameter/glitchiness = 0.2930000139175
+shader_parameter/glitch_rate = 5.24800024928
+shader_parameter/glitch_shift_px = 2.270000107825
+shader_parameter/glitch_window_min = 0.0490000023275
+shader_parameter/glitch_window_max = 0.174000008265
+shader_parameter/blue_band_start_y = 0.18000000855
+shader_parameter/blue_band_speed = 0.06
+shader_parameter/blue_band_width = 0.035
+shader_parameter/blue_band_strength = 0.1
+shader_parameter/blue_band_glitch = 0.25
+shader_parameter/blue_band_distort_px = 1.2
+
+[node name="GameManager" type="Node3D" unique_id=1022875171 node_paths=PackedStringArray("_monster")]
+script = ExtResource("1_mfdv2")
+LevelMaker = ExtResource("2_eow3j")
+_monster = NodePath("Monster")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1220312149]
+environment = SubResource("Environment_nu2kt")
+camera_attributes = SubResource("CameraAttributesPhysical_kgmex")
+compositor = SubResource("Compositor_08u7w")
+
+[node name="Monster" parent="." unique_id=433109594 instance=ExtResource("7_lc2xo")]
+transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, -58.959427, 4.44928, 28.900925)
+
+[node name="AmbiencePlayer" type="AudioStreamPlayer3D" parent="." unique_id=2097400499]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.474052, 0, -8.430759)
+stream = ExtResource("9_hve3p")
+attenuation_model = 3
+volume_db = 13.248
+autoplay = true
+panning_strength = 0.0
+script = ExtResource("10_mfdv2")
+
+[node name="Players" type="MultiplayerSpawner" parent="." unique_id=1064385220]
+spawn_path = NodePath(".")
+script = ExtResource("8_j5wjh")
+PlayerScene = ExtResource("1_eow3j")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=275782791]
+visible = false
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=303418682]
+z_index = 1
+material = SubResource("ShaderMaterial_hve3p")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[connection signal="child_entered_tree" from="Players" to="Monster" method="OnPlayerAdded"]
+[connection signal="child_entered_tree" from="Players" to="Monster/monster_2" method="OnPlayerSpawned"]
+[connection signal="spawned" from="Players" to="Monster/monster_2" method="OnPlayerSpawned"]
+
+[editable path="Monster"]
+[editable path="Monster/monster_2"]

@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/NetworkHandler.cs" id="1_4myv4"]
+
+[node name="NetworkHandler" type="Node" unique_id=1554284752]
+script = ExtResource("1_4myv4")

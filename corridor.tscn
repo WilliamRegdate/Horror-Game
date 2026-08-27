@@ -1,0 +1,62 @@
+[gd_scene load_steps=7 format=3 uid="uid://bou733u8xpt7o"]
+
+[ext_resource type="Script" uid="uid://bspnoxnk5r6kb" path="res://Scripts/Wall.cs" id="1_jm2rx"]
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_t4usd"]
+points = PackedVector3Array(0.5, 0.5, 0, 0.5, -0.5, 0, -0.5, 0.5, 0, -0.5, -0.5, 0)
+
+[sub_resource type="QuadMesh" id="QuadMesh_8u17k"]
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_jm2rx"]
+points = PackedVector3Array(0.5, 0.5, 0, 0.5, -0.5, 0, -0.5, 0.5, 0, -0.5, -0.5, 0)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_atpw5"]
+points = PackedVector3Array(0.5, 0.5, 0, 0.5, -0.5, 0, -0.5, 0.5, 0, -0.5, -0.5, 0)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_k7q0k"]
+points = PackedVector3Array(0.5, 0.5, 0, 0.5, -0.5, 0, -0.5, 0.5, 0, -0.5, -0.5, 0)
+
+[node name="Corridor" type="StaticBody3D"]
+
+[node name="Floor" type="CollisionShape3D" parent="."]
+transform = Transform3D(6, 0, 0, 0, -2.62268e-07, 1, 0, -6, -4.37114e-08, 0, -3, 0)
+shape = SubResource("ConvexPolygonShape3D_t4usd")
+
+[node name="Floor" type="MeshInstance3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, -8.88178e-16, 0, -2.84217e-14, 1, 0, 0, 0)
+mesh = SubResource("QuadMesh_8u17k")
+skeleton = NodePath("../..")
+
+[node name="Wall_Left" type="CollisionShape3D" parent="."]
+transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 1, 0, 0, -3)
+shape = SubResource("ConvexPolygonShape3D_jm2rx")
+
+[node name="Wall_Left" type="MeshInstance3D" parent="Wall_Left" node_paths=PackedStringArray("Corridor")]
+mesh = SubResource("QuadMesh_8u17k")
+skeleton = NodePath("../..")
+script = ExtResource("1_jm2rx")
+Corridor = NodePath("../..")
+
+[node name="Wall_Front" type="CollisionShape3D" parent="."]
+transform = Transform3D(4.52987e-07, 0, -1, 0, 6, 0, 6, 0, 7.54979e-08, 3, 0, 0)
+shape = SubResource("ConvexPolygonShape3D_atpw5")
+
+[node name="Wall_Front" type="MeshInstance3D" parent="Wall_Front" node_paths=PackedStringArray("Corridor")]
+transform = Transform3D(1, 0, 1.77636e-15, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("QuadMesh_8u17k")
+skeleton = NodePath("../..")
+script = ExtResource("1_jm2rx")
+Corridor = NodePath("../..")
+WallNum = 1
+
+[node name="Wall_Right" type="CollisionShape3D" parent="."]
+transform = Transform3D(6, 0, 0, 0, -6, -9.05975e-07, 0, 9.05975e-07, -6, 0, 0, 3)
+shape = SubResource("ConvexPolygonShape3D_k7q0k")
+
+[node name="Wall_Right" type="MeshInstance3D" parent="Wall_Right" node_paths=PackedStringArray("Corridor")]
+transform = Transform3D(1, 0, 0, 0, 1, -1.77636e-15, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("QuadMesh_8u17k")
+skeleton = NodePath("../..")
+script = ExtResource("1_jm2rx")
+Corridor = NodePath("../..")
+WallNum = 2

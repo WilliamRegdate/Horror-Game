@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://j7aghuvnwc56"]
+
+[ext_resource type="Material" uid="uid://b4fk1wsfi5mrs" path="res://Assets/Materials/Environment.tres" id="1_1d61r"]
+[ext_resource type="ArrayMesh" uid="uid://d0as2tsraiy0a" path="res://Assets/Models/Environment/Room objects/junction1.obj" id="2_orle1"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_y8xgx"]
+vertices = PackedVector3Array(-7.5, -2, -1.25, -7.5, -2, 1.25, -2.25, -2, 1.25, -2.25, -2, -1.25, -1.25, -2, -7.5, -1.25, -2, -2.25, 1.25, -2, -2.25, 1.25, -2, -7.5, -1.25, -2, 2.25, 2.25, -2, 1.25, 2.25, -2, -1.25, -1.25, -2, 7.5, 1.25, -2, 7.5, 1.25, -2, 2.25, 7.5, -2, 1.25, 7.5, -2, -1.25)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1), PackedInt32Array(7, 6, 4), PackedInt32Array(4, 6, 5), PackedInt32Array(5, 6, 3), PackedInt32Array(3, 6, 2), PackedInt32Array(2, 6, 8), PackedInt32Array(8, 6, 9), PackedInt32Array(6, 10, 9), PackedInt32Array(13, 12, 8), PackedInt32Array(8, 12, 11), PackedInt32Array(10, 15, 9), PackedInt32Array(9, 15, 14), PackedInt32Array(9, 13, 8)]
+agent_radius = 1.0
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_1d61r"]
+data = PackedVector3Array(-7.5, -2.5, 2.5, -2.5, -2.5, 2.4998, -7.5, 2.5, 2.5, -7.5, 2.5, 2.5, -2.5, -2.5, 2.4998, -2.5, 2.5, 2.4998, 2.4998, -2.5, -2.5, 2.5, -2.5, 2.4998, -2.5, -2.5, -2.5, -2.5, -2.5, -2.5, 2.5, -2.5, 2.4998, -2.5, -2.5, 2.5, 7.5, -2.5, -2.5, 7.5, -2.5, 2.4998, 2.5, -2.5, -2.5, 2.5, -2.5, -2.5, 7.5, -2.5, 2.4998, 2.5, -2.5, 2.5, 2.4998, -2.5, -7.5, 2.5, -2.5, -2.5, -2.5, -2.5, -7.5, -2.5, -2.5, -7.5, 2.5, -2.5, -2.5, -2.5, -2.5, -2.5, -2.5002, -2.5, -2.5, -2.5, -2.5, 2.4998, -7.5, -2.5, -2.5, -7.5, -2.5, -2.5, -2.5, -2.5, 2.4998, -7.5, -2.5, 2.5, 2.4998, -2.5, 2.5, 2.5, -2.5, 7.5, -2.5, -2.5, 2.5, -2.5, -2.5, 2.5, 2.5, -2.5, 7.5, -2.5, -2.5, 7.5, 2.5, -2.5, 7.4998, 2.4998, -2.5, 2.5, 2.5, 2.5, 7.4998, 2.5, 2.5, 7.4998, 2.4998, -2.5, 2.5, 2.4998, 2.5, 2.5, -2.5, -2.5, 2.5, -2.5, -2.5, 7.5, -2.5, 2.5, 2.5, -2.5, 2.5, 2.5, -2.5, -2.5, 7.5, -2.5, 2.5, 7.5, -2.5, -2.5, -7.5, -2.5, -2.5, -2.5, -2.5, 2.5, -7.5, -2.5, 2.5, -7.5, -2.5, -2.5, -2.5, -2.5, 2.5, -2.5, -2.5002, -2.5, -2.5, -7.5, -2.5, -2.5, -2.5002, 2.5, -2.5, -2.5002, 2.5, -2.5, -7.5, -2.5, -2.5, -7.5, 2.5, -2.5, 7.4998, -2.5, -2.5, 2.5, -2.5, -2.5, 7.4998, 2.5, -2.5, 7.4998, 2.5, -2.5, 2.5, -2.5, -2.5, 2.5, 2.5, -2.5, 2.5, -2.5, -2.5002, 2.4998, -2.5, -7.5, 2.5, 2.5, -2.5002, 2.5, 2.5, -2.5002, 2.4998, -2.5, -7.5, 2.4998, 2.5, -7.5, -2.5, 2.5, 2.5, 2.5, 2.5, 2.4998, -2.5, 2.5, -2.5, -2.5, 2.5, -2.5, 2.5, 2.5, 2.4998, 2.4998, 2.5, -2.5, 2.5, 2.5, 2.5, 7.5, 2.5, 2.4998, 2.5, 2.5, -2.5, 2.5, 2.5, -2.5, 7.5, 2.5, 2.4998, 7.5, 2.5, -2.5, -2.5, 2.5, -2.5, 2.5, 2.5, -2.5, -2.5, 2.5, -7.5, -2.5, 2.5, -7.5, 2.5, 2.5, -2.5, 2.4998, 2.5, -7.5, -7.5, 2.5, 2.5, -2.5, 2.5, 2.4998, -7.5, 2.5, -2.5, -7.5, 2.5, -2.5, -2.5, 2.5, 2.4998, -2.5002, 2.5, -2.5, -2.5, 2.5, 7.5, 2.5, 2.5, 7.5, -2.5, 2.5, 2.5, -2.5, 2.5, 2.5, 2.5, 2.5, 7.5, 2.4998, 2.5, 2.5, 2.5, -2.5, 2.5, 7.5, -2.5, 2.4998, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 7.5, -2.5, 2.4998, 7.5, 2.5, 2.4998)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1d61r"]
+size = Vector3(5, 1, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_orle1"]
+size = Vector3(17, 1, 5)
+
+[node name="Node3D" type="MeshInstance3D" unique_id=31960873]
+material_override = ExtResource("1_1d61r")
+mesh = ExtResource("2_orle1")
+surface_material_override/0 = ExtResource("1_1d61r")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1876483250]
+navigation_mesh = SubResource("NavigationMesh_y8xgx")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D" unique_id=959494877]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=1951443767]
+shape = SubResource("ConcavePolygonShape3D_1d61r")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=1336117888]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0)
+shape = SubResource("BoxShape3D_1d61r")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=718028049]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0)
+shape = SubResource("BoxShape3D_orle1")
