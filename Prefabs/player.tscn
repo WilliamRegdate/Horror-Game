@@ -27,6 +27,9 @@ properties/1/replication_mode = 1
 properties/2/path = NodePath("PlayerCamera:rotation")
 properties/2/spawn = true
 properties/2/replication_mode = 1
+properties/3/path = NodePath(".:IsCrouched")
+properties/3/spawn = true
+properties/3/replication_mode = 1
 
 [sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_kgmex"]
 
@@ -61,27 +64,38 @@ blend_point_3/node = SubResource("AnimationNodeAnimation_m62uw")
 blend_point_3/pos = 8.0
 blend_point_3/name = &"Run"
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ms580"]
+animation = &"Crouch"
+
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_b30ri"]
 animation = &"Hold"
 
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_ms580"]
 
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_2xbkd"]
+filter_enabled = true
+filters = ["", "Armature/Skeleton3D:Elbow.L", "Armature/Skeleton3D:Elbow.R", "Armature/Skeleton3D:Finger2.R", "Armature/Skeleton3D:Hand.L", "Armature/Skeleton3D:Hand.R", "Armature/Skeleton3D:LowerArm.L", "Armature/Skeleton3D:LowerArm.R", "Armature/Skeleton3D:Neck", "Armature/Skeleton3D:Root", "Armature/Skeleton3D:Shoulder.L", "Armature/Skeleton3D:Shoulder.R", "Armature/Skeleton3D:Spine", "Armature/Skeleton3D:Thumb.R", "Armature/Skeleton3D:UpperArm.L", "Armature/Skeleton3D:UpperArm.R"]
+
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_y8xgx"]
-graph_offset = Vector2(-331.42877, -31.257446)
-nodes/output/position = Vector2(800, 80)
+graph_offset = Vector2(31.739166, 48.92508)
+nodes/output/position = Vector2(1120, 140)
 nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_ms580")
 nodes/TimeScale/position = Vector2(460, 80)
 nodes/BlendSpace1D/node = SubResource("AnimationNodeBlendSpace1D_b30ri")
 nodes/BlendSpace1D/position = Vector2(120, 80)
 nodes/Hold/node = SubResource("AnimationNodeAnimation_b30ri")
-nodes/Hold/position = Vector2(380, 320)
-nodes/Add2/node = SubResource("AnimationNodeAdd2_kgmex")
-nodes/Add2/position = Vector2(640, 160)
-node_connections = [&"output", 0, &"Add2", &"TimeScale", 0, &"BlendSpace1D", &"Add2", 0, &"TimeScale", &"Add2", 1, &"Hold"]
+nodes/Hold/position = Vector2(620, 500)
+nodes/crouchValue/node = SubResource("AnimationNodeBlend2_2xbkd")
+nodes/crouchValue/position = Vector2(640, 160)
+"nodes/Add2 2/node" = SubResource("AnimationNodeAdd2_kgmex")
+"nodes/Add2 2/position" = Vector2(860, 160)
+nodes/Crouch/node = SubResource("AnimationNodeAnimation_ms580")
+nodes/Crouch/position = Vector2(329.21796, 395.2836)
+node_connections = [&"output", 0, &"Add2 2", &"TimeScale", 0, &"BlendSpace1D", &"crouchValue", 0, &"TimeScale", &"crouchValue", 1, &"Crouch", &"Add2 2", 0, &"crouchValue", &"Add2 2", 1, &"Hold"]
 
 [sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_mx3nr"]
 
-[node name="Player" type="CharacterBody3D" unique_id=959927640 node_paths=PackedStringArray("_checkForHead", "_collider", "_camera", "_playerMesh") groups=["Player"]]
+[node name="Player" type="CharacterBody3D" unique_id=959927640 node_paths=PackedStringArray("_checkForHead", "_collider", "_camera", "_playerMesh", "_torchNode") groups=["Player"]]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
 collision_layer = 2
 floor_constant_speed = true
@@ -95,10 +109,11 @@ _checkForHead = NodePath("RayCast3D")
 _collider = NodePath("CollisionShape3D")
 _camera = NodePath("PlayerCamera")
 _playerMesh = NodePath("Model")
+_torchNode = NodePath("PlayerCamera/Torch")
 metadata/Player = true
 
 [node name="PlayerCamera" type="Camera3D" parent="." unique_id=1300668449 node_paths=PackedStringArray("_audioPlayer")]
-transform = Transform3D(0.6666667, 0, 0, 0, 0.6666667, 0, 0, 0, 0.6666667, 0, 0.9056833, 0)
+transform = Transform3D(0.6666667, 0, 0, 0, 0.6666667, 0, 0, 0, 0.6666668, 0, 0.851249, 0)
 script = ExtResource("2_kgmex")
 MouseSensitivity = 0.1
 BobFrequency = 2.0
@@ -106,6 +121,20 @@ BobHeight = 0.06
 BobSway = 0.08
 FootstepSounds = Array[AudioStream]([ExtResource("3_kgmex"), ExtResource("4_4qbli"), ExtResource("5_4qbli"), ExtResource("6_08u7w"), ExtResource("7_kgmex")])
 _audioPlayer = NodePath("AudioStreamPlayer3D")
+
+[node name="Torch" type="SpotLight3D" parent="PlayerCamera" unique_id=878207258]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -1, -0.65)
+shadow_enabled = true
+distance_fade_enabled = true
+spot_range = 72.8751
+spot_angle = 16.3053
+
+[node name="TorchOuter" type="SpotLight3D" parent="PlayerCamera/Torch" unique_id=679873910]
+transform = Transform3D(1, 0, -2.9802322e-08, 0, 1, 0, 2.9802322e-08, 0, 1, 0, 0, 0)
+light_energy = 0.3
+distance_fade_enabled = true
+spot_range = 72.8751
+spot_angle = 45.968285
 
 [node name="AudioListener3D" type="AudioListener3D" parent="PlayerCamera" unique_id=2057926588]
 
@@ -120,24 +149,11 @@ collision_mask = 9
 script = ExtResource("8_4qbli")
 _player = NodePath("../..")
 
-[node name="ArmTarget_R" type="Marker3D" parent="PlayerCamera" unique_id=355148436]
-transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0.5077071, -1.0994722, -0.36837894)
-
-[node name="Torch" type="SpotLight3D" parent="PlayerCamera/ArmTarget_R" unique_id=241199280]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.085496426, -0.21906891, -0.37535676)
-distance_fade_enabled = true
-spot_range = 72.8751
-spot_angle = 16.3053
-
-[node name="TorchOuter" type="SpotLight3D" parent="PlayerCamera/ArmTarget_R" unique_id=1750901896]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.085496426, -0.21906891, -0.37535676)
-light_energy = 0.3
-distance_fade_enabled = true
-spot_range = 72.8751
-spot_angle = 45.968285
-
 [node name="HeadTarget" type="Marker3D" parent="PlayerCamera" unique_id=1437886052]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, -10)
+
+[node name="TorchNode" type="Node3D" parent="PlayerCamera" unique_id=4276694]
+transform = Transform3D(0.31699282, 0.30788293, 0.897064, -0.3199304, -0.85569274, 0.4067367, 0.8928383, -0.41593066, -0.1727473, 0, 0, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=140627627]
 visible = false
@@ -164,70 +180,63 @@ target_position = Vector3(0, 2, 0)
 hit_from_inside = true
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=451726356]
+physics_interpolation_mode = 1
 replication_config = SubResource("SceneReplicationConfig_4qbli")
+visibility_update_mode = 1
 
-[node name="Model" parent="." unique_id=1386582256 node_paths=PackedStringArray("_footRestPositions", "_legTargets", "_ikInfluenceTargets", "_animationTree", "_camera") instance=ExtResource("9_08u7w")]
+[node name="Model" parent="." unique_id=1386582256 node_paths=PackedStringArray("_footRestPositions", "_legTargets", "_ikInfluenceTargets", "_animationTree", "_leftArmTarget", "_torchArmJoint", "_lookAtTarget", "_camera") instance=ExtResource("9_08u7w")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.2128046, 0)
 script = ExtResource("10_kgmex")
 _footRestPositions = [NodePath("SpringArm3D/Node3D/FootRest_L"), NodePath("SpringArm3D/Node3D/FootRest_R")]
 _legTargets = [NodePath("LegTarget_L"), NodePath("LegTarget_R")]
 _ikInfluenceTargets = [NodePath("Armature/Skeleton3D/Arm_L"), NodePath("Armature/Skeleton3D/Leg_R"), NodePath("Armature/Skeleton3D/Leg_L")]
 _animationTree = NodePath("AnimationTree")
+_leftArmTarget = NodePath("ArmTarget_L")
+_torchArmJoint = NodePath("TorchArmRotator")
+_lookAtTarget = NodePath("../PlayerCamera/HeadTarget")
 _camera = NodePath("../PlayerCamera")
 
-[node name="Skeleton3D" parent="Model/Armature" parent_id_path=PackedInt32Array(1386582256, 257170883) index="0" unique_id=231258903]
-bones/0/position = Vector3(-1.2376176e-09, -0.311198, 0.26578757)
-bones/0/rotation = Quaternion(0.03387391, 0.7281974, 0.031241452, 0.6838167)
-bones/1/rotation = Quaternion(4.0060193e-08, -1.2987945e-07, -0.1023803, 0.9947454)
-bones/4/rotation = Quaternion(-0.72549474, 1.4220408e-08, -0.103641845, 0.6803792)
-bones/5/rotation = Quaternion(-0.52377045, -0.06787257, -0.10566303, 0.8425516)
-bones/6/rotation = Quaternion(0.04700357, 0.24790981, -0.16741158, 0.95305026)
-bones/7/rotation = Quaternion(-0.035859864, -0.2266713, -0.07109951, 0.97071064)
-bones/8/rotation = Quaternion(0.031843405, -0.0009558241, 0.0047119856, 0.9994813)
-bones/12/rotation = Quaternion(0.103641614, 0.68037933, 0.72549456, 2.3362314e-07)
-bones/13/rotation = Quaternion(-0.5584546, -0.07764256, -0.010335315, 0.82582885)
-bones/14/rotation = Quaternion(0.04700353, -0.2479097, 0.1674116, 0.9530503)
-bones/15/rotation = Quaternion(-0.035859954, 0.22667132, 0.07109956, 0.9707106)
-bones/16/rotation = Quaternion(0.048669215, -0.005547865, -0.0109559, 0.9987395)
-bones/18/rotation = Quaternion(-0.60319805, 0.057282913, 0.21985584, 0.7645484)
+[node name="Skeleton3D" parent="Model/Armature" parent_id_path=PackedInt32Array(1386582256, 712949339) index="0" unique_id=1066585452]
+bones/0/position = Vector3(-1.776357e-14, -0.177405, 0.26732177)
+bones/0/rotation = Quaternion(0.03258281, 0.7063558, 0.032582786, 0.70635563)
+bones/1/rotation = Quaternion(3.9996927e-08, -1.2919585e-07, -0.10238029, 0.9947453)
+bones/2/rotation = Quaternion(5.83101e-08, -2.7853458e-08, -0.25132063, 0.967904)
+bones/4/rotation = Quaternion(-0.72549474, 2.4805297e-08, -0.10364185, 0.6803792)
+bones/5/rotation = Quaternion(-0.37624604, -0.0046612946, 0.0011087715, 0.9265075)
+bones/6/rotation = Quaternion(0.10777776, 0.250155, -0.1363497, 0.95247847)
+bones/7/rotation = Quaternion(-0.03585985, -0.2266713, -0.071099535, 0.97071064)
+bones/8/rotation = Quaternion(0.031843398, -0.00095583295, 0.0047119837, 0.9994813)
+bones/12/rotation = Quaternion(0.10364161, 0.68037933, 0.72549456, 2.1807935e-07)
+bones/13/rotation = Quaternion(-0.37624595, 0.004661241, -0.0011087527, 0.9265074)
+bones/14/rotation = Quaternion(0.1077778, -0.25015488, 0.13634963, 0.95247847)
+bones/15/rotation = Quaternion(-0.03585994, 0.22667135, 0.071099564, 0.9707106)
+bones/16/rotation = Quaternion(0.048669215, -0.005547885, -0.010955882, 0.9987395)
+bones/18/rotation = Quaternion(-0.60319805, 0.05728292, 0.21985584, 0.7645484)
 bones/19/rotation = Quaternion(-0.4691231, 0.19929594, 0.265942, 0.81821734)
-bones/20/rotation = Quaternion(-0.5167438, -0.02575294, 0.85120404, 0.088115215)
-bones/21/rotation = Quaternion(0.10532667, 0.0054898877, -0.051536456, 0.9930863)
-bones/22/rotation = Quaternion(0.10640415, 0.006021159, -0.03834567, 0.9935651)
-bones/23/rotation = Quaternion(-0.71316576, -0.043445967, 0.35263672, 0.6042802)
-bones/24/rotation = Quaternion(0.8767704, 0.15891868, -0.41628903, 0.18089263)
-bones/24/scale = Vector3(1.0000066, 0.9999996, 1.0000213)
-bones/25/rotation = Quaternion(0.11652056, -0.0055052163, 0.056788716, 0.9915481)
-bones/26/rotation = Quaternion(0.117569685, -0.0060336166, 0.042597465, 0.9921323)
-bones/27/rotation = Quaternion(-0.5975331, 0.025786154, -0.2908222, 0.7468011)
-bones/28/position = Vector3(-0.41738048, -2.1527195, 0.54696983)
-bones/29/position = Vector3(0.41738048, -2.1855237, -0.52098423)
+bones/20/rotation = Quaternion(-0.4889809, -0.037088756, 0.86988723, 0.053088684)
+bones/21/rotation = Quaternion(0.062821954, 0.00516654, -0.032957483, 0.99746704)
+bones/22/rotation = Quaternion(0.0543854, 0.005747082, -0.017004093, 0.99835867)
+bones/23/rotation = Quaternion(-0.6449369, -0.033793464, 0.3184508, 0.6939046)
+bones/24/rotation = Quaternion(0.869888, -0.05309319, -0.4889791, 0.03708581)
+bones/24/scale = Vector3(1.0000068, 0.9999995, 1.0000207)
+bones/25/rotation = Quaternion(0.06281845, -0.0051665367, 0.03295596, 0.99746734)
+bones/26/rotation = Quaternion(0.05438135, -0.0057470025, 0.017002543, 0.998359)
+bones/26/scale = Vector3(1.0000005, 0.9999995, 0.9999992)
+bones/27/rotation = Quaternion(-0.64493686, 0.033793155, -0.31845137, 0.69390434)
+bones/28/position = Vector3(-0.41738045, -2.1976216, 0.1732685)
+bones/29/position = Vector3(0.41738045, -2.1976216, 0.1732685)
 bones/30/rotation = Quaternion(0.111430235, -0.69827175, 0.6982716, -0.11143024)
 bones/31/rotation = Quaternion(0.111430116, 0.6982717, -0.6982717, -0.11143013)
 
 [node name="BoneAttachment3D" type="BoneAttachment3D" parent="Model/Armature/Skeleton3D" index="0" unique_id=379185942]
-transform = Transform3D(0.4020781, -0.09945142, 0.9101882, -0.11535084, -0.9916653, -0.05739753, 0.90830994, -0.08191273, -0.41019833, 0.69522727, -0.22876929, -0.53986406)
+transform = Transform3D(0.3890162, 0.099666, 1.271421, -0.27043155, -1.2925801, 0.1840685, 1.2463192, -0.31157842, -0.35691094, 1.0675752, -0.03239155, -0.42036894)
 bone_name = "finger1.R"
 bone_idx = 17
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="Model/Armature/Skeleton3D/BoneAttachment3D" unique_id=1079429140]
 transform = Transform3D(0.028474974, -0.23863159, 0.009278, 0.07947888, 0.033466633, -0.07458397, 0.070514396, 0.058642447, 0.08031908, -0.06859791, 0.07794938, -0.050395727)
 
-[node name="TorchLookAt" type="LookAtModifier3D" parent="Model/Armature/Skeleton3D" index="3" unique_id=794301651]
-target_node = NodePath("../../../../PlayerCamera/HeadTarget")
-bone_name = "Hand.R"
-bone = 16
-forward_axis = 3
-primary_rotation_axis = 2
-relative = true
-use_angle_limitation = true
-symmetry_limitation = true
-primary_limit_angle = 1.5707964
-primary_damp_threshold = 1.0
-secondary_limit_angle = 1.3173745
-secondary_damp_threshold = 1.0
-
-[node name="HeadLookAt" type="LookAtModifier3D" parent="Model/Armature/Skeleton3D" index="4" unique_id=317811796]
+[node name="HeadLookAt" type="LookAtModifier3D" parent="Model/Armature/Skeleton3D" index="3" unique_id=317811796]
 target_node = NodePath("../../../../PlayerCamera/HeadTarget")
 bone_name = "Head"
 bone = 3
@@ -239,9 +248,9 @@ primary_damp_threshold = 1.0
 secondary_limit_angle = 1.3173745
 secondary_damp_threshold = 1.0
 
-[node name="Arm_R" type="TwoBoneIK3D" parent="Model/Armature/Skeleton3D" index="5" unique_id=1586121917]
+[node name="Arm_R" type="TwoBoneIK3D" parent="Model/Armature/Skeleton3D" index="4" unique_id=1586121917]
 setting_count = 1
-settings/0/target_node = NodePath("../../../../PlayerCamera/ArmTarget_R")
+settings/0/target_node = NodePath("../../../TorchArmRotator/ArmTarget_R")
 settings/0/pole_node = NodePath("../../../ElbowPole_R")
 settings/0/root_bone_name = "UpperArm.R"
 settings/0/root_bone = 13
@@ -253,8 +262,7 @@ settings/0/end_bone = 16
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
-[node name="Arm_L" type="TwoBoneIK3D" parent="Model/Armature/Skeleton3D" index="6" unique_id=1313785607]
-influence = 0.0
+[node name="Arm_L" type="TwoBoneIK3D" parent="Model/Armature/Skeleton3D" index="5" unique_id=1313785607]
 setting_count = 1
 settings/0/target_node = NodePath("../../../ArmTarget_L")
 settings/0/pole_node = NodePath("../../../ElbowPole_L")
@@ -268,7 +276,7 @@ settings/0/end_bone = 8
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
-[node name="Leg_R" type="TwoBoneIK3D" parent="Model/Armature/Skeleton3D" index="7" unique_id=183227116]
+[node name="Leg_R" type="TwoBoneIK3D" parent="Model/Armature/Skeleton3D" index="6" unique_id=183227116]
 influence = 0.0
 setting_count = 1
 settings/0/target_node = NodePath("../../../LegTarget_R")
@@ -283,7 +291,7 @@ settings/0/end_bone = 27
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
-[node name="Leg_L" type="TwoBoneIK3D" parent="Model/Armature/Skeleton3D" index="8" unique_id=31824052]
+[node name="Leg_L" type="TwoBoneIK3D" parent="Model/Armature/Skeleton3D" index="7" unique_id=31824052]
 influence = 0.0
 setting_count = 1
 settings/0/target_node = NodePath("../../../LegTarget_L")
@@ -298,12 +306,47 @@ settings/0/end_bone = 23
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
+[node name="CopyTransformModifier3D" type="CopyTransformModifier3D" parent="Model/Armature/Skeleton3D" index="8" unique_id=1214935966]
+transform = Transform3D(1.3333334, 0, 0, 0, 1.3333334, 0, 0, 0, 1.3333334, 0, 1.2768887, 0)
+setting_count = 1
+settings/0/amount = 1.0
+settings/0/apply_bone_name = "Hand.R"
+settings/0/apply_bone = 16
+settings/0/reference_type = 1
+settings/0/reference_node = NodePath("../../../../PlayerCamera/TorchNode")
+settings/0/copy = 6
+settings/0/axes = 7
+settings/0/invert = 0
+settings/0/additive = false
+
+[node name="TorchArmRotator" type="Node3D" parent="Model" unique_id=46780767]
+transform = Transform3D(1.3333333, 0, 0, 0, 1.3333333, 0, 0, 0, 1.3333333, 0.6605139, 0.2403908, 0.23879719)
+
+[node name="ArmTarget_R" type="Marker3D" parent="Model/TorchArmRotator" unique_id=355148436]
+transform = Transform3D(0.6666667, 0, 0, 0, 0.6666667, 0, 0, 0, 0.6666667, 0.2568337, -0.06989646, -0.42890513)
+
+[node name="Torch" type="SpotLight3D" parent="Model/TorchArmRotator/ArmTarget_R" unique_id=241199280]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.038676023, -0.26662037, -0.76171035)
+shadow_enabled = true
+distance_fade_enabled = true
+spot_range = 72.8751
+spot_angle = 16.3053
+
+[node name="TorchOuter" type="SpotLight3D" parent="Model/TorchArmRotator/ArmTarget_R" unique_id=1750901896]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.038676023, -0.26662037, -0.76171035)
+light_energy = 0.3
+shadow_enabled = true
+distance_fade_enabled = true
+spot_range = 72.8751
+spot_angle = 45.968285
+
 [node name="AnimationTree" type="AnimationTree" parent="Model" unique_id=359014244]
 tree_root = SubResource("AnimationNodeBlendTree_y8xgx")
 anim_player = NodePath("../AnimationPlayer")
-parameters/TimeScale/scale = 6.240000000000002
-parameters/BlendSpace1D/blend_position = 2.477
-parameters/Add2/add_amount = 1.0
+parameters/TimeScale/scale = 1.0
+parameters/BlendSpace1D/blend_position = 1.0
+parameters/crouchValue/blend_amount = 0.0
+"parameters/Add2 2/add_amount" = 1.0
 
 [node name="SpringArm3D" type="SpringArm3D" parent="Model" unique_id=1304572400]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.82697886, 0.18050633)
@@ -322,10 +365,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.46, 4.4703484e-08, 0.816554
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.69521856, -0.34907874, 0.14781556)
 
 [node name="ElbowPole_R" type="Marker3D" parent="Model" unique_id=1947373697]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0.9962555, 0.07381287, 1.3928045)
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0.9962556, -0.14197484, 2.656942)
 
 [node name="ElbowPole_L" type="Marker3D" parent="Model" unique_id=1069371425]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.996, 0.074, 1.393)
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.996, -0.14178762, 2.6571374)
 
 [node name="LegTarget_L" type="Marker3D" parent="Model" unique_id=1794602539]
 transform = Transform3D(0.75, 0, 0, 0, 0.543887, -0.5164174, 0, 0.5164174, 0.543887, -0.315, -1.3285432, 0.12975001)
@@ -335,19 +378,10 @@ top_level = true
 transform = Transform3D(0.75, 0, 0, 0, 0.543887, -0.5164174, 0, 0.5164174, 0.543887, 0.315, -1.3285432, 0.12975001)
 top_level = true
 
-[node name="LegRotator" type="Node3D" parent="Model" unique_id=1913896779]
-transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, -2.197, 0.17300002)
-
-[node name="RunningTarget_L" type="Marker3D" parent="Model/LegRotator" unique_id=2116527174]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42, 0, -1)
-
-[node name="RunningTarget_R" type="Marker3D" parent="Model/LegRotator" unique_id=1624964836]
-transform = Transform3D(1, 0, 0, 0, 0.9999999, 0, 0, 0, 0.9999999, 0.42, 0, 1)
-
 [node name="KneePole_L" type="Marker3D" parent="Model" unique_id=461829740]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5627978, -1.092, -1.1200001)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5627978, -1.5473834, -1.3375719)
 
 [node name="KneePole_R" type="Marker3D" parent="Model" unique_id=876132740]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.563, -1.092, -1.12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5630001, -1.5473834, -1.3375716)
 
 [editable path="Model"]

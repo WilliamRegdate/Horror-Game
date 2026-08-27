@@ -12,14 +12,18 @@ public partial class Player : CharacterBody3D
 	private CapsuleShape3D _capsule;
 	[Export] PlayerCamera _camera;
 	[Export] Node3D _playerMesh; 
+	[Export] Node3D _torchNode;
 	private bool debugMode;
+	[Export] public bool IsCrouched;
 
     public override void _Ready()
     {
         _capsule = (CapsuleShape3D)_collider.Shape;
+		_torchNode.Hide();
 		if (!IsMultiplayerAuthority()) return;
 		_playerMesh.Hide();
 		_playerMesh.QueueFree();
+		_torchNode.Show();
     }
 
 
@@ -69,25 +73,31 @@ public partial class Player : CharacterBody3D
 			// 	SaveSceneToDisk(GetTree().Root.GetChild(0), "res://debug_dungeon_snapshot.tscn");
 			if (Input.IsActionPressed("game_crouch"))
 			{
-				_camera.IsCrouching = true;
-				Speed = BaseSpeed * 0.3f;
-				_collider.Position = new(0, -0.5f, 0);
-				_capsule.Height = 0.88f;
-			}
-
-			else if (Input.IsActionPressed("game_sprint"))
-			{
-				Speed = BaseSpeed * 2f;
+				IsCrouched = true;
 			}
 			else
 			{
 				if (!_checkForHead.IsColliding())
 				{
 					Speed = BaseSpeed;
+					IsCrouched = false;
 					_camera.IsCrouching = false;
 					_collider.Position = Vector3.Zero;
 					_capsule.Height = 2.0f;
+					_torchNode.Position = new (0.75f, -1, -0.65f);
 				}
+			}
+			if (IsCrouched)
+			{
+				_camera.IsCrouching = true;
+				Speed = BaseSpeed * 0.3f;
+				_collider.Position = new(0, -0.56f, 0);
+				_capsule.Height = 0.88f;
+				_torchNode.Position = new (0.75f, 0, -0.65f);
+			}
+			else if (Input.IsActionPressed("game_sprint"))
+			{
+				Speed = BaseSpeed * 2f;
 			}
 		}
 

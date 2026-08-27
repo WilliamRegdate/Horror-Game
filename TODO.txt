@@ -1,6 +1,4 @@
 gui scale slider
-Fullscreen mode
-
 
 stabalize multiplayer
 player crouch
