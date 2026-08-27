@@ -70,7 +70,7 @@ shader_parameter/blue_band_strength = 0.1
 shader_parameter/blue_band_glitch = 0.25
 shader_parameter/blue_band_distort_px = 1.2
 
-[node name="Menu" type="Node3D" unique_id=750598287 node_paths=PackedStringArray("_playMenu", "_optionsMenu", "_partyMenu", "_loadProgress", "_startGameButton", "_errorMessage", "_errorBox", "_ipInput")]
+[node name="Menu" type="Node3D" unique_id=750598287 node_paths=PackedStringArray("_playMenu", "_optionsMenu", "_partyMenu", "_loadProgress", "_startGameButton", "_errorMessage", "_errorBox", "_ipInput", "_menuPlayerSpawner")]
 script = ExtResource("1_dolsu")
 _playMenu = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu")
 _optionsMenu = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu")
@@ -80,6 +80,7 @@ _startGameButton = NodePath("CanvasLayer2/HSplitContainer/Party Menu/StartButton
 _errorMessage = NodePath("ErrorLayer/ColorRect/VBoxContainer/ErrorMessage")
 _errorBox = NodePath("ErrorLayer")
 _ipInput = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer/TextEdit")
+_menuPlayerSpawner = NodePath("MultiplayerSpawner")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=871504934]
 environment = SubResource("Environment_dolsu")
@@ -482,6 +483,7 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "OKAY"
 
+[connection signal="StartGame" from="." to="MultiplayerSpawner" method="OnStartGame"]
 [connection signal="toggled" from="CanvasLayer2/HSplitContainer/VBoxContainer/PlayButton" to="." method="ToggledPlaySignal"]
 [connection signal="toggled" from="CanvasLayer2/HSplitContainer/VBoxContainer/OptionsButton" to="." method="ToggledOptionsSignal"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/VBoxContainer/QuitButton" to="." method="PressedQuitSignal"]

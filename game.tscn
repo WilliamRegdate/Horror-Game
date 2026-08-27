@@ -111,7 +111,8 @@ mouse_filter = 2
 
 [connection signal="child_entered_tree" from="Players" to="Monster" method="OnPlayerAdded"]
 [connection signal="child_entered_tree" from="Players" to="Monster/monster_2" method="OnPlayerSpawned"]
-[connection signal="spawned" from="Players" to="Monster/monster_2" method="OnPlayerSpawned"]
+[connection signal="child_exiting_tree" from="Players" to="Monster" method="OnPlayerRemoved"]
+[connection signal="child_exiting_tree" from="Players" to="Monster/monster_2" method="OnPlayerRemoved"]
 
 [editable path="Monster"]
 [editable path="Monster/monster_2"]

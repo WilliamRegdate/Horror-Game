@@ -51,12 +51,10 @@ public partial class PlayerSpawner : MultiplayerSpawner
         var data = new Godot.Collections.Array { id, index };
         Spawn(data);
     }
-
     private void DespawnForPeer(long id)
     {
         GetNode(SpawnPath).GetNodeOrNull($"Player_{id}")?.QueueFree();
     }
-
     private Node SpawnPlayer(Variant data)
     {
         var args = data.AsGodotArray();

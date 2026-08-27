@@ -62,6 +62,12 @@ public partial class MonsterAI : CharacterBody3D
 		_players.Add(player as Player, new());
 		_locked = false;
 	}
+	public void OnPlayerRemoved(Node node)
+	{
+		if (node is Player player)
+			_players.Remove(player);
+	}
+
 	public override void _PhysicsProcess(double delta)
 	{
 		if (!IsMultiplayerAuthority())

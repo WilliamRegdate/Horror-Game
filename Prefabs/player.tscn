@@ -196,7 +196,7 @@ _torchArmJoint = NodePath("TorchArmRotator")
 _lookAtTarget = NodePath("../PlayerCamera/HeadTarget")
 _camera = NodePath("../PlayerCamera")
 
-[node name="Skeleton3D" parent="Model/Armature" parent_id_path=PackedInt32Array(1386582256, 712949339) index="0" unique_id=1066585452]
+[node name="Skeleton3D" parent="Model/Armature" parent_id_path=PackedInt32Array(1386582256, 1562057847) index="0" unique_id=998402447]
 bones/0/position = Vector3(-1.776357e-14, -0.177405, 0.26732177)
 bones/0/rotation = Quaternion(0.03258281, 0.7063558, 0.032582786, 0.70635563)
 bones/1/rotation = Quaternion(3.9996927e-08, -1.2919585e-07, -0.10238029, 0.9947453)
@@ -379,9 +379,9 @@ transform = Transform3D(0.75, 0, 0, 0, 0.543887, -0.5164174, 0, 0.5164174, 0.543
 top_level = true
 
 [node name="KneePole_L" type="Marker3D" parent="Model" unique_id=461829740]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5627978, -1.5473834, -1.3375719)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, -1.547, -1.338)
 
 [node name="KneePole_R" type="Marker3D" parent="Model" unique_id=876132740]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5630001, -1.5473834, -1.3375716)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, -1.547, -1.338)
 
 [editable path="Model"]

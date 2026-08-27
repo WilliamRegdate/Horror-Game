@@ -1,11 +1,9 @@
 gui scale slider
 
+interact button
 stabalize multiplayer
-player crouch
-prop syncing
 interact functionality
 navigation improvements
-interact button
 chalk
 
 death screen and dying

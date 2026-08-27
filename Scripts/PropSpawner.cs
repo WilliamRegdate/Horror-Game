@@ -15,6 +15,11 @@ public partial class PropSpawner : Node3D
 
     public override void _Ready()
     {
+        if (!IsMultiplayerAuthority()) 
+        {
+            QueueFree();
+            return;
+        }
         if (GetParent() is not GetRoomSet parent)
         {
             GD.PrintErr("Parent does not have GetRoomSet attached");
@@ -31,34 +36,18 @@ public partial class PropSpawner : Node3D
 
         IReadOnlyList<PropData> propList = generator.PropLoader.Props;
 
-        List<PropData> propsInSet = new();
+        List<int> propsInSet = new();
         for (int i = 0; i < propList.Count; i++)
         {
             if (propList[i].Set == propSet && propList[i].Shape == _shape)
-                propsInSet.Add(propList[i]);
+                propsInSet.Add(i);
         }
-
         if (propsInSet.Count == 0)
         {
-            GD.PrintErr($"No props found for set={propSet}, shape={_shape}");
+            GD.PrintErr($"No props found for set = {propSet}, shape = {_shape}");
             return;
         }
-
-        PackedScene chosenProp = propsInSet[GD.RandRange(0, propsInSet.Count - 1)].Scene;
-        Node3D node = chosenProp.Instantiate<Node3D>();
-
-        // Capture transform now while this node is still in the tree
-        Vector3 spawnPosition = Position;
-        Vector3 spawnRotation = Rotation;
-        Node parentNode = GetParent();
-
-        // Defer everything that touches the scene tree
-        Callable.From(() =>
-        {
-            parentNode.AddChild(node);
-            node.Position = spawnPosition;
-            node.Rotation = spawnRotation;
-        }).CallDeferred();
+        generator.Placements.Add(new ProceduralGenerator.PlacementRecord { SceneIndex = propsInSet[GD.RandRange(0, propsInSet.Count - 1)], Position = GlobalPosition, RotationDegrees = GlobalRotationDegrees, IsProp = true });
 
         QueueFree();
     }

@@ -84,6 +84,10 @@ public partial class Monster : Node3D
         skeleton.AddChild(_lookAtPlayersModifier);
         _lookAtPlayersModifier.AddTarget(node as Node3D);
     }
+    private void OnPlayerRemoved(Node node)
+    {
+        _lookAtPlayersModifier.RemoveTarget(node as Node3D);
+    }
 
     public override void _Process(double delta)
     {

@@ -44,6 +44,7 @@ public partial class MenuPlayerSpawner : MultiplayerSpawner
         if (!Multiplayer.IsServer()) return;
         Spawn(id);
     }
+    
 
     private void OnPeerDisconnected(long id)
     {
@@ -52,10 +53,18 @@ public partial class MenuPlayerSpawner : MultiplayerSpawner
         var label = GetNode(SpawnPath).GetNodeOrNull($"Player_{id}");
         label?.QueueFree();
     }
+    public void OnStartGame()
+    {
+        if (!Multiplayer.IsServer()) return;
+
+        foreach (Node child in GetChildren())
+            child.QueueFree();
+    }
 
     private Node SpawnPlayerLabel(Variant data)
     {
         long id = data.AsInt64();
-        return new Label { Name = $"Player_{id}", Text = $"<Player {id}>" };
+        return new Label { Name = $"{id}", Text = $"<Player {id}>" };
     }
+
 }

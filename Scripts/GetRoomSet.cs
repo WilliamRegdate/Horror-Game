@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 
 
@@ -16,8 +17,8 @@ public partial class GetRoomSet : MeshInstance3D
 			_propSet = "server";
 				break;
 			case 1:
-		_propSet = "office";
-			break;
+			_propSet = "office";
+				break;
 		}
 	}
 

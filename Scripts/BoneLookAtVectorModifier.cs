@@ -21,7 +21,11 @@ public partial class BoneLookAtVectorModifier : SkeletonModifier3D
     public void AddTarget(Node3D node)
     {
         targets.Add(node);
-        GD.Print(targets.Count);
+    }
+    public void RemoveTarget(Node3D node)
+    {
+        targets.Remove(node);
+        GD.Print("removed target");
     }
     private Quaternion _currentRot = Quaternion.Identity;
 

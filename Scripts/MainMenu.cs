@@ -138,6 +138,11 @@ public partial class MainMenu : Node3D
 	public void PressedStartGameSignal()
 	{
 		EmitSignal(SignalName.StartGame);
+		CallDeferred(nameof(SendBeginGameRpc));
+	}
+
+	private void SendBeginGameRpc()
+	{
 		Rpc(nameof(BeginGame));
 	}
 
@@ -146,10 +151,11 @@ public partial class MainMenu : Node3D
 	{
 		CallDeferred(nameof(SwitchToMainScene));
 	}
-
+	[Export] private MenuPlayerSpawner _menuPlayerSpawner;
 	private void SwitchToMainScene()
 	{
 		_worldInstance.Visible = true;
+
 		GetTree().CurrentScene?.QueueFree();
 		GetTree().CurrentScene = _worldInstance;
 
