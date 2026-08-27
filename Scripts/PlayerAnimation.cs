@@ -16,8 +16,9 @@ public partial class PlayerAnimation : Node3D
 
 	[Export] private float _ikFadeStartSpeed = 1.5f; 
 	[Export] private float _ikFadeEndSpeed = 2.5f;
-
 	[Export] private AnimationTree _animationTree;
+	private float _crouchAmount = 0;
+	[Export] Node3D _leftArmTarget;
 
 	public override void _Ready()
 	{
@@ -25,6 +26,8 @@ public partial class PlayerAnimation : Node3D
 		_player = GetParent() as Player;
 		TopLevel = true;
 		_animationTree.Active = true;
+		Vector3 worldRestForward = -_torchArmJoint.GlobalTransform.Basis.Z;
+    	_restForward = (_player.GlobalTransform.Basis.Inverse() * worldRestForward).Normalized();
 	}
 
 	public override void _Process(double delta)
@@ -32,11 +35,39 @@ public partial class PlayerAnimation : Node3D
 		RotateBody(delta);
 		UpdateMovementTracking(delta);
 		UpdateIkInfluence();
-		UpdateLocomotionBlend();
+		UpdateLocomotionBlend(delta);
 		Step(delta);
+		RotateTorchArm();
 	}
 
-	private void UpdateLocomotionBlend()
+	[Export] private Node3D _torchArmJoint;
+	[Export] private Node3D _lookAtTarget;
+	[Export] private float _maxAngleDegrees = 40f;
+
+	private Vector3 _restForward;
+	public void RotateTorchArm()
+	{
+		if (_torchArmJoint.GlobalPosition == _lookAtTarget.GlobalPosition)
+			return;
+
+		Vector3 currentRestForward = (_player.GlobalTransform.Basis * _restForward).Normalized();
+
+		Vector3 desiredDir = (_lookAtTarget.GlobalPosition - _torchArmJoint.GlobalPosition).Normalized();
+
+		float angle = currentRestForward.AngleTo(desiredDir);
+		float maxAngle = Mathf.DegToRad(_maxAngleDegrees);
+
+		Vector3 clampedDir = desiredDir;
+		if (angle > maxAngle)
+		{
+			Vector3 axis = currentRestForward.Cross(desiredDir).Normalized();
+			clampedDir = currentRestForward.Rotated(axis, maxAngle);
+		}
+
+		_torchArmJoint.LookAt(_torchArmJoint.GlobalPosition + clampedDir, Vector3.Up);
+	}
+
+	private void UpdateLocomotionBlend(double delta)
 	{
 		_animationTree.Set("parameters/BlendSpace1D/blend_position", _moveSpeed);
 
@@ -49,7 +80,19 @@ public partial class PlayerAnimation : Node3D
 		{
 			_animationTree.Set("parameters/TimeScale/scale", _moveSpeed * 0.69f * walkSpeed);
 		}
-		
+		if (_player.IsCrouched)
+		{
+			if (_crouchAmount < 1)
+				_crouchAmount += (float)delta * 2;
+		}
+		else
+		{
+			if (_crouchAmount > 0)
+				_crouchAmount -= (float)delta * 2;
+		}
+		_animationTree.Set("parameters/crouchValue/blend_amount",_crouchAmount);
+		_torchArmJoint.Position = new(0.661f, 0.24f - (_crouchAmount * 1.5f), 0.239f);
+		_leftArmTarget.Position = new(-0.695f, -0.35f - _crouchAmount, 0.148f);
 	}
 
 	private void UpdateIkInfluence()
@@ -177,7 +220,7 @@ public partial class PlayerAnimation : Node3D
 			}
 
 			Vector3 flatPos = _stepStartPos[i].Lerp(_stepEndPos[i], _stepProgress[i]);
-			float arc = Mathf.Sin(_stepProgress[i] * Mathf.Pi) * _stepArcHeight;
+			float arc = Mathf.Sin(_stepProgress[i] * Mathf.Pi) * _stepArcHeight * (1 - _crouchAmount * 0.9f);
 
 			SetLegTargetPosition(i, flatPos + Vector3.Up * arc);
 		}
