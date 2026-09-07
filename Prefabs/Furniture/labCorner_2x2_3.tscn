@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://djt4rpat3s0hr"]
+
+[ext_resource type="PackedScene" uid="uid://dxlf7t82dfewr" path="res://Prefabs/Furniture/locker.tscn" id="1_00ysv"]
+
+[node name="Node3D" type="Node3D" unique_id=1090894928]
+
+[node name="Locker" parent="." unique_id=1167403961 instance=ExtResource("1_00ysv")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0.20154476, 0, 1)
+
+[node name="Locker2" parent="." unique_id=670430695 instance=ExtResource("1_00ysv")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0.20154476, 0, 3.0293443)
+
+[node name="Locker3" parent="." unique_id=2116927071 instance=ExtResource("1_00ysv")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -0.1653136, 0, 5.239136)
+
+[node name="Locker4" parent="." unique_id=1994556129 instance=ExtResource("1_00ysv")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 1.8640308, 0, 5.239136)
+
+[node name="Locker5" parent="." unique_id=1350237325 instance=ExtResource("1_00ysv")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 3.9199238, 0, 5.239136)

@@ -2,7 +2,6 @@ gui scale slider
 
 interact button
 stabalize multiplayer
-interact functionality
 navigation improvements
 chalk
 

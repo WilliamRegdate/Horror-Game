@@ -66,7 +66,7 @@ public partial class PlayerAnimation : Node3D
 
 		_torchArmJoint.LookAt(_torchArmJoint.GlobalPosition + clampedDir, Vector3.Up);
 	}
-
+	
 	private void UpdateLocomotionBlend(double delta)
 	{
 		_animationTree.Set("parameters/BlendSpace1D/blend_position", _moveSpeed);

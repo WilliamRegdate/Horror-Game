@@ -8,6 +8,7 @@ public partial class GameManager : Node3D
     [Export] public PackedScene LevelMaker;
 	[Export] Node3D _monster;
     public ProceduralGenerator Generator;
+	public int GeneratorsOn;
     [Signal] public delegate void WorldReadyEventHandler();
 
     public override void _Ready()

@@ -49,12 +49,25 @@ public partial class MonsterAI : CharacterBody3D
     private bool _hasDestination = false;
 	private const float RotationSpeed = 2.0f;
 
+	// --- Chase audio ---
+	// Two players so we can overlap: while one is finishing, the other starts the next clip on top of it.
+	[Export] private AudioStreamPlayer3D _chaseAudioA;
+	[Export] private AudioStreamPlayer3D _chaseAudioB;
+	[Export] private Godot.Collections.Array<AudioStream> _chaseSounds = new();
+	[Export(PropertyHint.Range, "0,1,0.01")] private float _chaseOverlapFraction = 0.6f; // start next clip once current is this far through
+
+	private AudioStreamPlayer3D _activeChasePlayer;
+	private AudioStreamPlayer3D _inactiveChasePlayer;
+	private bool _chaseAudioActive = false;
+
     public override void _Ready()
     {
 		_agent.TargetPosition = Position;
 		_checkForPlayer.AddException(this);
 		_currentTarget = new();
 		_timer = 10;
+		_activeChasePlayer = _chaseAudioA;
+		_inactiveChasePlayer = _chaseAudioB;
     }
 
 	public void OnPlayerAdded(Node player)
@@ -107,7 +120,7 @@ public partial class MonsterAI : CharacterBody3D
 	//AI TIME!!
     public override void _Process(double delta)
     {
-	
+		UpdateChaseAudio(delta);
 		if (_locked || !IsMultiplayerAuthority())
 			return;
 		if (_startState)
@@ -321,7 +334,9 @@ public partial class MonsterAI : CharacterBody3D
 			_agent.TargetPosition = GlobalPosition;
 			_startState = false;
 			_secondaryTimer = 2.5;
+			StartChaseAudio();
 		}
+
 		if (_timer > 0)
 		{
 			_timer -= delta;
@@ -341,6 +356,7 @@ public partial class MonsterAI : CharacterBody3D
 		{
 			_startState = true;
 			_state = MonsterState.Hunt;
+			StopChaseAudio();
 		}
 	}
 	public void Taunt(double delta)
@@ -372,6 +388,82 @@ public partial class MonsterAI : CharacterBody3D
 	private Vector3 GetHintPosition(Vector3 targetPos, float hintAmount)
 	{
 		return GlobalPosition + ((targetPos - GlobalPosition) * hintAmount);
+	}
+
+	// --- Chase audio helpers ---
+
+	/// <summary>
+	/// Starts the chase-sound loop by playing a random clip on player A.
+	/// Safe to call even if no clips/players are assigned - it just does nothing.
+	/// </summary>
+	private void StartChaseAudio()
+	{
+		Rpc(nameof(RpcStartChaseAudio));
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable, CallLocal = true)]
+	private void RpcStartChaseAudio()
+	{
+		if (_chaseAudioA == null || _chaseAudioB == null || _chaseSounds == null || _chaseSounds.Count == 0)
+			return;
+
+		_chaseAudioActive = true;
+
+		PlayRandomChaseSound(_activeChasePlayer);
+	}
+
+	/// <summary>
+	/// Call every frame while in the Chase state. Watches the currently playing clip and,
+	/// once it's _chaseOverlapFraction of the way through, starts a new random clip on the
+	/// other player so the two overlap instead of leaving a gap.
+	/// </summary>
+	private void UpdateChaseAudio(double delta)
+	{
+		if (_activeChasePlayer == null || _inactiveChasePlayer == null)
+			return;
+
+		if (!_chaseAudioActive)
+			return;
+
+		if (_activeChasePlayer.Playing && _activeChasePlayer.Stream != null)
+		{
+			double length = _activeChasePlayer.Stream.GetLength();
+			if (length > 0)
+			{
+				double progress = _activeChasePlayer.GetPlaybackPosition() / length;
+				if (progress >= _chaseOverlapFraction && !_inactiveChasePlayer.Playing)
+				{
+					PlayRandomChaseSound(_inactiveChasePlayer);
+					// the one we just started becomes the new "active" (i.e. the one we watch for the next crossfade point)
+					(_activeChasePlayer, _inactiveChasePlayer) = (_inactiveChasePlayer, _activeChasePlayer);
+				}
+			}
+		}
+		else if (!_inactiveChasePlayer.Playing)
+		{
+			// fallback in case a stream's length was 0/unreadable and we never crossfaded in time -
+			// avoids total silence if something slipped through
+			PlayRandomChaseSound(_activeChasePlayer);
+		}
+	}
+
+	private void StopChaseAudio()
+	{
+		Rpc(nameof(RpcStopChaseAudio));
+	}
+ 
+	[Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable, CallLocal = true)]
+	private void RpcStopChaseAudio()
+	{
+		_chaseAudioActive = false;
+	}
+
+
+	private void PlayRandomChaseSound(AudioStreamPlayer3D player)
+	{
+		int soundIndex = GD.RandRange(0, _chaseSounds.Count - 1);
+		player.Stream = _chaseSounds[soundIndex];
+		player.Play();
 	}
 
 }

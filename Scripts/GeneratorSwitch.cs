@@ -15,6 +15,13 @@ public partial class GeneratorSwitch : Area3D, IInteractable
 	}
 	public void Interact(Player player)
 	{
-		_light.LightEnergy = 16;
+		Rpc(nameof(RunGenerator), 16f);
+
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	private void RunGenerator(float energy)
+	{
+		_light.LightEnergy = energy;
 	}
 }
