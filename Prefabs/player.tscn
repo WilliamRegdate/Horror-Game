@@ -10,6 +10,8 @@
 [ext_resource type="Script" uid="uid://bdpgje3vanaq5" path="res://Scripts/InteractRay.cs" id="8_4qbli"]
 [ext_resource type="PackedScene" uid="uid://2m4egrxi26rs" path="res://Assets/Models/Player.glb" id="9_08u7w"]
 [ext_resource type="Script" uid="uid://bhddl0qm2y2h3" path="res://Scripts/PlayerAnimation.cs" id="10_kgmex"]
+[ext_resource type="FontFile" uid="uid://c45rhuei47ung" path="res://Assets/Fonts/Teletactile-3zavL.ttf" id="11_2xbkd"]
+[ext_resource type="ArrayMesh" uid="uid://vsaq73bmi4hi" path="res://Assets/Models/flashlight.obj" id="12_3vpsw"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_degqt"]
 
@@ -144,7 +146,7 @@ volume_db = 80.0
 max_db = 6.0
 
 [node name="InteractRay" type="RayCast3D" parent="PlayerCamera" unique_id=171824802 node_paths=PackedStringArray("_player")]
-target_position = Vector3(0, 0, -5)
+target_position = Vector3(0, 0, -6)
 collision_mask = 9
 script = ExtResource("8_4qbli")
 _player = NodePath("../..")
@@ -184,7 +186,7 @@ physics_interpolation_mode = 1
 replication_config = SubResource("SceneReplicationConfig_4qbli")
 visibility_update_mode = 1
 
-[node name="Model" parent="." unique_id=1386582256 node_paths=PackedStringArray("_footRestPositions", "_legTargets", "_ikInfluenceTargets", "_animationTree", "_leftArmTarget", "_torchArmJoint", "_lookAtTarget", "_camera") instance=ExtResource("9_08u7w")]
+[node name="Model" parent="." unique_id=1386582256 node_paths=PackedStringArray("_footRestPositions", "_legTargets", "_ikInfluenceTargets", "_animationTree", "_leftArmTarget", "_nameBadge", "_torchArmJoint", "_lookAtTarget", "_camera") instance=ExtResource("9_08u7w")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.2128046, 0)
 script = ExtResource("10_kgmex")
 _footRestPositions = [NodePath("SpringArm3D/Node3D/FootRest_L"), NodePath("SpringArm3D/Node3D/FootRest_R")]
@@ -192,6 +194,7 @@ _legTargets = [NodePath("LegTarget_L"), NodePath("LegTarget_R")]
 _ikInfluenceTargets = [NodePath("Armature/Skeleton3D/Arm_L"), NodePath("Armature/Skeleton3D/Leg_R"), NodePath("Armature/Skeleton3D/Leg_L")]
 _animationTree = NodePath("AnimationTree")
 _leftArmTarget = NodePath("ArmTarget_L")
+_nameBadge = NodePath("Armature/Skeleton3D/BoneAttachment3D2/Name")
 _torchArmJoint = NodePath("TorchArmRotator")
 _lookAtTarget = NodePath("../PlayerCamera/HeadTarget")
 _camera = NodePath("../PlayerCamera")
@@ -233,8 +236,10 @@ transform = Transform3D(0.3890162, 0.099666, 1.271421, -0.27043155, -1.2925801, 
 bone_name = "finger1.R"
 bone_idx = 17
 
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Model/Armature/Skeleton3D/BoneAttachment3D" unique_id=1079429140]
-transform = Transform3D(0.028474974, -0.23863159, 0.009278, 0.07947888, 0.033466633, -0.07458397, 0.070514396, 0.058642447, 0.08031908, -0.06859791, 0.07794938, -0.050395727)
+[node name="Flashlight" type="MeshInstance3D" parent="Model/Armature/Skeleton3D/BoneAttachment3D" unique_id=1744230879]
+transform = Transform3D(0.96212727, -0.2207593, -0.1599304, -0.15326095, -0.9232275, 0.35236895, -0.22544013, -0.31451318, -0.9220946, -0.019185781, 0.06751654, -0.072874784)
+mesh = ExtResource("12_3vpsw")
+skeleton = NodePath("../../../../..")
 
 [node name="HeadLookAt" type="LookAtModifier3D" parent="Model/Armature/Skeleton3D" index="3" unique_id=317811796]
 target_node = NodePath("../../../../PlayerCamera/HeadTarget")
@@ -318,6 +323,20 @@ settings/0/copy = 6
 settings/0/axes = 7
 settings/0/invert = 0
 settings/0/additive = false
+
+[node name="BoneAttachment3D2" type="BoneAttachment3D" parent="Model/Armature/Skeleton3D" index="9" unique_id=2030013361]
+transform = Transform3D(6.318288e-09, 1.01231905e-07, 1.0000001, -0.112689465, 0.9936304, -9.966202e-08, -0.99363023, -0.11268939, 2.0788661e-08, 2.507584e-08, 0.38115054, 0.31896174)
+bone_name = "Spine"
+bone_idx = 1
+
+[node name="Name" type="Label3D" parent="Model/Armature/Skeleton3D/BoneAttachment3D2" unique_id=77253777]
+transform = Transform3D(0.0013706671, -0.550984, 0.76324916, -0.0021337944, 0.8577066, 0.49030548, -0.64187026, -0.0040279366, -8.1483854e-08, 0.4954967, 0.5155875, 0.0027419114)
+pixel_size = 0.003
+shaded = true
+double_sided = false
+modulate = Color(0.3515629, 0.3515629, 0.35156286, 1)
+font = ExtResource("11_2xbkd")
+font_size = 22
 
 [node name="TorchArmRotator" type="Node3D" parent="Model" unique_id=46780767]
 transform = Transform3D(1.3333333, 0, 0, 0, 1.3333333, 0, 0, 0, 1.3333333, 0.6605139, 0.2403908, 0.23879719)

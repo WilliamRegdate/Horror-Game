@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://djn222nyfsqcg" path="res://Prefabs/Furniture/serverMiddle_2x3_2.tscn" id="4_dc3kh"]
 [ext_resource type="Script" uid="uid://13gfmwxyvaci" path="res://Scripts/PropSpawner.cs" id="5_ff1k4"]
 [ext_resource type="PackedScene" uid="uid://b3gp8tl2eiqkj" path="res://Prefabs/Furniture/serverCorner_2x2_1.tscn" id="5_vk7mh"]
+[ext_resource type="ArrayMesh" uid="uid://bin7vraa4nxh5" path="res://Assets/Models/Environment/Furniture/labCorner_2x2_2.obj" id="8_5puya"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_h6qtp"]
 
@@ -60,7 +61,8 @@ script = ExtResource("5_ff1k4")
 _shape = "wall_1x2"
 
 [node name="PropSpawner5" parent="." unique_id=2128492635 instance=ExtResource("5_vk7mh")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 24.574825, 0, -10)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 24.32653, 0, -10.019099)
+mesh = ExtResource("8_5puya")
 script = ExtResource("5_ff1k4")
 _shape = "corner_2x2"
 

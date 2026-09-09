@@ -17,14 +17,17 @@ public partial class MainMenu : Node3D
 	[Export] private Label _errorMessage;
 	[Export] private CanvasLayer _errorBox;
 	[Export] private TextEdit _ipInput;
-
+	[Export] private LineEdit _nameInput;
+	[Export] private Label _playerList;
 
 	private NetworkHandler _networkHandler;
     public override void _Ready()
     {
 		_networkHandler = GetNode<NetworkHandler>("/root/NetworkHandler");
 		_networkHandler.NetworkStopped += _partyMenu.Hide;
-		
+		_networkHandler.UpdatePlayerNames += UpdatePlayerList;
+		Multiplayer.ConnectedToServer += AddPlayerName;
+		Multiplayer.PeerDisconnected += RemovePlayerName;
 
         _optionsMenu.Visible = false;
 		_playMenu.Visible = false;
@@ -32,11 +35,20 @@ public partial class MainMenu : Node3D
 		_startGameButton.Visible = false;
 		_loadProgress.Visible = true;
 		_errorBox.Visible = false;
+
+		
+		Input.MouseMode = Input.MouseModeEnum.Visible;
     }
 
 	public override void _Process(double delta)
     {
+		if (_networkHandler.JustDisconnectedFromServer)
+		{
+			PrintError(_networkHandler.lastDisconnectReason);
+			_networkHandler.JustDisconnectedFromServer = false;
+		}
         if (!_isLoading) return;
+		
 
         var status = ResourceLoader.LoadThreadedGetStatus(GameScenePath);
         if (status != ResourceLoader.ThreadLoadStatus.Loaded)
@@ -65,6 +77,14 @@ public partial class MainMenu : Node3D
         	_loadProgress.Value = _worldInstance.Generator.Progress;
 		}
     }
+	private void UpdatePlayerList()
+	{
+		_playerList.Text = "";
+		foreach((int id, string name) in _networkHandler.PlayerNames)
+		{
+			_playerList.Text += $"{name}\n";
+		}	
+	}
 
     private void OnWorldReady(Node3D worldInstance)
     {
@@ -72,7 +92,6 @@ public partial class MainMenu : Node3D
 		_loadProgress.Visible = false;
 		_startGameButton.Visible = true;
     }
-
 	public void ToggledPlaySignal(bool toggledOn)
 	{
 		_playMenu.Visible = toggledOn;
@@ -93,6 +112,7 @@ public partial class MainMenu : Node3D
 			PrintError("Cannot host server: already connected to a server.\n Try leaving the current server first");
 			return;
 		}
+		_networkHandler.SubmitPlayerName(_nameInput.Text);
 		_partyMenu.Visible = true;
 		_isLoading = true;
 		_loadProgress.Visible = true;
@@ -106,6 +126,7 @@ public partial class MainMenu : Node3D
 			PrintError("Cannot Join server: already connected to a server.\n Try leaving the current server first");
 			return;
 		}
+
 		_partyMenu.Visible = true;
 		_loadProgress.Visible = false;
 		CanvasItem ipTextBox = _playMenu.GetChild(2) as CanvasItem;
@@ -133,6 +154,7 @@ public partial class MainMenu : Node3D
     {
         _networkHandler.NetworkStopped -= _partyMenu.Hide;
 		StartGame -= _worldInstance.OnStartGame;
+		_networkHandler.UpdatePlayerNames -= UpdatePlayerList;
     }
 	[Signal] public delegate void StartGameEventHandler();
 	public void PressedStartGameSignal()
@@ -151,7 +173,6 @@ public partial class MainMenu : Node3D
 	{
 		CallDeferred(nameof(SwitchToMainScene));
 	}
-	[Export] private MenuPlayerSpawner _menuPlayerSpawner;
 	private void SwitchToMainScene()
 	{
 		_worldInstance.Visible = true;
@@ -166,6 +187,14 @@ public partial class MainMenu : Node3D
 	{
 		_errorBox.Show();
 		_errorMessage.Text = message;
+	}
+	private void AddPlayerName()
+	{
+		_networkHandler.SubmitPlayerName(_nameInput.Text);
+	}
+	public void RemovePlayerName(long id)
+	{
+		_networkHandler.RemovePlayerName((int)id);
 	}
 }
 

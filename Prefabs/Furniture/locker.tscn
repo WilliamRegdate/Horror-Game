@@ -77,6 +77,9 @@ shadow_mesh = SubResource("ArrayMesh_1lpvr")
 [sub_resource type="BoxShape3D" id="BoxShape3D_j83vq"]
 size = Vector3(0.057266235, 3.999977, 1.1127644)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_sfupo"]
+size = Vector3(0.057266235, 3.999977, 1.9861379)
+
 [sub_resource type="ArrayMesh" id="ArrayMesh_jxs5s"]
 _surfaces = [{
 "aabb": AABB(-0.0349377, -4.319682, -2.040665, 0.10000001, 4.220251, 2.0330472),
@@ -121,7 +124,7 @@ size = Vector3(0.25013733, 4.225891, 2.0344543)
 libraries/ = SubResource("AnimationLibrary_w5yqu")
 
 [node name="Cupboard" type="MeshInstance3D" parent="." unique_id=1411993209]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.4997625, 0)
+transform = Transform3D(1.2, 0, 0, 0, 1, 0, 0, 0, 1, -0.5098994, -1.4997625, 0)
 material_override = ExtResource("2_sfupo")
 mesh = SubResource("ArrayMesh_nugg7")
 skeleton = NodePath("")
@@ -132,12 +135,16 @@ skeleton = NodePath("")
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.933595, 1.0008655, -0.9730428)
 shape = SubResource("BoxShape3D_j83vq")
 
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="Cupboard/StaticBody3D" unique_id=1340558213]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4813247, 1.0008655, 0.0018285811)
+shape = SubResource("BoxShape3D_sfupo")
+
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="Cupboard/StaticBody3D" unique_id=1605863571]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.933595, 1.0008655, 0.9726369)
 shape = SubResource("BoxShape3D_j83vq")
 
 [node name="Door" type="MeshInstance3D" parent="." unique_id=52852601]
-transform = Transform3D(0.905042, 0, 0, 0, 0.905042, 0, 0, 0, 0.905042, 1.4095004, 1.499732, 0.92689073)
+transform = Transform3D(0.905042, 0, 0, 0, 0.905042, 0, 0, 0, 0.905042, 1.17023, 1.499732, 0.92689073)
 material_override = ExtResource("2_sfupo")
 mesh = SubResource("ArrayMesh_t4gu1")
 skeleton = NodePath("")

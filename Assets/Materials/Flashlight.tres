@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://chtmqo8l3fp4"]
+
+[ext_resource type="Texture2D" uid="uid://dtgeia1nuc2it" path="res://Assets/Textures/flashlight_BaseColor.png" id="1_hdr4q"]
+[ext_resource type="Texture2D" uid="uid://3pych6um1rc0" path="res://Assets/Textures/flashlight_Immissive.png" id="2_lkaj2"]
+[ext_resource type="Texture2D" uid="uid://dj7m0md8dj0vb" path="res://Assets/Textures/flashlight_Specular.png" id="3_g1vxn"]
+[ext_resource type="Texture2D" uid="uid://qf3mc0usoekx" path="res://Assets/Textures/flashlight_Roughness.png" id="4_yupye"]
+
+[resource]
+albedo_texture = ExtResource("1_hdr4q")
+metallic = 1.0
+metallic_texture = ExtResource("3_g1vxn")
+roughness_texture = ExtResource("4_yupye")
+emission_enabled = true
+emission_texture = ExtResource("2_lkaj2")

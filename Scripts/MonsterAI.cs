@@ -62,6 +62,8 @@ public partial class MonsterAI : CharacterBody3D
 
     public override void _Ready()
     {
+			
+
 		_agent.TargetPosition = Position;
 		_checkForPlayer.AddException(this);
 		_currentTarget = new();
@@ -79,6 +81,16 @@ public partial class MonsterAI : CharacterBody3D
 	{
 		if (node is Player player)
 			_players.Remove(player);
+		GD.Print("player removed");
+		int largestAwareness = 0;
+		foreach((Player currentPlayer, PlayerTracker playerData) in _players)
+		{
+			if (playerData.Awareness > largestAwareness) //set target to the next most ovbious target if a player is removed
+			{
+				largestAwareness = (int)playerData.Awareness;
+				_currentTarget = currentPlayer;
+			}
+		}
 	}
 
 	public override void _PhysicsProcess(double delta)

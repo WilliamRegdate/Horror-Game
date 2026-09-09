@@ -19,6 +19,9 @@ public partial class PlayerAnimation : Node3D
 	[Export] private AnimationTree _animationTree;
 	private float _crouchAmount = 0;
 	[Export] Node3D _leftArmTarget;
+	[Export] Label3D _nameBadge;
+	
+	public NetworkHandler _networkHandler;
 
 	public override void _Ready()
 	{
@@ -28,6 +31,10 @@ public partial class PlayerAnimation : Node3D
 		_animationTree.Active = true;
 		Vector3 worldRestForward = -_torchArmJoint.GlobalTransform.Basis.Z;
     	_restForward = (_player.GlobalTransform.Basis.Inverse() * worldRestForward).Normalized();
+		_networkHandler = GetNode<NetworkHandler>("/root/NetworkHandler");
+		_nameBadge.Text = _networkHandler.PlayerNames[GetMultiplayerAuthority()];
+
+		
 	}
 
 	public override void _Process(double delta)

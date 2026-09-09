@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://c2kymqgrv4k4n" path="res://Scripts/GetRoomSet.cs" id="3_oqtpn"]
 [ext_resource type="PackedScene" uid="uid://b3gp8tl2eiqkj" path="res://Prefabs/Furniture/serverCorner_2x2_1.tscn" id="4_boqs8"]
 [ext_resource type="Script" uid="uid://13gfmwxyvaci" path="res://Scripts/PropSpawner.cs" id="5_ehywy"]
+[ext_resource type="ArrayMesh" uid="uid://bwq53ehghvvvy" path="res://Assets/Models/Environment/Furniture/officeCorner_2x2_1.obj" id="5_klodx"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_y8xgx"]
 vertices = PackedVector3Array(-12.5, -2, -1.25, -12.5, -2, 1.25, -11.25, -2, 2, -11.25, -2, -2, -2, -2, 11.25, -1.25, -2, 12.5, 1.25, -2, 12.5, 2, -2, 11.25, 11.25, -2, 2, 12.5, -2, 1.25, 12.5, -2, -1.25, 11.25, -2, -2, 2, -2, -11.25, 1.25, -2, -12.5, -1.25, -2, -12.5, -2, -2, -11.25, -11.25, -2, -11.25, -11.25, -2, 11.5, 11.25, -2, 11.5, 11.25, -2, -11.25)
@@ -49,23 +50,27 @@ shape = SubResource("BoxShape3D_4eab5")
 
 [node name="PropSpawner5" parent="." unique_id=986384125 instance=ExtResource("4_boqs8")]
 transform = Transform3D(-1, 0, -8.742279e-08, 0, 1, 0, 8.742279e-08, 0, -1, 9.843727, 0, -4.397048)
+mesh = ExtResource("5_klodx")
 script = ExtResource("5_ehywy")
 _shape = "corner_2x2"
 
 [node name="PropSpawner6" parent="." unique_id=1916464715 instance=ExtResource("4_boqs8")]
-transform = Transform3D(1, 0, 1.7484558e-07, 0, 1, 0, -1.7484558e-07, 0, 1, -9.851107, 0, 4.44668)
+transform = Transform3D(1, 0, 1.7484558e-07, 0, 1, 0, -1.7484558e-07, 0, 1, -10.016924, 0, 4.3637714)
+mesh = ExtResource("5_klodx")
 skeleton = NodePath("../PropSpawner5")
 script = ExtResource("5_ehywy")
 _shape = "corner_2x2"
 
 [node name="PropSpawner7" parent="." unique_id=1951059479 instance=ExtResource("4_boqs8")]
 transform = Transform3D(3.0597977e-07, 0, -1, 0, 1, 0, 1, 0, 3.0597977e-07, -4.3474174, 0, -9.851107)
+mesh = ExtResource("5_klodx")
 skeleton = NodePath("../PropSpawner6")
 script = ExtResource("5_ehywy")
 _shape = "corner_2x2"
 
 [node name="PropSpawner8" parent="." unique_id=1023569105 instance=ExtResource("4_boqs8")]
-transform = Transform3D(-3.9340256e-07, 0, 1, 0, 1, 0, -1, 0, -3.9340256e-07, 4.5177364, 0, 9.8859825)
+transform = Transform3D(-3.9340256e-07, 0, 1, 0, 1, 0, -1, 0, -3.9340256e-07, 4.344926, 0, 9.8859825)
+mesh = ExtResource("5_klodx")
 skeleton = NodePath("../PropSpawner5")
 script = ExtResource("5_ehywy")
 _shape = "corner_2x2"

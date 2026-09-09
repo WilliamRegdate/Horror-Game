@@ -1,0 +1,13 @@
+# Blender 5.2.1 LTS MTL File: 'flashlight.blend'
+# www.blender.org
+
+newmtl Material.001
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd D:/apps/GitHub/Horror-Game/Assets/Textures/flashlight_BaseColor.png
+map_refl D:/apps/GitHub/Horror-Game/Assets/Textures/flashlight_Specular.png
+map_Ke D:/apps/GitHub/Horror-Game/Assets/Textures/flashlight_Immissive.png

@@ -1,6 +1,6 @@
 using Godot;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 public partial class GameManager : Node3D
@@ -11,9 +11,13 @@ public partial class GameManager : Node3D
 	public int GeneratorsOn;
     [Signal] public delegate void WorldReadyEventHandler();
 
+	public NetworkHandler _networkHandler;
+
     public override void _Ready()
 	{
-
+		_networkHandler = GetNode<NetworkHandler>("/root/NetworkHandler");
+		_networkHandler.NetworkStopped += OnServerClosed;
+		
 		Generator = LevelMaker.Instantiate() as ProceduralGenerator;
 		Generator.PrewarmAabbCache();
 
@@ -33,6 +37,14 @@ public partial class GameManager : Node3D
 		});
 	}
 
+	private void OnServerClosed()
+	{
+		// _networkHandler.lastDisconnectReason  = "Disconnected from the server.";
+		// _networkHandler.JustDisconnectedFromServer = true;
+		ProcessMode = ProcessModeEnum.Disabled; //freeze processing to stop crash
+		GetTree().ChangeSceneToFile("res://Menu.tscn");
+		_networkHandler.NetworkStopped -= OnServerClosed;
+	}
 
 	private void OnGenerationComplete()
 	{

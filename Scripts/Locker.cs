@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public partial class Locker : Area3D, IInteractable
 {
@@ -8,20 +7,17 @@ public partial class Locker : Area3D, IInteractable
 
 	public void Interact(Player player)
 	{
+		if (animation.IsPlaying())
+		{
+			return;
+		}
+		_isOpen = !_isOpen;
 		Rpc(nameof(MoveDoor), _isOpen);
 	}
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-	private void MoveDoor(bool open)
+	private void MoveDoor(bool isOpen)
 	{
-		_isOpen = open;
-		if (_isOpen)
-		{
-			animation.Play("Close");
-		}
-		else
-		{
-			animation.Play("Open");
-		}
-		_isOpen = !_isOpen;
+		_isOpen = isOpen;
+		animation.Play(isOpen ? "Open" : "Close");
 	}
 }

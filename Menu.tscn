@@ -6,10 +6,10 @@
 [ext_resource type="FontFile" uid="uid://c45rhuei47ung" path="res://Assets/Fonts/Teletactile-3zavL.ttf" id="3_cx167"]
 [ext_resource type="PackedScene" uid="uid://df7hfxwmhlttd" path="res://Prefabs/Rooms/drill.tscn" id="3_ylpcl"]
 [ext_resource type="Theme" uid="uid://87sp4rn4eiee" path="res://MenuTheme.tres" id="5_n4eug"]
-[ext_resource type="Script" uid="uid://bvykotri8rdls" path="res://Scripts/MenuPlayerSpawner.cs" id="7_dlksc"]
 [ext_resource type="Script" uid="uid://c7f35gv5pu4rs" path="res://Scripts/OptionsMenu.cs" id="8_1igrg"]
 [ext_resource type="Script" uid="uid://vyajwa84ndrp" path="res://Scripts/ResolutionChanger.cs" id="8_5p1lm"]
 [ext_resource type="Script" uid="uid://bw0iecjc28v3v" path="res://Scripts/Menu/EnableFullscreen.cs" id="9_1igrg"]
+[ext_resource type="Script" uid="uid://br3orqjaa8l6l" path="res://Scripts/ChangePLayerName.cs" id="10_1igrg"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_cx167"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -38,7 +38,7 @@ glow_enabled = true
 fog_enabled = true
 fog_light_color = Color(0, 0, 0, 1)
 fog_light_energy = 0.0
-fog_density = 0.039
+fog_density = 0.02
 
 [sub_resource type="CameraAttributesPhysical" id="CameraAttributesPhysical_n4eug"]
 
@@ -70,7 +70,7 @@ shader_parameter/blue_band_strength = 0.1
 shader_parameter/blue_band_glitch = 0.25
 shader_parameter/blue_band_distort_px = 1.2
 
-[node name="Menu" type="Node3D" unique_id=750598287 node_paths=PackedStringArray("_playMenu", "_optionsMenu", "_partyMenu", "_loadProgress", "_startGameButton", "_errorMessage", "_errorBox", "_ipInput", "_menuPlayerSpawner")]
+[node name="Menu" type="Node3D" unique_id=750598287 node_paths=PackedStringArray("_playMenu", "_optionsMenu", "_partyMenu", "_loadProgress", "_startGameButton", "_errorMessage", "_errorBox", "_ipInput", "_nameInput", "_playerList")]
 script = ExtResource("1_dolsu")
 _playMenu = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu")
 _optionsMenu = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu")
@@ -80,7 +80,8 @@ _startGameButton = NodePath("CanvasLayer2/HSplitContainer/Party Menu/StartButton
 _errorMessage = NodePath("ErrorLayer/ColorRect/VBoxContainer/ErrorMessage")
 _errorBox = NodePath("ErrorLayer")
 _ipInput = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer/TextEdit")
-_menuPlayerSpawner = NodePath("MultiplayerSpawner")
+_nameInput = NodePath("CanvasLayer2/HSplitContainer/Party Menu/LineEdit")
+_playerList = NodePath("CanvasLayer2/HSplitContainer/Party Menu/Players/PlayerList")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=871504934]
 environment = SubResource("Environment_dolsu")
@@ -106,7 +107,8 @@ stream = ExtResource("2_ylpcl")
 autoplay = true
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=897591210]
-transform = Transform3D(0.8038574, 0.11094832, -0.5843832, 0, 0.9824505, 0.18652354, 0.59482205, -0.14993833, 0.7897501, -45.43061, 12.369792, 7.2382336)
+transform = Transform3D(-0.70918965, -0.20480582, -0.6746145, -0.053411126, 0.96973336, -0.23825236, 0.7029917, -0.13293412, -0.69866383, -35.780144, 9.377, -113.84337)
+fov = 52.9
 
 [node name="Node3D" parent="." unique_id=972607526 instance=ExtResource("3_ylpcl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8691568, 0, -128.47746)
@@ -125,9 +127,10 @@ offset_bottom = -44.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("5_n4eug")
-split_offsets = PackedInt32Array(0, 0)
+split_offsets = PackedInt32Array(146, -183)
 dragging_enabled = false
 dragger_visibility = 1
+split_offset = 146
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer" unique_id=1519465539]
 layout_mode = 2
@@ -401,6 +404,9 @@ theme = ExtResource("5_n4eug")
 [node name="Players" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=215472306]
 layout_mode = 2
 
+[node name="PlayerList" type="Label" parent="CanvasLayer2/HSplitContainer/Party Menu/Players" unique_id=1722451686]
+layout_mode = 2
+
 [node name="LeaveGroup" type="Button" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=451030988]
 layout_mode = 2
 theme = ExtResource("5_n4eug")
@@ -437,9 +443,23 @@ offset_right = 183.0
 offset_bottom = 25.0
 text = "Loading..."
 
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=762956721]
-spawn_path = NodePath("../CanvasLayer2/HSplitContainer/Party Menu/Players")
-script = ExtResource("7_dlksc")
+[node name="Label2" type="Label" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=1969017901]
+layout_mode = 2
+size_flags_vertical = 10
+text = "Player:"
+
+[node name="LineEdit" type="LineEdit" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=1817843678]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+text = "Player"
+placeholder_text = "Input Name"
+
+[node name="Change PLayer Name" type="Button" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=1643253193 node_paths=PackedStringArray("_text")]
+layout_mode = 2
+text = "Change Name"
+script = ExtResource("10_1igrg")
+_text = NodePath("../LineEdit")
 
 [node name="ErrorLayer" type="CanvasLayer" parent="." unique_id=1663550498]
 
@@ -483,7 +503,6 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "OKAY"
 
-[connection signal="StartGame" from="." to="MultiplayerSpawner" method="OnStartGame"]
 [connection signal="toggled" from="CanvasLayer2/HSplitContainer/VBoxContainer/PlayButton" to="." method="ToggledPlaySignal"]
 [connection signal="toggled" from="CanvasLayer2/HSplitContainer/VBoxContainer/OptionsButton" to="." method="ToggledOptionsSignal"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/VBoxContainer/QuitButton" to="." method="PressedQuitSignal"]
@@ -493,4 +512,5 @@ text = "OKAY"
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer/ApplyOptions" to="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer" method="ApplySettings"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/Party Menu/LeaveGroup" to="." method="PressedLeaveGroupSignal"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/Party Menu/StartButton" to="." method="PressedStartGameSignal"]
+[connection signal="pressed" from="CanvasLayer2/HSplitContainer/Party Menu/Change PLayer Name" to="CanvasLayer2/HSplitContainer/Party Menu/Change PLayer Name" method="OnPressed"]
 [connection signal="pressed" from="ErrorLayer/ColorRect/VBoxContainer/Button" to="ErrorLayer" method="hide"]

@@ -12,6 +12,10 @@ public partial class InteractRay : RayCast3D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _PhysicsProcess(double delta)
 	{
+		if (!IsMultiplayerAuthority())
+		{
+			return;
+		}
 
 		if (Input.IsActionJustPressed("interact")&& IsColliding())
 		{

@@ -15,15 +15,25 @@ public partial class Player : CharacterBody3D
 	[Export] Node3D _torchNode;
 	private bool debugMode;
 	[Export] public bool IsCrouched;
+	NetworkHandler _networkHandler;
 
     public override void _Ready()
     {
+		_networkHandler = GetNode<NetworkHandler>("/root/NetworkHandler");
         _capsule = (CapsuleShape3D)_collider.Shape;
 		_torchNode.Hide();
 		if (!IsMultiplayerAuthority()) return;
 		_playerMesh.Hide();
 		_playerMesh.QueueFree();
 		_torchNode.Show();
+    }
+	    public override void _Process(double delta)
+    {
+		if (!IsMultiplayerAuthority()) return;
+        if (Input.IsActionJustPressed("ui_cancel"))
+		{
+			_networkHandler.Disconnect();
+		}
     }
 
 

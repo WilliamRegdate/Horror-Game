@@ -1,8 +1,7 @@
 gui scale slider
 
-interact button
+fix AI
 stabalize multiplayer
-navigation improvements
 chalk
 
 death screen and dying

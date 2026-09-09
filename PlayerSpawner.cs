@@ -21,14 +21,7 @@ public partial class PlayerSpawner : MultiplayerSpawner
     {
         SpawnFunction = new Callable(this, nameof(SpawnPlayer));
     }
-
-    public override void _ExitTree()
-    {
-        if (!Multiplayer.IsServer()) return;
-        Multiplayer.PeerConnected -= SpawnForPeer;
-        Multiplayer.PeerDisconnected -= DespawnForPeer;
-    }
-
+    
     public void BeginSpawning()
     {
         if (!Multiplayer.IsServer()) return;
