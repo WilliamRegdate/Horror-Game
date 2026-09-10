@@ -12,6 +12,8 @@
 [ext_resource type="Script" uid="uid://bhddl0qm2y2h3" path="res://Scripts/PlayerAnimation.cs" id="10_kgmex"]
 [ext_resource type="FontFile" uid="uid://c45rhuei47ung" path="res://Assets/Fonts/Teletactile-3zavL.ttf" id="11_2xbkd"]
 [ext_resource type="ArrayMesh" uid="uid://vsaq73bmi4hi" path="res://Assets/Models/flashlight.obj" id="12_3vpsw"]
+[ext_resource type="Script" uid="uid://dnupslqcs7v02" path="res://Scripts/PauseMenu.cs" id="13_b30ri"]
+[ext_resource type="Theme" uid="uid://87sp4rn4eiee" path="res://MenuTheme.tres" id="13_m62uw"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_degqt"]
 
@@ -97,7 +99,7 @@ node_connections = [&"output", 0, &"Add2 2", &"TimeScale", 0, &"BlendSpace1D", &
 
 [sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_mx3nr"]
 
-[node name="Player" type="CharacterBody3D" unique_id=959927640 node_paths=PackedStringArray("_checkForHead", "_collider", "_camera", "_playerMesh", "_torchNode") groups=["Player"]]
+[node name="Player" type="CharacterBody3D" unique_id=959927640 node_paths=PackedStringArray("_checkForHead", "Collider", "_camera", "_playerMesh", "_torchNode") groups=["Player"]]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
 collision_layer = 2
 floor_constant_speed = true
@@ -106,9 +108,9 @@ floor_snap_length = 0.6
 safe_margin = 0.005
 script = ExtResource("1_08u7w")
 BaseSpeed = 5.0
-JumpHeight = 40.0
+JumpHeight = 15.0
 _checkForHead = NodePath("RayCast3D")
-_collider = NodePath("CollisionShape3D")
+Collider = NodePath("CollisionShape3D")
 _camera = NodePath("PlayerCamera")
 _playerMesh = NodePath("Model")
 _torchNode = NodePath("PlayerCamera/Torch")
@@ -332,9 +334,9 @@ bone_idx = 1
 [node name="Name" type="Label3D" parent="Model/Armature/Skeleton3D/BoneAttachment3D2" unique_id=77253777]
 transform = Transform3D(0.0013706671, -0.550984, 0.76324916, -0.0021337944, 0.8577066, 0.49030548, -0.64187026, -0.0040279366, -8.1483854e-08, 0.4954967, 0.5155875, 0.0027419114)
 pixel_size = 0.003
-shaded = true
 double_sided = false
-modulate = Color(0.3515629, 0.3515629, 0.35156286, 1)
+modulate = Color(0.2744, 0.49, 0.39298007, 1)
+outline_modulate = Color(0.16379999, 0.26, 0.21671002, 1)
 font = ExtResource("11_2xbkd")
 font_size = 22
 
@@ -402,5 +404,55 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, -1.547, -1.338)
 
 [node name="KneePole_R" type="Marker3D" parent="Model" unique_id=876132740]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, -1.547, -1.338)
+
+[node name="PauseMenu" type="CanvasLayer" parent="." unique_id=1660541424 node_paths=PackedStringArray("_camera")]
+layer = 2
+script = ExtResource("13_b30ri")
+_camera = NodePath("../PlayerCamera")
+
+[node name="ColorRect2" type="ColorRect" parent="PauseMenu" unique_id=1373799735]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0, 0, 0, 0.39215687)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PauseMenu/ColorRect2" unique_id=639192090]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.148
+anchor_bottom = 0.165
+offset_right = 0.5039978
+offset_bottom = -40.920006
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 0
+theme = ExtResource("13_m62uw")
+theme_override_constants/separation = 4
+metadata/_edit_use_anchors_ = true
+
+[node name="Menu" type="Label" parent="PauseMenu/ColorRect2/VBoxContainer" unique_id=1442090859]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "<Menu>"
+horizontal_alignment = 1
+
+[node name="Resume" type="Button" parent="PauseMenu/ColorRect2/VBoxContainer" unique_id=2021764043]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "<RESUME>"
+
+[node name="Quit" type="Button" parent="PauseMenu/ColorRect2/VBoxContainer" unique_id=1552998162]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "<Quit>"
+
+[connection signal="pressed" from="PauseMenu/ColorRect2/VBoxContainer/Resume" to="PauseMenu" method="OnResumePressed"]
+[connection signal="pressed" from="PauseMenu/ColorRect2/VBoxContainer/Quit" to="PauseMenu" method="OnQuitPressed"]
 
 [editable path="Model"]

@@ -2,8 +2,21 @@
 
 [ext_resource type="Script" uid="uid://ds0x3o4xex2gp" path="res://Scripts/MonsterAI.cs" id="1_7jf71"]
 [ext_resource type="PackedScene" uid="uid://seidjyu0lna0" path="res://Assets/Models/monster_2.blend" id="2_og4gj"]
-[ext_resource type="AudioStream" uid="uid://k4l21vo7kqbf" path="res://Assets/Audio/Fart.mp3" id="2_vrexm"]
+[ext_resource type="AudioStream" uid="uid://mj6msfs47yci" path="res://Assets/Audio/Monster/scream0.wav" id="2_ql6sb"]
+[ext_resource type="AudioStream" uid="uid://rf3vmunwggqy" path="res://Assets/Audio/Monster/scream1.wav" id="3_1pl3i"]
 [ext_resource type="Script" uid="uid://lxualqoxpyqb" path="res://Scripts/Monster.cs" id="3_vrexm"]
+[ext_resource type="AudioStream" uid="uid://0kb012hd25sg" path="res://Assets/Audio/Monster/scream2.wav" id="4_2ioap"]
+[ext_resource type="AudioStream" uid="uid://cnwmps6sotmq6" path="res://Assets/Audio/Monster/scream3.wav" id="5_2n8pp"]
+[ext_resource type="AudioStream" uid="uid://bjogrgif2ofbo" path="res://Assets/Audio/Monster/scream4.wav" id="6_mu2cd"]
+[ext_resource type="AudioStream" uid="uid://dirwkydwret7" path="res://Assets/Audio/Monster/scream5.wav" id="7_f7tcx"]
+[ext_resource type="AudioStream" uid="uid://555agrok0haa" path="res://Assets/Audio/Monster/scream6.wav" id="8_pfmso"]
+[ext_resource type="AudioStream" uid="uid://ch6wud3a6fm" path="res://Assets/Audio/Monster/scream7.wav" id="9_gghos"]
+[ext_resource type="AudioStream" uid="uid://bycgptday553v" path="res://Assets/Audio/Monster/scream8.wav" id="10_iaqix"]
+[ext_resource type="AudioStream" uid="uid://cl0tv82tcu2yc" path="res://Assets/Audio/Footsteps/MonsterSteps/monsterStep0.wav" id="13_f7tcx"]
+[ext_resource type="AudioStream" uid="uid://dxrr23ywi3xp0" path="res://Assets/Audio/Footsteps/MonsterSteps/monsterStep1.wav" id="14_pfmso"]
+[ext_resource type="AudioStream" uid="uid://b2f5yvypl5sd2" path="res://Assets/Audio/Footsteps/MonsterSteps/monsterStep2.wav" id="15_gghos"]
+[ext_resource type="AudioStream" uid="uid://dshlyj8pvlccq" path="res://Assets/Audio/Footsteps/MonsterSteps/monsterStep3.wav" id="16_iaqix"]
+[ext_resource type="AudioStream" uid="uid://cj1o74fr7e7iu" path="res://Assets/Audio/Footsteps/MonsterSteps/monsterStep4.wav" id="17_pucdh"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3253y"]
 radius = 0.6329346
@@ -24,13 +37,13 @@ floor_max_angle = 0.80285144
 floor_snap_length = 1.0
 safe_margin = 0.01
 script = ExtResource("1_7jf71")
-_checkForPlayer = NodePath("monster_2/PlayerChecker")
+_checkForPlayer = NodePath("PlayerChecker")
 _monster = NodePath("monster_2")
 _agent = NodePath("NavigationAgent3D")
 TestLabel = NodePath("Label")
-_chaseAudioA = NodePath("AudioPlayerA")
-_chaseAudioB = NodePath("AudioPlayerB")
-_chaseSounds = Array[AudioStream]([ExtResource("2_vrexm")])
+_chaseAudioA = NodePath("ScreamerA")
+_chaseAudioB = NodePath("ScreamerB")
+_chaseSounds = Array[AudioStream]([ExtResource("2_ql6sb"), ExtResource("3_1pl3i"), ExtResource("4_2ioap"), ExtResource("5_2n8pp"), ExtResource("6_mu2cd"), ExtResource("7_f7tcx"), ExtResource("8_pfmso"), ExtResource("9_gghos"), ExtResource("10_iaqix")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1447364782]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5558975, 0)
@@ -45,9 +58,11 @@ debug_enabled = true
 debug_path_custom_color = Color(1, 0, 1, 1)
 debug_path_custom_point_size = 40.0
 
-[node name="monster_2" parent="." unique_id=1659373829 node_paths=PackedStringArray("_ikTargets", "_ikPoles", "_feet", "_spineTarget") instance=ExtResource("2_og4gj")]
+[node name="monster_2" parent="." unique_id=1659373829 node_paths=PackedStringArray("_footstepPlayer", "_ikTargets", "_ikPoles", "_feet", "_spineTarget") instance=ExtResource("2_og4gj")]
 transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 0, -6.7425733, 0)
 script = ExtResource("3_vrexm")
+_footstepPlayer = NodePath("../StepPlayer")
+_footstepSounds = Array[AudioStream]([ExtResource("13_f7tcx"), ExtResource("14_pfmso"), ExtResource("15_gghos"), ExtResource("16_iaqix"), ExtResource("17_pucdh")])
 _ikTargets = [NodePath("../IK_ArmTarget_L"), NodePath("../IK_ArmTarget_R"), NodePath("../IK_LegTarget_L"), NodePath("../IK_LegTarget_R")]
 _ikPoles = [NodePath("IK_ArmPole_L"), NodePath("IK_ArmPole_R"), NodePath("IK_LegPole_L"), NodePath("IK_Legpole_R")]
 _feet = [NodePath("Armature/Skeleton3D/Hand_L"), NodePath("Armature/Skeleton3D/Hand_R"), NodePath("Armature/Skeleton3D/Foot_L"), NodePath("Armature/Skeleton3D/Foot_R"), NodePath("IK_SpineTarget")]
@@ -175,13 +190,6 @@ bone_name = "Foot.R"
 bone_idx = 22
 override_pose = true
 
-[node name="PlayerChecker" type="RayCast3D" parent="monster_2" unique_id=1219386205]
-transform = Transform3D(-0.49999988, 5.6859675e-14, 1.94707e-07, -1.9469469e-07, -0.005609758, -0.49996844, 2.184482e-09, -0.49996856, 0.00560987, -3.8550343e-14, 6.001566, -0.86665034)
-target_position = Vector3(0, 3.205, 0)
-collision_mask = 7
-hit_back_faces = false
-debug_shape_thickness = 1
-
 [node name="IK_ArmPole_L" type="Node3D" parent="monster_2" unique_id=440931462]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 14.20517, 12.558)
 
@@ -222,12 +230,26 @@ offset_top = 30.32
 offset_right = 38.848
 offset_bottom = -6.9440002
 
-[node name="AudioPlayerA" type="AudioStreamPlayer3D" parent="." unique_id=311328793]
+[node name="ScreamerA" type="AudioStreamPlayer3D" parent="." unique_id=311328793]
 unit_size = 30.0
-max_db = 2.735
+max_db = 0.0
 
-[node name="AudioPlayerB" type="AudioStreamPlayer3D" parent="." unique_id=1104739825]
+[node name="ScreamerB" type="AudioStreamPlayer3D" parent="." unique_id=1104739825]
 unit_size = 30.0
-max_db = 2.735
+max_db = 0.0
+
+[node name="PlayerChecker" type="RayCast3D" parent="." unique_id=1219386205]
+transform = Transform3D(-0.5499999, 6.2545645e-14, 2.141777e-07, -2.1416415e-07, -0.0061707343, -0.5499653, 2.4029299e-09, -0.54996544, 0.006170857, 0, 1.5, 0)
+target_position = Vector3(0, 0, 0)
+collision_mask = 7
+hit_back_faces = false
+debug_shape_thickness = 1
+
+[node name="CSGBox3D" type="CSGBox3D" parent="PlayerChecker" unique_id=325682026]
+
+[node name="StepPlayer" type="AudioStreamPlayer3D" parent="." unique_id=730579448]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5074267, 0)
+attenuation_model = 1
+unit_size = 2.0
 
 [editable path="monster_2"]

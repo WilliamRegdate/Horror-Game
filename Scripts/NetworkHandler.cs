@@ -25,10 +25,8 @@ public partial class NetworkHandler : Node
     }
     private void OnServerDisconnected()
     {
-        
-        
-            lastDisconnectReason = "Lost connection to the server.";
-            JustDisconnectedFromServer = true;
+        lastDisconnectReason = "Lost connection to the server.";
+        JustDisconnectedFromServer = true;
         
         Disconnect();
     }

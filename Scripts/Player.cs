@@ -8,7 +8,7 @@ public partial class Player : CharacterBody3D
 
 	[Export] private RayCast3D _checkForHead;
 	public float Speed;
-	[Export] public CollisionShape3D _collider;
+	[Export] public CollisionShape3D Collider;
 	private CapsuleShape3D _capsule;
 	[Export] PlayerCamera _camera;
 	[Export] Node3D _playerMesh; 
@@ -20,7 +20,7 @@ public partial class Player : CharacterBody3D
     public override void _Ready()
     {
 		_networkHandler = GetNode<NetworkHandler>("/root/NetworkHandler");
-        _capsule = (CapsuleShape3D)_collider.Shape;
+        _capsule = (CapsuleShape3D)Collider.Shape;
 		_torchNode.Hide();
 		if (!IsMultiplayerAuthority()) return;
 		_playerMesh.Hide();
@@ -29,11 +29,7 @@ public partial class Player : CharacterBody3D
     }
 	    public override void _Process(double delta)
     {
-		if (!IsMultiplayerAuthority()) return;
-        if (Input.IsActionJustPressed("ui_cancel"))
-		{
-			_networkHandler.Disconnect();
-		}
+		
     }
 
 
@@ -46,7 +42,7 @@ public partial class Player : CharacterBody3D
 		if (Input.IsActionJustPressed("debug"))
 		{
 			debugMode = !debugMode;
-			_collider.Disabled = debugMode;
+			Collider.Disabled = debugMode;
 		}
 
 		if (debugMode)
@@ -92,7 +88,7 @@ public partial class Player : CharacterBody3D
 					Speed = BaseSpeed;
 					IsCrouched = false;
 					_camera.IsCrouching = false;
-					_collider.Position = Vector3.Zero;
+					Collider.Position = Vector3.Zero;
 					_capsule.Height = 2.0f;
 					_torchNode.Position = new (0.75f, -1, -0.65f);
 				}
@@ -101,7 +97,7 @@ public partial class Player : CharacterBody3D
 			{
 				_camera.IsCrouching = true;
 				Speed = BaseSpeed * 0.3f;
-				_collider.Position = new(0, -0.56f, 0);
+				Collider.Position = new(0, -0.56f, 0);
 				_capsule.Height = 0.88f;
 				_torchNode.Position = new (0.75f, 0, -0.65f);
 			}

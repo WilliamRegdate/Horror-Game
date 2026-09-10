@@ -10,6 +10,7 @@ public partial class GameManager : Node3D
     public ProceduralGenerator Generator;
 	public int GeneratorsOn;
     [Signal] public delegate void WorldReadyEventHandler();
+	[Signal] public delegate void StartGameEventHandler();
 
 	public NetworkHandler _networkHandler;
 
@@ -69,8 +70,12 @@ public partial class GameManager : Node3D
 		}
 
 		Rpc(nameof(ReceivePlacements), sceneIndices, positions, rotations, intArray);
-
-		
+		Rpc(nameof(PropagateStartGame));
+	}
+	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
+	private void PropagateStartGame()
+	{
+		EmitSignal(SignalName.StartGame);
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.Authority)]

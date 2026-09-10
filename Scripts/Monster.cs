@@ -1,9 +1,12 @@
 
 using System.ComponentModel;
+using System.Linq;
 using Godot;
 
 public class Leg
 {
+
+
     public Node3D IKTarget;
     public Node3D IKPole;
     public Node3D Foot;
@@ -16,6 +19,7 @@ public class Leg
     public Vector3 LastStepTarget;
     public bool IsMoving;
     public float StepHeight;
+    public bool WasMovingLastFrame;
 
     public Leg(Node3D ikTarget, Node3D ikPole, Node3D foot, Vector3 restPosition, int[] adjacentIndices)
     {
@@ -29,6 +33,10 @@ public class Leg
 
 public partial class Monster : Node3D
 {
+    [Export] private AudioStreamPlayer3D _footstepPlayer;
+    [Export] private AudioStream[] _footstepSounds;
+    private AudioStreamPlaybackPolyphonic _playback;
+
     //public Node3D Player;
     private BoneLookAtVectorModifier _lookAtPlayersModifier;
 
@@ -45,6 +53,10 @@ public partial class Monster : Node3D
 
     public override void _Ready()
     {
+
+        _footstepPlayer.Stream = new AudioStreamPolyphonic(); // optionally set .Polyphony (default 32)
+        _footstepPlayer.Play();
+        _playback = (AudioStreamPlaybackPolyphonic)_footstepPlayer.GetStreamPlayback();
         _parent = GetParent() as Node3D;
         Node grandParent = _parent.GetParent();
         _moveFootThreshold *= _moveFootThreshold;
@@ -160,6 +172,7 @@ public partial class Monster : Node3D
 
         if (!leg.LastStepTarget.IsEqualApprox(leg.TargetPosition))
         {
+            
             leg.IsMoving = true;
             leg.StepStartPosition = leg.IKTarget.Position;
             leg.LastStepTarget = leg.TargetPosition;
@@ -171,7 +184,12 @@ public partial class Monster : Node3D
         }
         if (leg.StepProgress >= 1.0f)
         {
+            if (leg.WasMovingLastFrame)
+            {
+                PlayFootstep(_footstepSounds[GD.RandRange(0, _footstepSounds.Length-1)], 0, (float)GD.RandRange(0.8,1.2));
+            }
             leg.IsMoving = false;
+            leg.WasMovingLastFrame = leg.IsMoving;
             return;
         }
 
@@ -181,10 +199,15 @@ public partial class Monster : Node3D
         float lift = Mathf.Sin(leg.StepProgress * Mathf.Pi) * leg.StepHeight;
 
         leg.IKTarget.Position = flatPos + new Vector3(0, lift, 0);
+        leg.WasMovingLastFrame = leg.IsMoving;
     }
 
     private void RefreshIKTarget(TwoBoneIK3D ik, int i)
     {
         ik.SetTargetNode(i, _legs[i].IKTarget.GetPath());
     }
+    public void PlayFootstep(AudioStream stream, float volumeDb = 0f, float pitchScale = 1f)
+{
+    _playback.PlayStream(stream, 0f, volumeDb, pitchScale);
+}
 }

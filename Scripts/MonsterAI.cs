@@ -67,6 +67,7 @@ public partial class MonsterAI : CharacterBody3D
 		_agent.TargetPosition = Position;
 		_checkForPlayer.AddException(this);
 		_currentTarget = new();
+		_timer = 180;
 		_timer = 10;
 		_activeChasePlayer = _chaseAudioA;
 		_inactiveChasePlayer = _chaseAudioB;
@@ -214,7 +215,8 @@ public partial class MonsterAI : CharacterBody3D
 		//check for player line of sight
 		foreach (var (player, data) in _players)
 		{
-			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(player.GlobalPosition);
+			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(player.Collider.GlobalPosition);
+			_checkForPlayer.ForceRaycastUpdate();
 			if (_checkForPlayer.IsColliding())
 			{
 				if (_checkForPlayer.GetCollider() is Player)
@@ -249,7 +251,8 @@ public partial class MonsterAI : CharacterBody3D
 		//check for all players
 		foreach (var item in _players)
 		{
-			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(item.Key.GlobalPosition);
+			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(item.Key.Collider.GlobalPosition);
+			_checkForPlayer.ForceRaycastUpdate();
 			if (_checkForPlayer.IsColliding())
 			{
 				
@@ -296,7 +299,8 @@ public partial class MonsterAI : CharacterBody3D
 		//check for all players
 		foreach (var item in _players)
 		{
-			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(item.Key.GlobalPosition);
+			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(item.Key.Collider.GlobalPosition);
+			_checkForPlayer.ForceRaycastUpdate();
 			if (_checkForPlayer.IsColliding())
 			{
 				
@@ -313,7 +317,7 @@ public partial class MonsterAI : CharacterBody3D
 			//get player sounds and add them to monsters awareness
 			item.Value.Awareness += GetSoundLevel(item.Key) * delta;
 			TestLabel.Text += $"Awareness: {item.Value.Awareness}\n";
-			currentDistance = GlobalPosition.DistanceSquaredTo(item.Key.GlobalPosition);
+			currentDistance = GlobalPosition.DistanceSquaredTo(item.Key.Collider.GlobalPosition);
 			
 			if (item.Value.Awareness  > 100)
 			{
@@ -355,6 +359,7 @@ public partial class MonsterAI : CharacterBody3D
 			return;
 		}
 		_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(_currentTarget.GlobalPosition);
+		_checkForPlayer.ForceRaycastUpdate();
 		if (_checkForPlayer.IsColliding())
 		{
 			if (_checkForPlayer.GetCollider() == _currentTarget)

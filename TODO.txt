@@ -1,7 +1,7 @@
 gui scale slider
 
+
 fix AI
-stabalize multiplayer
 chalk
 
 death screen and dying
@@ -9,3 +9,4 @@ sound effects
 
 start game cutscene
 Ending area & cutscene
+fix host

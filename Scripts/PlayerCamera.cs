@@ -23,6 +23,8 @@ public partial class PlayerCamera : Camera3D
     private float _standHeight;
     private float _crouchHeight = -0.5f;
 
+    public bool DisableMouse;
+
     public override void _Ready()
     {
         if (IsMultiplayerAuthority())
@@ -41,7 +43,7 @@ public partial class PlayerCamera : Camera3D
 
     public override void _Input(InputEvent @event)
     {
-
+        if (DisableMouse) return;
         if (@event is InputEventMouseMotion mouseMotion)
         {
             _mouseDelta = mouseMotion.Relative;
