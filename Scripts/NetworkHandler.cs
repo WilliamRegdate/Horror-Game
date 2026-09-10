@@ -139,7 +139,7 @@ public partial class NetworkHandler : Node
 
         Multiplayer.MultiplayerPeer = null;
         EmitSignal(SignalName.NetworkStopped);
-        PlayerNames = new();
+        PlayerNames.Clear();
     }
 
     private async Task SetupUpnpAsync(int port)

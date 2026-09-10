@@ -245,11 +245,9 @@ collision_mask = 7
 hit_back_faces = false
 debug_shape_thickness = 1
 
-[node name="CSGBox3D" type="CSGBox3D" parent="PlayerChecker" unique_id=325682026]
-
 [node name="StepPlayer" type="AudioStreamPlayer3D" parent="." unique_id=730579448]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5074267, 0)
 attenuation_model = 1
-unit_size = 2.0
+unit_size = 2.5
 
 [editable path="monster_2"]

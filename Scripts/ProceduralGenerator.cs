@@ -904,6 +904,7 @@ public partial class ProceduralGenerator : Node
         {
             node = GetScenefromIndex(record.SceneIndex).Instantiate<Node3D>();
         }
+        node.Name = $"Placement_{_buildIndex}";
         node.Position = record.Position.Round();
         node.RotationDegrees = record.RotationDegrees.Round();
         AddChild(node);

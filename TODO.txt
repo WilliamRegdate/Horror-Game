@@ -1,12 +1,12 @@
 gui scale slider
 
-
-fix AI
 chalk
 
 death screen and dying
 sound effects
 
-start game cutscene
 Ending area & cutscene
+
 fix host
+
+Controls
