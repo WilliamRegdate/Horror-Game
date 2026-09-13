@@ -17,10 +17,9 @@
 [ext_resource type="AudioStream" uid="uid://b2f5yvypl5sd2" path="res://Assets/Audio/Footsteps/MonsterSteps/monsterStep2.wav" id="15_gghos"]
 [ext_resource type="AudioStream" uid="uid://dshlyj8pvlccq" path="res://Assets/Audio/Footsteps/MonsterSteps/monsterStep3.wav" id="16_iaqix"]
 [ext_resource type="AudioStream" uid="uid://cj1o74fr7e7iu" path="res://Assets/Audio/Footsteps/MonsterSteps/monsterStep4.wav" id="17_pucdh"]
+[ext_resource type="AudioStream" uid="uid://jlo7nvoxfo8d" path="res://Assets/Audio/Monster/jumpscare.wav" id="18_pfmso"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3253y"]
-radius = 0.6329346
-height = 1.2658691
+[sub_resource type="SphereShape3D" id="SphereShape3D_y8xgx"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_7jf71"]
 properties/0/path = NodePath(".:position")
@@ -30,7 +29,10 @@ properties/1/path = NodePath("monster_2:rotation")
 properties/1/spawn = true
 properties/1/replication_mode = 1
 
-[node name="Monster" type="CharacterBody3D" unique_id=433109594 node_paths=PackedStringArray("_checkForPlayer", "_monster", "_agent", "TestLabel", "_chaseAudioA", "_chaseAudioB")]
+[sub_resource type="SphereShape3D" id="SphereShape3D_f7tcx"]
+radius = 5.0
+
+[node name="Monster" type="CharacterBody3D" unique_id=433109594 node_paths=PackedStringArray("_checkForPlayer", "_monster", "_agent", "TestLabel", "_chaseAudioA", "_chaseAudioB", "_killZone", "_death")]
 wall_min_slide_angle = 0.0
 floor_constant_speed = true
 floor_max_angle = 0.80285144
@@ -44,12 +46,13 @@ TestLabel = NodePath("Label")
 _chaseAudioA = NodePath("ScreamerA")
 _chaseAudioB = NodePath("ScreamerB")
 _chaseSounds = Array[AudioStream]([ExtResource("2_ql6sb"), ExtResource("3_1pl3i"), ExtResource("4_2ioap"), ExtResource("5_2n8pp"), ExtResource("6_mu2cd"), ExtResource("7_f7tcx"), ExtResource("8_pfmso"), ExtResource("9_gghos"), ExtResource("10_iaqix")])
+_killZone = NodePath("KillZone")
+_death = NodePath("JumpscareAudio")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1447364782]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5558975, 0)
-shape = SubResource("CapsuleShape3D_3253y")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=625589052]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5451242, 0)
+shape = SubResource("SphereShape3D_y8xgx")
 disabled = true
-debug_color = Color(0.892029, 0.000236611, 0.788447, 0.42)
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=205892437]
 path_desired_distance = 0.3
@@ -234,6 +237,11 @@ offset_bottom = -6.9440002
 unit_size = 30.0
 max_db = 0.0
 
+[node name="JumpscareAudio" type="AudioStreamPlayer3D" parent="." unique_id=13460874]
+stream = ExtResource("18_pfmso")
+volume_db = -2.0
+max_db = 0.0
+
 [node name="ScreamerB" type="AudioStreamPlayer3D" parent="." unique_id=1104739825]
 unit_size = 30.0
 max_db = 0.0
@@ -249,5 +257,13 @@ debug_shape_thickness = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5074267, 0)
 attenuation_model = 1
 unit_size = 2.5
+
+[node name="KillZone" type="Area3D" parent="." unique_id=1464178497]
+collision_mask = 2
+
+[node name="KillRadius" type="CollisionShape3D" parent="KillZone" unique_id=1210214620]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5558975, 0)
+shape = SubResource("SphereShape3D_f7tcx")
+debug_color = Color(0.892029, 0.000236611, 0.788447, 0.42)
 
 [editable path="monster_2"]

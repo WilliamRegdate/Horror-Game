@@ -37,6 +37,7 @@ project/assembly_name="Horror Game 2.0"
 [global_group]
 
 Player=""
+SpectatorView=""
 
 [input]
 

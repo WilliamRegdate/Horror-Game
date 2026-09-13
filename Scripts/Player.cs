@@ -76,7 +76,6 @@ public partial class Player : CharacterBody3D
 			}
 
 			// if (Input.IsActionJustPressed("ui_cancel"))
-			// 	SaveSceneToDisk(GetTree().Root.GetChild(0), "res://debug_dungeon_snapshot.tscn");
 			if (Input.IsActionPressed("game_crouch"))
 			{
 				IsCrouched = true;
@@ -123,32 +122,47 @@ public partial class Player : CharacterBody3D
 		Velocity = velocity;
 		MoveAndSlide();
 	}
-	private void SaveSceneToDisk(Node root, string path)
+	// private void SetOwnerRecursive(Node node, Node ownerRoot)
+	// {
+	// 	foreach (Node child in node.GetChildren())
+	// 	{
+	// 		child.Owner = ownerRoot;
+	// 		SetOwnerRecursive(child, ownerRoot);
+	// 	}
+	// }
+	
+	public void Die()
 	{
-		SetOwnerRecursive(root, root); // walk existing tree, assign ownership before packing
+		if (!Multiplayer.IsServer()) return;
 
-		var packedScene = new PackedScene();
-		Error result = packedScene.Pack(root);
+		int ownerId = GetMultiplayerAuthority();
 
-		if (result != Error.Ok)
-		{
-			GD.PrintErr("Failed to pack scene: ", result);
-			return;
-		}
+		// Stop replicating this node before anything else happens —
+		// no RPCs, no ragdoll spawn, nothing, until this is off.
+		var synchronizer = GetNodeOrNull<MultiplayerSynchronizer>("MultiplayerSynchronizer");
+		if (synchronizer != null)
+			synchronizer.ProcessMode = ProcessModeEnum.Disabled;
 
-		Error saveResult = ResourceSaver.Save(packedScene, path);
-		if (saveResult != Error.Ok)
-			GD.PrintErr("Failed to save scene: ", saveResult);
+		GameManager gameManager = GetNode<GameManager>("/root/GameManager");
+		NodePath path = gameManager.SpawnRagdoll(ownerId, _networkHandler.PlayerNames[ownerId], GlobalPosition, GlobalRotation);
+
+		if (ownerId == Multiplayer.GetUniqueId())
+			DieRpc(path);
 		else
-			GD.Print("Saved scene to: ", path);
+			RpcId(ownerId, nameof(DieRpc), path);
+
+		PlayerSpawner spawner = GetParent() as PlayerSpawner;
+		spawner.DespawnForPeer(ownerId);
 	}
 
-	private void SetOwnerRecursive(Node node, Node ownerRoot)
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false)]
+	public void DieRpc(NodePath path)
 	{
-		foreach (Node child in node.GetChildren())
-		{
-			child.Owner = ownerRoot;
-			SetOwnerRecursive(child, ownerRoot);
-		}
+		GameManager gameManager = GetNode<GameManager>("/root/GameManager");
+		PackedScene spectator = (PackedScene)ResourceLoader.Load("res://Prefabs/spectator.tscn");
+		Spectator specNode = spectator.Instantiate() as Spectator;
+		specNode.CurrentView = GetNode(path) as Node3D;
+
+		gameManager.AddChild(specNode);
 	}
 }

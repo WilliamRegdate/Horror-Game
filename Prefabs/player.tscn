@@ -337,8 +337,17 @@ pixel_size = 0.003
 double_sided = false
 modulate = Color(0.2744, 0.49, 0.39298007, 1)
 outline_modulate = Color(0.16379999, 0.26, 0.21671002, 1)
+text = "HI"
 font = ExtResource("11_2xbkd")
 font_size = 22
+
+[node name="BoneAttachment3D3" type="BoneAttachment3D" parent="Model/Armature/Skeleton3D" index="10" unique_id=524359336]
+transform = Transform3D(-1.0929654e-08, 7.0566756e-08, 1.0000001, 0.007170528, 0.9999744, -7.0273515e-08, -0.99997437, 0.007170528, -8.332542e-09, 1.4664309e-07, 1.1806816, 0.083386794)
+bone_name = "Head"
+bone_idx = 3
+
+[node name="SpectatorView" type="Node3D" parent="Model/Armature/Skeleton3D/BoneAttachment3D3" unique_id=1022522659 groups=["SpectatorView"]]
+transform = Transform3D(5.1372765e-05, 0.0071702725, -0.99997437, 0.007170415, 0.9999487, 0.007170457, 0.99997437, -0.0071705985, -4.371139e-08, 0.50453824, 0.20961535, -9.277423e-09)
 
 [node name="TorchArmRotator" type="Node3D" parent="Model" unique_id=46780767]
 transform = Transform3D(1.3333333, 0, 0, 0, 1.3333333, 0, 0, 0, 1.3333333, 0.6605139, 0.2403908, 0.23879719)

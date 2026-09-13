@@ -96,4 +96,24 @@ public partial class GameManager : Node3D
 		Generator.LoadPlacements(sceneIndices, positions, rotations, boolArray);
 		Generator.BuildFromPlacements();
 	}
+
+	public NodePath SpawnRagdoll(int ownerId, string name, Vector3 globalPosition, Vector3 globalRotation)
+	{
+		Rpc(nameof(RpcSpawnRagdoll), ownerId, name, globalPosition, globalRotation);
+		return RpcSpawnRagdoll(ownerId, name, globalPosition, globalRotation);
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false)]
+	public NodePath RpcSpawnRagdoll(int ownerId, string name, Vector3 globalPosition, Vector3 globalRotation)
+	{
+		PackedScene ragdollScene = (PackedScene)ResourceLoader.Load("res://Prefabs/player_ragdoll.tscn");
+		Ragdoll ragdoll = ragdollScene.Instantiate() as Ragdoll;
+		AddChild(ragdoll);
+		ragdoll.GlobalPosition = globalPosition;
+		ragdoll.GlobalRotation = globalRotation;
+		ragdoll.Label.Text = name;
+		ragdoll.Name = $"{name}{ownerId}";
+		ragdoll.StartRagdoll();
+		return ragdoll.View.GetPath();
+	}
 }

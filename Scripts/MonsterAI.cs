@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Godot;
 
 public enum MonsterState
@@ -10,7 +10,8 @@ public enum MonsterState
 	Hunt,
 	Chase,
 	Wander,
-	Start
+	Start,
+	Kill
 }
 public enum MonsterSpeed
 {
@@ -20,9 +21,9 @@ public enum MonsterSpeed
 
 public partial class MonsterAI : CharacterBody3D
 {
-	private class PlayerTracker
+	public class PlayerTracker
 	{
-
+		public bool IsDead;
 		public double Awareness;  // how aware the monster is of the player (how certain monster is of this players location)
 		public Vector3 LastLocation; // where the monster thinks this player is 
 		public Vector3 PositionLastFrame = new();
@@ -37,7 +38,7 @@ public partial class MonsterAI : CharacterBody3D
 	[Export] private RayCast3D _checkForPlayer;
 	[Export] private Monster _monster;
 	[Export] private NavigationAgent3D _agent;
-	private Dictionary<Player,PlayerTracker> _players = new();
+	public Dictionary<Player, PlayerTracker> Players { get; private set; } = new();
 
 	[Export] public Label TestLabel;
 	private Player _currentTarget;
@@ -60,6 +61,8 @@ public partial class MonsterAI : CharacterBody3D
 	private AudioStreamPlayer3D _inactiveChasePlayer;
 	private bool _chaseAudioActive = false;
 
+	[Export] private Area3D _killZone;
+
     public override void _Ready()
     {
 			
@@ -75,16 +78,16 @@ public partial class MonsterAI : CharacterBody3D
 
 	public void OnPlayerAdded(Node player)
 	{
-		_players.Add(player as Player, new());
+		Players.Add(player as Player, new());
 		_locked = false;
 	}
 	public void OnPlayerRemoved(Node node)
 	{
 		if (node is Player player)
-			_players.Remove(player);
+			Players.Remove(player);
 		GD.Print("player removed");
 		int largestAwareness = 0;
-		foreach((Player currentPlayer, PlayerTracker playerData) in _players)
+		foreach((Player currentPlayer, PlayerTracker playerData) in Players)
 		{
 			if (playerData.Awareness > largestAwareness) //set target to the next most ovbious target if a player is removed
 			{
@@ -140,7 +143,7 @@ public partial class MonsterAI : CharacterBody3D
 			GD.Print("set state :", _state);
 
 		//work out each player's sound level
-		foreach (var (player, data) in _players)
+		foreach (var (player, data) in Players)
 		{
 			Vector3 currentPos = player.GlobalPosition;
 			float distanceMoved = currentPos.DistanceTo(data.PositionLastFrame);
@@ -153,6 +156,34 @@ public partial class MonsterAI : CharacterBody3D
 		TestLabel.Text = $"state: {_state}\n";
 		TestLabel.Text += $"timer 1: {_timer}\n";
 		TestLabel.Text += $"timer 2: {_secondaryTimer}\n";
+
+		//try kill player
+		if (_killZone.HasOverlappingBodies())
+		{
+			var bodies = _killZone.GetOverlappingBodies();
+			foreach (Node3D body in bodies)
+			{
+				if (body is Player playerToKill )
+				{
+					if (Players[playerToKill].IsDead)
+						continue;
+					GD.Print("Player in range");
+					_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(playerToKill.Collider.GlobalPosition);
+					_checkForPlayer.ForceRaycastUpdate();
+					if (_checkForPlayer.IsColliding())
+					{
+						if (_checkForPlayer.GetCollider() is Player)
+						{
+							_startState = true;
+							_state = MonsterState.Kill;	
+							playerToKill.Die();
+							Players[playerToKill].IsDead = true;
+							return;
+						}
+					}
+				}
+			}
+		}
         switch(_state)
 		{
 			case MonsterState.Wander:
@@ -173,6 +204,9 @@ public partial class MonsterAI : CharacterBody3D
 			case MonsterState.Start:
 				Start(delta); 
 				break;
+			case MonsterState.Kill:
+				Kill(delta); 
+				break;
 		}
     }
 
@@ -184,6 +218,7 @@ public partial class MonsterAI : CharacterBody3D
 
 	public void Start(double delta)
 	{
+		_agent.TargetPosition = GlobalPosition;
 		if (_timer < 0)
 			_state = MonsterState.Search;
 		_timer -= delta;
@@ -198,7 +233,7 @@ public partial class MonsterAI : CharacterBody3D
 		{
 			SetSpeed(MonsterSpeed.Walk);
 			_timer = 60;
-			_secondaryTimer = 15;
+			_secondaryTimer = 0;
 			_startState = false;
 		}
 		if (_timer < 0)
@@ -213,7 +248,7 @@ public partial class MonsterAI : CharacterBody3D
 			_agent.TargetPosition = GlobalPosition + new Vector3(GD.RandRange(-30,30), GD.RandRange(-10,10), GD.RandRange(-30,30));
 		}
 		//check for player line of sight
-		foreach (var (player, data) in _players)
+		foreach (var (player, data) in Players)
 		{
 			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(player.Collider.GlobalPosition);
 			_checkForPlayer.ForceRaycastUpdate();
@@ -239,7 +274,7 @@ public partial class MonsterAI : CharacterBody3D
 	{
 		if (_startState)
 		{
-			_timer = 30; // hunt for 30 seconds then give up
+			_timer = 18; // hunt for 30 seconds then give up
 			_checkPos = _agent.TargetPosition;
 			_agent.TargetPosition = _checkPos;
 			_startState = false;
@@ -249,7 +284,7 @@ public partial class MonsterAI : CharacterBody3D
 
 		float currentDistance;
 		//check for all players
-		foreach (var item in _players)
+		foreach (var item in Players)
 		{
 			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(item.Key.Collider.GlobalPosition);
 			_checkForPlayer.ForceRaycastUpdate();
@@ -297,7 +332,7 @@ public partial class MonsterAI : CharacterBody3D
 
 		float currentDistance;
 		//check for all players
-		foreach (var item in _players)
+		foreach (var item in Players)
 		{
 			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(item.Key.Collider.GlobalPosition);
 			_checkForPlayer.ForceRaycastUpdate();
@@ -331,11 +366,11 @@ public partial class MonsterAI : CharacterBody3D
 		{
 			Vector3 averagePos = new();
 			_timer = _forcedHintInterval;
-			foreach (var (player, data) in _players)
+			foreach (var (player, data) in Players)
 			{
 				averagePos += player.GlobalPosition;
 			}
-			averagePos /= _players.Count();
+			averagePos /= Players.Count();
 			_agent.TargetPosition = GetHintPosition(averagePos, 0.5f);
 			return;
 		}
@@ -375,6 +410,25 @@ public partial class MonsterAI : CharacterBody3D
 			_state = MonsterState.Hunt;
 			StopChaseAudio();
 		}
+	}
+	[Export] AudioStreamPlayer3D _death;
+	public void Kill(double delta)
+	{
+		if (_startState)
+		{
+			StopChaseAudio();
+			_activeChasePlayer.Stop();
+			_death.Play();
+			_startState = false;
+			_timer = 20;
+		}
+		_timer -= delta;
+		if (_timer < 0)
+		{
+			_startState = true;
+			_state = MonsterState.Search;
+		}
+		_agent.TargetPosition = GlobalPosition;
 	}
 	public void Taunt(double delta)
 	{
