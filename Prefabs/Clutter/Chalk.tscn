@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://ddg7n54oynhk6"]
+
+[ext_resource type="ArrayMesh" uid="uid://cxli8dojpoq4c" path="res://Assets/Models/Clutter/Chalk.obj" id="1_j74mn"]
+[ext_resource type="Script" uid="uid://bnuc08c1wa81o" path="res://Scripts/Chalk.cs" id="2_o55yy"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y8xgx"]
+size = Vector3(0.23492432, 0.39157104, 0.34591675)
+
+[node name="Chalk" type="MeshInstance3D" unique_id=842867667]
+mesh = ExtResource("1_j74mn")
+
+[node name="Area3D" type="Area3D" parent="." unique_id=1997495549 node_paths=PackedStringArray("_shape")]
+script = ExtResource("2_o55yy")
+_shape = NodePath("CollisionShape3D")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=507128042]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.016937256, 0.19575706, 0.0029144287)
+shape = SubResource("BoxShape3D_y8xgx")

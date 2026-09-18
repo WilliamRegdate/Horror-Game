@@ -6,6 +6,7 @@ public partial class PlayerAnimation : Node3D
 	private Player _player;
 	private Vector3 _originalPosition = new();
 
+	[Export] private Torch _torch;
 	[Export] private Node3D[] _footRestPositions;
 	[Export] private Node3D[] _legTargets;
 	private bool[] _isStepping = new bool[2];

@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://011x5os3hkfb"]
+
+[ext_resource type="ArrayMesh" uid="uid://dwtkv3rmg3pb2" path="res://Assets/Models/Clutter/Batteries.obj" id="1_8u82s"]
+[ext_resource type="Script" uid="uid://dqvnonmx1utpk" path="res://Scripts/Battery.cs" id="2_an62m"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0t7x5"]
+size = Vector3(0.33164215, 0.2182312, 0.3059616)
+
+[node name="Node3D" type="MeshInstance3D" unique_id=310881221]
+mesh = ExtResource("1_8u82s")
+
+[node name="Area3D" type="Area3D" parent="." unique_id=174940342 node_paths=PackedStringArray("_shape")]
+script = ExtResource("2_an62m")
+_shape = NodePath("CollisionShape3D")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=2142194444]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0017356873, 0.10907723, 0.0008125305)
+shape = SubResource("BoxShape3D_0t7x5")

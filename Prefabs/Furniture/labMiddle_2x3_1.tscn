@@ -2,6 +2,7 @@
 
 [ext_resource type="Material" uid="uid://b4fk1wsfi5mrs" path="res://Assets/Materials/Environment.tres" id="1_gq8h7"]
 [ext_resource type="ArrayMesh" uid="uid://c4v73581glwi2" path="res://Assets/Models/Environment/Furniture/labMiddle_2x3_1.obj" id="2_aeym8"]
+[ext_resource type="ArrayMesh" uid="uid://dwtkv3rmg3pb2" path="res://Assets/Models/Clutter/Batteries.obj" id="3_ojayp"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_aeym8"]
 size = Vector3(3.5350037, 1.5040283, 5.849825)
@@ -55,3 +56,24 @@ shape = SubResource("BoxShape3D_il3uc")
 [node name="CollisionShape3D10" type="CollisionShape3D" parent="StaticBody3D" unique_id=236186057]
 transform = Transform3D(-0.00810501, 0, -0.9999672, 0, 1, 0, 0.9999672, 0, -0.00810501, 9.022348, -0.45425797, -0.06730276)
 shape = SubResource("BoxShape3D_r8eg1")
+
+[node name="Node3D5" type="MeshInstance3D" parent="." unique_id=519997029 groups=["Clutter"]]
+transform = Transform3D(0.4328626, 0, 0.90145993, 0, 1, 0, -0.90145993, 0, 0.4328626, 1.2885001, -0.9908054, 4.4553075)
+mesh = ExtResource("3_ojayp")
+
+[node name="Node3D6" type="MeshInstance3D" parent="." unique_id=189620158 groups=["Clutter"]]
+transform = Transform3D(0.5762043, 0, -0.8173057, 0, 1, 0, 0.8173057, 0, 0.5762043, 1.688535, -0.9908049, 0.5598173)
+mesh = ExtResource("3_ojayp")
+
+[node name="Node3D7" type="MeshInstance3D" parent="." unique_id=449929652 groups=["Clutter"]]
+transform = Transform3D(0.5762043, 0, -0.8173057, 0, 1, 0, 0.8173057, 0, 0.5762043, 0.47521555, 0.24866784, 0.5598173)
+mesh = ExtResource("3_ojayp")
+
+[node name="Node3D8" type="MeshInstance3D" parent="." unique_id=226244318 groups=["Clutter"]]
+transform = Transform3D(-0.0009379983, 0, -0.99999946, 0, 1, 0, 0.99999946, 0, -0.0009379983, 7.6937556, -1.002863, 3.2876534)
+mesh = ExtResource("3_ojayp")
+skeleton = NodePath("../Node3D6")
+
+[node name="Node3D9" type="MeshInstance3D" parent="." unique_id=1869444051 groups=["Clutter"]]
+transform = Transform3D(0.8167648, 0, -0.57697064, 0, 1, 0, 0.57697064, 0, 0.8167648, 8.339415, -0.9908049, 0.6331525)
+mesh = ExtResource("3_ojayp")

@@ -16,7 +16,8 @@ public partial class MainMenu : Node3D
 
 	[Export] private Label _errorMessage;
 	[Export] private CanvasLayer _errorBox;
-	[Export] private TextEdit _ipInput;
+	[Export] private LineEdit _ipInput;
+	[Export] private LineEdit _portInput;
 	[Export] private LineEdit _nameInput;
 	[Export] private Label _playerList;
 
@@ -121,9 +122,10 @@ public partial class MainMenu : Node3D
 	public void PressedJoinSignal()
 	{
 		_networkHandler.IpAddress = _ipInput.Text;
+		_networkHandler.Port = _portInput.Text.ToInt();
 		if (!_networkHandler.StartClient())
 		{
-			PrintError("Cannot Join server: already connected to a server.\n Try leaving the current server first");
+			PrintError("Failed to Host Or Join server");
 			return;
 		}
 

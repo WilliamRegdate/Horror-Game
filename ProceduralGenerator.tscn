@@ -7,16 +7,20 @@
 [ext_resource type="PackedScene" uid="uid://df7hfxwmhlttd" path="res://Prefabs/Rooms/drill.tscn" id="5_bst7p"]
 [ext_resource type="PackedScene" uid="uid://bgdmx7ajlyytq" path="res://Prefabs/Rooms/wall.tscn" id="5_goavb"]
 [ext_resource type="PackedScene" uid="uid://cfdpl0lekvhr1" path="res://Prefabs/Rooms/elevator.tscn" id="7_f7fte"]
+[ext_resource type="PackedScene" uid="uid://ddg7n54oynhk6" path="res://Prefabs/Clutter/Chalk.tscn" id="8_goavb"]
+[ext_resource type="PackedScene" uid="uid://011x5os3hkfb" path="res://Prefabs/Clutter/Batteries.tscn" id="9_5b0lc"]
 
 [node name="LevelMaker" type="StaticBody3D" unique_id=427530219]
 script = ExtResource("1_fj0im")
 Rooms = PackedStringArray("room1", "room2", "room3", "room4", "room5", "room6", "warehouse", "junction1", "corridorStraight", "corridorCorner", "staircase1", "generator")
 TotalRoomsPerCluster = 30
 LevelBounds = Vector3i(10, 10, 10)
-RoomWeights = PackedInt32Array(10, 10, 5, 10, 10, 0, 2, 2, 0, 0, 5, 10)
+RoomWeights = PackedInt32Array(10, 10, 5, 10, 10, 0, 2, 2, 0, 0, 5, 2)
 _corridorStraight = ExtResource("2_bst7p")
 _corridorCorner = ExtResource("3_f7fte")
 _corridorStairs = ExtResource("4_rlpbo")
 _drill = ExtResource("5_bst7p")
 _wall = ExtResource("5_goavb")
 _elevator = ExtResource("7_f7fte")
+_chalk = ExtResource("8_goavb")
+_batteries = ExtResource("9_5b0lc")

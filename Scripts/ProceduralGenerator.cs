@@ -30,7 +30,7 @@ public partial class ProceduralGenerator : Node
     private List<Aabb> _placedRoomBounds = new(); // world-space AABBs of every room placed so far
     private int _totalWeight;
     private const int MaxPlacementAttempts = 40; // how many spawn locations to check before giving up
-    private const int ClusterAmount = 6; //how many room clusters to have  
+    private const int ClusterAmount = 5; //how many room clusters to have  
 
     //corridors
     [Export] PackedScene _corridorStraight;
@@ -73,12 +73,12 @@ public partial class ProceduralGenerator : Node
         if (_localAabbCache.TryGetValue(scene, out Aabb cached))
             return cached;
 
-        Node3D temp = scene.Instantiate<Node3D>(); // main thread, fine to instantiate+measure+discard
+        Node3D temp = scene.Instantiate<Node3D>();
         Aabb? combined = null;
-        CollectLocalMeshAabbs(temp, temp, ref combined); // measure relative to temp's own root, not global
+        CollectLocalMeshAabbs(temp, temp, ref combined);
         Aabb result = combined ?? new Aabb(Vector3.Zero, Vector3.Zero);
 
-        temp.QueueFree(); // safe here — main thread, message queue gets flushed normally
+        temp.QueueFree();
         _localAabbCache[scene] = result;
         return result;
     }
@@ -274,7 +274,7 @@ public partial class ProceduralGenerator : Node
 
     private Aabb SpawnRoomAt(Vector3 position, Vector3 rotationDegrees, out List<DoorData> resultingDoors)
     {
-        int random = GetWeightedIndex();
+        int random = 11;
         RoomData roomTemplate = RoomManager.Rooms[random];
 
         Aabb localAabb = GetOrCacheLocalAabb(roomTemplate.Room);
@@ -889,29 +889,97 @@ public partial class ProceduralGenerator : Node
     }
 
     private int _buildIndex = 0;
+    private float _clutterChance = 0.1f;
     public void BuildFromPlacements()
     {
-        if (_buildIndex >= Placements.Count)
-            return;
-
-        var record = Placements[_buildIndex];
-        Node3D node;
-        if(Placements[_buildIndex].IsProp)
+        for (; _buildIndex < Placements.Count; _buildIndex++)
         {
-            node = GetPropSceneFromIndex(record.SceneIndex).Instantiate<Node3D>();
+            var record = Placements[_buildIndex];
+            Node3D node = record.IsProp
+                ? GetPropSceneFromIndex(record.SceneIndex).Instantiate<Node3D>()
+                : GetScenefromIndex(record.SceneIndex).Instantiate<Node3D>();
+
+            node.Name = $"Placement_{_buildIndex}";
+            node.Position = record.Position.Round();
+            node.RotationDegrees = record.RotationDegrees.Round();
+            AddChild(node);
+        }
+        //placements built now get all in clutter group and move them to other instances.
+        //index, pos, rot
+        List<Node3D> clutterNodes = GetTree().GetNodesInGroup("Clutter")
+        .OfType<Node3D>()
+        .ToList();
+        if (!Multiplayer.IsServer())
+        {
+            foreach (var item in  clutterNodes)
+            {
+                item.QueueFree();
+            }
         }
         else
         {
-            node = GetScenefromIndex(record.SceneIndex).Instantiate<Node3D>();
+            foreach (var item in  clutterNodes)
+            {
+                if (GD.Randf() < _clutterChance)
+                {
+                    int type = (int)GD.Randi() % 2;
+                    Vector3 pos = item.GlobalPosition;
+                    Vector3 rot = item.GlobalRotation;
+                    _clutter.Add((type, pos, rot));
+                }
+                item.QueueFree(); // free the temp item
+            }
+            //place clutter
+            int[] ids = _clutter.Select(c => c.Item1).ToArray();
+            Vector3[] positions = _clutter.Select(c => c.Item2).ToArray();
+            Vector3[] rotations = _clutter.Select(c => c.Item3).ToArray();
+            Rpc(nameof(RpcSyncClutter), ids, positions, rotations);      
         }
-        node.Name = $"Placement_{_buildIndex}";
-        node.Position = record.Position.Round();
-        node.RotationDegrees = record.RotationDegrees.Round();
-        AddChild(node);
-        _buildIndex++;
+        PlaceClutter();
 
-        if (_buildIndex < Placements.Count)
-            BuildFromPlacements();
+    }
+    public (int[] ids, Vector3[] positions, Vector3[] rotations) ExportClutter()
+    {
+        return (
+            _clutter.Select(c => c.Item1).ToArray(),
+            _clutter.Select(c => c.Item2).ToArray(),
+            _clutter.Select(c => c.Item3).ToArray()
+        );
+    }
+    List<(int, Vector3, Vector3)> _clutter = new();
+    private void PlaceClutter()
+    {
+        int i = 0;
+        Node3D node;
+        foreach ((int id, Vector3 pos, Vector3 rot) in _clutter)
+        {
+            if (id == 0)
+                {
+                    node = _chalk.Instantiate() as Node3D;
+                }
+            else
+                {
+                    node = _batteries.Instantiate() as Node3D;
+                }
+            AddChild(node);
+            node.GlobalPosition = pos;
+            node.GlobalRotation = rot;
+            node.Name = $"Clutter_{i}";
+            i++;
+        }
+    }
+
+    [Export] PackedScene _chalk;
+    [Export]PackedScene  _batteries;
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
+    public void RpcSyncClutter(int[] ids, Vector3[] positions, Vector3[] rotations)
+    {
+        if (Multiplayer.IsServer()) return; // server already built its own clutter directly
+        for (int i = 0; i < ids.Length; i++)
+        {
+            _clutter.Add((ids[i], positions[i], rotations[i]));
+        }
+        PlaceClutter();
     }
     private PackedScene GetScenefromIndex(int i)
     {

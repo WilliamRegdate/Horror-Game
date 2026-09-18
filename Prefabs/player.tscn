@@ -8,12 +8,22 @@
 [ext_resource type="AudioStream" uid="uid://d2eqttpp2xrbc" path="res://Assets/Audio/Footsteps/footstep_w3.wav" id="6_08u7w"]
 [ext_resource type="AudioStream" uid="uid://dr7tdaj5xpq6" path="res://Assets/Audio/Footsteps/footstep_w4.wav" id="7_kgmex"]
 [ext_resource type="Script" uid="uid://bdpgje3vanaq5" path="res://Scripts/InteractRay.cs" id="8_4qbli"]
+[ext_resource type="Script" uid="uid://dhln51mokysr0" path="res://Scripts/Torch.cs" id="8_and0b"]
 [ext_resource type="PackedScene" uid="uid://2m4egrxi26rs" path="res://Assets/Models/Player.glb" id="9_08u7w"]
+[ext_resource type="AudioStream" uid="uid://jc222nj730yp" path="res://Assets/Audio/flashlight.wav" id="9_i3mxk"]
 [ext_resource type="Script" uid="uid://bhddl0qm2y2h3" path="res://Scripts/PlayerAnimation.cs" id="10_kgmex"]
 [ext_resource type="FontFile" uid="uid://c45rhuei47ung" path="res://Assets/Fonts/Teletactile-3zavL.ttf" id="11_2xbkd"]
+[ext_resource type="Script" uid="uid://ds4ecmxfx6fot" path="res://Scripts/Draw.cs" id="11_qjulh"]
 [ext_resource type="ArrayMesh" uid="uid://vsaq73bmi4hi" path="res://Assets/Models/flashlight.obj" id="12_3vpsw"]
 [ext_resource type="Script" uid="uid://dnupslqcs7v02" path="res://Scripts/PauseMenu.cs" id="13_b30ri"]
 [ext_resource type="Theme" uid="uid://87sp4rn4eiee" path="res://MenuTheme.tres" id="13_m62uw"]
+[ext_resource type="Texture2D" uid="uid://1m62glo40vlj" path="res://Assets/Textures/Icons/chalkIcon.png" id="15_ms580"]
+[ext_resource type="Texture2D" uid="uid://cjcb34drmm8u3" path="res://Assets/Textures/Icons/batteryIcon.png" id="16_0fs2y"]
+[ext_resource type="Script" uid="uid://ck23jk1ycwd4s" path="res://Scripts/Hud.cs" id="16_405c5"]
+[ext_resource type="Texture2D" uid="uid://bi3o7d53j4ecg" path="res://Assets/Textures/Icons/batteryIconFill.png" id="17_wphcr"]
+[ext_resource type="Texture2D" uid="uid://doyspnm4qe061" path="res://Assets/Textures/Icons/crosshair.png" id="20_405c5"]
+[ext_resource type="PackedScene" uid="uid://b3p2ackoe8oaa" path="res://Prefabs/Clutter/Cross.tscn" id="23_evqxc"]
+[ext_resource type="Texture2D" uid="uid://yquhv7ya5fjt" path="res://Assets/Textures/ChalkCross.png" id="24_evqxc"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_degqt"]
 
@@ -33,7 +43,10 @@ properties/2/spawn = true
 properties/2/replication_mode = 1
 properties/3/path = NodePath(".:IsCrouched")
 properties/3/spawn = true
-properties/3/replication_mode = 1
+properties/3/replication_mode = 2
+properties/4/path = NodePath("PlayerCamera/Torch:visible")
+properties/4/spawn = true
+properties/4/replication_mode = 2
 
 [sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_kgmex"]
 
@@ -99,6 +112,8 @@ node_connections = [&"output", 0, &"Add2 2", &"TimeScale", 0, &"BlendSpace1D", &
 
 [sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_mx3nr"]
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mx3nr"]
+
 [node name="Player" type="CharacterBody3D" unique_id=959927640 node_paths=PackedStringArray("_checkForHead", "Collider", "_camera", "_playerMesh", "_torchNode") groups=["Player"]]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
 collision_layer = 2
@@ -109,7 +124,7 @@ safe_margin = 0.005
 script = ExtResource("1_08u7w")
 BaseSpeed = 5.0
 JumpHeight = 15.0
-_checkForHead = NodePath("RayCast3D")
+_checkForHead = NodePath("CheckFloor")
 Collider = NodePath("CollisionShape3D")
 _camera = NodePath("PlayerCamera")
 _playerMesh = NodePath("Model")
@@ -126,12 +141,15 @@ BobSway = 0.08
 FootstepSounds = Array[AudioStream]([ExtResource("3_kgmex"), ExtResource("4_4qbli"), ExtResource("5_4qbli"), ExtResource("6_08u7w"), ExtResource("7_kgmex")])
 _audioPlayer = NodePath("AudioStreamPlayer3D")
 
-[node name="Torch" type="SpotLight3D" parent="PlayerCamera" unique_id=878207258]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -1, -0.65)
+[node name="Torch" type="SpotLight3D" parent="PlayerCamera" unique_id=878207258 node_paths=PackedStringArray("_audio", "_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -1, -0.7280932)
 shadow_enabled = true
 distance_fade_enabled = true
 spot_range = 72.8751
 spot_angle = 16.3053
+script = ExtResource("8_and0b")
+_audio = NodePath("TorchClick")
+_player = NodePath("../..")
 
 [node name="TorchOuter" type="SpotLight3D" parent="PlayerCamera/Torch" unique_id=679873910]
 transform = Transform3D(1, 0, -2.9802322e-08, 0, 1, 0, 2.9802322e-08, 0, 1, 0, 0, 0)
@@ -139,6 +157,9 @@ light_energy = 0.3
 distance_fade_enabled = true
 spot_range = 72.8751
 spot_angle = 45.968285
+
+[node name="TorchClick" type="AudioStreamPlayer3D" parent="PlayerCamera/Torch" unique_id=2024275692]
+stream = ExtResource("9_i3mxk")
 
 [node name="AudioListener3D" type="AudioListener3D" parent="PlayerCamera" unique_id=2057926588]
 
@@ -159,6 +180,14 @@ transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, -10)
 [node name="TorchNode" type="Node3D" parent="PlayerCamera" unique_id=4276694]
 transform = Transform3D(0.31699282, 0.30788293, 0.897064, -0.3199304, -0.85569274, 0.4067367, 0.8928383, -0.41593066, -0.1727473, 0, 0, 0)
 
+[node name="Draw" type="RayCast3D" parent="PlayerCamera" unique_id=2093300820 node_paths=PackedStringArray("_player", "_showColor", "_label")]
+target_position = Vector3(0, 0, -5)
+script = ExtResource("11_qjulh")
+_cross = ExtResource("23_evqxc")
+_player = NodePath("../..")
+_showColor = NodePath("../../HUD/Crosshair/Cross")
+_label = NodePath("../../Label")
+
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=140627627]
 visible = false
 mesh = SubResource("CapsuleMesh_degqt")
@@ -178,7 +207,7 @@ offset_right = 40.0
 offset_bottom = 23.0
 text = "sound level:"
 
-[node name="RayCast3D" type="RayCast3D" parent="." unique_id=2135286830]
+[node name="CheckFloor" type="RayCast3D" parent="." unique_id=2135286830]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 target_position = Vector3(0, 2, 0)
 hit_from_inside = true
@@ -355,21 +384,6 @@ transform = Transform3D(1.3333333, 0, 0, 0, 1.3333333, 0, 0, 0, 1.3333333, 0.660
 [node name="ArmTarget_R" type="Marker3D" parent="Model/TorchArmRotator" unique_id=355148436]
 transform = Transform3D(0.6666667, 0, 0, 0, 0.6666667, 0, 0, 0, 0.6666667, 0.2568337, -0.06989646, -0.42890513)
 
-[node name="Torch" type="SpotLight3D" parent="Model/TorchArmRotator/ArmTarget_R" unique_id=241199280]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.038676023, -0.26662037, -0.76171035)
-shadow_enabled = true
-distance_fade_enabled = true
-spot_range = 72.8751
-spot_angle = 16.3053
-
-[node name="TorchOuter" type="SpotLight3D" parent="Model/TorchArmRotator/ArmTarget_R" unique_id=1750901896]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.038676023, -0.26662037, -0.76171035)
-light_energy = 0.3
-shadow_enabled = true
-distance_fade_enabled = true
-spot_range = 72.8751
-spot_angle = 45.968285
-
 [node name="AnimationTree" type="AnimationTree" parent="Model" unique_id=359014244]
 tree_root = SubResource("AnimationNodeBlendTree_y8xgx")
 anim_player = NodePath("../AnimationPlayer")
@@ -460,6 +474,118 @@ text = "<RESUME>"
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "<Quit>"
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1775121594 node_paths=PackedStringArray("_batteryFillAmount", "_chalkImage", "_chalkColor", "_batteryLabel", "_chalkLabel", "_torch", "_player", "_label")]
+script = ExtResource("16_405c5")
+_batteryFillAmount = NodePath("VBoxContainer/BatteryAmount")
+_chalkImage = NodePath("VBoxContainer/Chalk")
+_chalkColor = NodePath("../PlayerCamera/Draw")
+_batteryLabel = NodePath("VBoxContainer/BatteryAmount/BatteryAmount")
+_chalkLabel = NodePath("VBoxContainer/Chalk/ChalkAmount")
+_torch = NodePath("../PlayerCamera/Torch")
+_player = NodePath("..")
+_label = NodePath("../Label")
+
+[node name="VBoxContainer" type="HBoxContainer" parent="HUD" unique_id=15874215]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -261.0
+offset_top = -129.0
+offset_right = -1.0
+offset_bottom = -1.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.7, 0.7)
+size_flags_horizontal = 10
+size_flags_vertical = 10
+
+[node name="Chalk" type="TextureRect" parent="HUD/VBoxContainer" unique_id=316161255]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("15_ms580")
+
+[node name="ChalkAmount" type="Label" parent="HUD/VBoxContainer/Chalk" unique_id=798556525]
+layout_mode = 0
+offset_left = -9.0
+offset_top = 44.0
+offset_right = 136.0
+offset_bottom = 73.0
+theme = ExtResource("13_m62uw")
+theme_override_font_sizes/font_size = 28
+text = "10"
+horizontal_alignment = 1
+
+[node name="BatteryAmount" type="TextureProgressBar" parent="HUD/VBoxContainer" unique_id=115263178]
+layout_mode = 2
+max_value = 60.0
+value = 60.0
+fill_mode = 3
+texture_over = ExtResource("16_0fs2y")
+texture_progress = ExtResource("17_wphcr")
+
+[node name="BatteryAmount" type="Label" parent="HUD/VBoxContainer/BatteryAmount" unique_id=1622715451]
+layout_mode = 0
+offset_left = -9.0
+offset_top = 44.0
+offset_right = 136.0
+offset_bottom = 73.0
+theme = ExtResource("13_m62uw")
+theme_override_font_sizes/font_size = 28
+text = "5"
+horizontal_alignment = 1
+
+[node name="Crosshair" type="TextureRect" parent="HUD" unique_id=1782484485]
+texture_filter = 1
+material = SubResource("ShaderMaterial_mx3nr")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("20_405c5")
+
+[node name="Cross" type="TextureRect" parent="HUD/Crosshair" unique_id=553636874]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.20300001
+anchor_top = 0.20300001
+anchor_right = 0.791
+anchor_bottom = 0.791
+offset_left = 0.00799942
+offset_top = 0.00799942
+offset_right = 1216.376
+offset_bottom = 1216.376
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.03, 0.03)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+size_flags_stretch_ratio = 0.0
+texture = ExtResource("24_evqxc")
+
+[node name="Label" type="Label" parent="." unique_id=197270711]
+anchors_preset = -1
+anchor_top = 0.035
+anchor_right = 0.001
+anchor_bottom = 0.128
+offset_left = 1.0
+offset_top = 30.32
+offset_right = 38.848
+offset_bottom = -6.9440002
+text = "Chalk Color:
+Chalk index:"
 
 [connection signal="pressed" from="PauseMenu/ColorRect2/VBoxContainer/Resume" to="PauseMenu" method="OnResumePressed"]
 [connection signal="pressed" from="PauseMenu/ColorRect2/VBoxContainer/Quit" to="PauseMenu" method="OnQuitPressed"]

@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bmhftl7fayyjc"]
+
+[ext_resource type="Texture2D" uid="uid://4hq7pro7j48o" path="res://Assets/Textures/Battery.png" id="1_wqnib"]
+
+[resource]
+albedo_texture = ExtResource("1_wqnib")
+metallic = 0.6
+roughness = 0.2

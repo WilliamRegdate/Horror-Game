@@ -2,12 +2,13 @@
 
 [ext_resource type="ArrayMesh" uid="uid://b206ny8b3b8wl" path="res://Assets/Models/Environment/Furniture/officeCorner_2x2_2.obj" id="1_bo646"]
 [ext_resource type="Material" uid="uid://b4fk1wsfi5mrs" path="res://Assets/Materials/Environment.tres" id="1_evh04"]
+[ext_resource type="ArrayMesh" uid="uid://dwtkv3rmg3pb2" path="res://Assets/Models/Clutter/Batteries.obj" id="3_14f01"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_evh04"]
 size = Vector3(2.517334, 1.5040283, 1.5168762)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_14f01"]
-size = Vector3(5.478882, 1.5040283, 2.5532913)
+size = Vector3(5.478882, 1.0567017, 2.5532913)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2ybul"]
 size = Vector3(1.5059052, 1.5040283, 2.5532913)
@@ -49,7 +50,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9466553, -1.7479858, 4.504
 shape = SubResource("BoxShape3D_evh04")
 
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="StaticBody3D" unique_id=1993104928]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5510864, -1.7479858, 6.516308)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5510864, -1.9716492, 6.516308)
 shape = SubResource("BoxShape3D_14f01")
 
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="StaticBody3D" unique_id=1937801331]
@@ -83,3 +84,33 @@ shape = SubResource("BoxShape3D_algp8")
 [node name="CollisionShape3D11" type="CollisionShape3D" parent="StaticBody3D" unique_id=1912267272]
 transform = Transform3D(0.99969757, 0, -0.02459791, 0, 1, 0, 0.02459791, 0, 0.99969757, -0.95882237, -0.6087495, 1.1138235)
 shape = SubResource("BoxShape3D_3ylq5")
+
+[node name="Node3D10" type="MeshInstance3D" parent="." unique_id=2047265607 groups=["Clutter"]]
+transform = Transform3D(0.21693662, 0, -0.9761853, 0, 1, 0, 0.9761853, 0, 0.21693662, 2.6461306, -1.4404516, 5.5522265)
+mesh = ExtResource("3_14f01")
+skeleton = NodePath("../Node3D7")
+
+[node name="Node3D12" type="MeshInstance3D" parent="." unique_id=1503520928 groups=["Clutter"]]
+transform = Transform3D(0.21693662, 0, -0.9761853, 0, 1, 0, 0.9761853, 0, 0.21693662, 2.9853108, -1.4404516, 5.8974943)
+mesh = ExtResource("3_14f01")
+skeleton = NodePath("../Node3D7")
+
+[node name="Node3D13" type="MeshInstance3D" parent="." unique_id=1617771820 groups=["Clutter"]]
+transform = Transform3D(0.21693662, 0, -0.9761853, 0, 1, 0, 0.9761853, 0, 0.21693662, 2.4968548, -1.4404516, 6.0407224)
+mesh = ExtResource("3_14f01")
+skeleton = NodePath("../Node3D7")
+
+[node name="Node3D14" type="MeshInstance3D" parent="." unique_id=1351342307 groups=["Clutter"]]
+transform = Transform3D(0.21693662, 0, -0.9761853, 0, 1, 0, 0.9761853, 0, 0.21693662, 2.148964, -1.4404516, 5.787647)
+mesh = ExtResource("3_14f01")
+skeleton = NodePath("../Node3D7")
+
+[node name="Node3D15" type="MeshInstance3D" parent="." unique_id=415700301 groups=["Clutter"]]
+transform = Transform3D(0.21693662, 0, -0.9761853, 0, 1, 0, 0.9761853, 0, 0.21693662, 2.1893299, -1.4404516, 5.435141)
+mesh = ExtResource("3_14f01")
+skeleton = NodePath("../Node3D7")
+
+[node name="Node3D11" type="MeshInstance3D" parent="." unique_id=2068824030 groups=["Clutter"]]
+transform = Transform3D(0.9978471, 0, -0.06557758, 0, 1, 0, 0.06557758, 0, 0.9978471, 5.3689733, -1.0010808, 5.494923)
+mesh = ExtResource("3_14f01")
+skeleton = NodePath("../Node3D7")

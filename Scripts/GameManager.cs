@@ -68,9 +68,20 @@ public partial class GameManager : Node3D
 		{
 			intArray[i] = areProps[i] ? 1 : 0;
 		}
-
 		Rpc(nameof(ReceivePlacements), sceneIndices, positions, rotations, intArray);
+
+		var (clutterIds, clutterPositions, clutterRotations) = Generator.ExportClutter();
+		Rpc(nameof(RpcRelayClutter), clutterIds, clutterPositions, clutterRotations);
+
 		Rpc(nameof(PropagateStartGame));
+	}
+	
+
+	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
+	private void RpcRelayClutter(int[] ids, Vector3[] positions, Vector3[] rotations)
+	{
+		// plain method call, not Generator.Rpc(...) — GameManager already received this over the network
+		Generator.RpcSyncClutter(ids, positions, rotations);
 	}
 	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
 	private void PropagateStartGame()

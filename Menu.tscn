@@ -70,7 +70,7 @@ shader_parameter/blue_band_strength = 0.1
 shader_parameter/blue_band_glitch = 0.25
 shader_parameter/blue_band_distort_px = 1.2
 
-[node name="Menu" type="Node3D" unique_id=750598287 node_paths=PackedStringArray("_playMenu", "_optionsMenu", "_partyMenu", "_loadProgress", "_startGameButton", "_errorMessage", "_errorBox", "_ipInput", "_nameInput", "_playerList")]
+[node name="Menu" type="Node3D" unique_id=750598287 node_paths=PackedStringArray("_playMenu", "_optionsMenu", "_partyMenu", "_loadProgress", "_startGameButton", "_errorMessage", "_errorBox", "_ipInput", "_portInput", "_nameInput", "_playerList")]
 script = ExtResource("1_dolsu")
 _playMenu = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu")
 _optionsMenu = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu")
@@ -79,7 +79,8 @@ _loadProgress = NodePath("CanvasLayer2/HSplitContainer/Party Menu/ProgressBar")
 _startGameButton = NodePath("CanvasLayer2/HSplitContainer/Party Menu/StartButton")
 _errorMessage = NodePath("ErrorLayer/ColorRect/VBoxContainer/ErrorMessage")
 _errorBox = NodePath("ErrorLayer")
-_ipInput = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer/TextEdit")
+_ipInput = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer/InputIp")
+_portInput = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer/InputPort")
 _nameInput = NodePath("CanvasLayer2/HSplitContainer/Party Menu/LineEdit")
 _playerList = NodePath("CanvasLayer2/HSplitContainer/Party Menu/Players/PlayerList")
 
@@ -225,10 +226,16 @@ alignment = 0
 visible = false
 layout_mode = 2
 
-[node name="TextEdit" type="TextEdit" parent="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer" unique_id=827194245]
+[node name="InputIp" type="LineEdit" parent="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer" unique_id=1716489903]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "INPUT IP ADDRESS"
+
+[node name="InputPort" type="LineEdit" parent="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer" unique_id=480609238]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "23000"
+placeholder_text = "Port"
 
 [node name="Button" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer" unique_id=1332855504]
 layout_mode = 2

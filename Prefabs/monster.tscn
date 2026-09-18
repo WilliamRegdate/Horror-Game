@@ -57,7 +57,6 @@ disabled = true
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=205892437]
 path_desired_distance = 0.3
 target_desired_distance = 1.5
-debug_enabled = true
 debug_path_custom_color = Color(1, 0, 1, 1)
 debug_path_custom_point_size = 40.0
 
@@ -224,6 +223,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0278655, -0.0014418066, 1.9
 replication_config = SubResource("SceneReplicationConfig_7jf71")
 
 [node name="Label" type="Label" parent="." unique_id=2118002149]
+visible = false
 anchors_preset = -1
 anchor_top = 0.035
 anchor_right = 0.001
@@ -247,7 +247,7 @@ unit_size = 30.0
 max_db = 0.0
 
 [node name="PlayerChecker" type="RayCast3D" parent="." unique_id=1219386205]
-transform = Transform3D(-0.5499999, 6.2545645e-14, 2.141777e-07, -2.1416415e-07, -0.0061707343, -0.5499653, 2.4029299e-09, -0.54996544, 0.006170857, 0, 1.5, 0)
+transform = Transform3D(-0.5499999, 6.2545645e-14, 2.141777e-07, -2.1416415e-07, -0.0061707343, -0.5499653, 2.4029299e-09, -0.54996544, 0.006170857, 0, 3, 0)
 target_position = Vector3(0, 0, 0)
 collision_mask = 7
 hit_back_faces = false

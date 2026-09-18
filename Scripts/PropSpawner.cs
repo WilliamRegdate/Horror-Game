@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public partial class PropSpawner : Node3D
 {
 	[Export] private string _shape;
-
+    
 
     //Json File as a string
 

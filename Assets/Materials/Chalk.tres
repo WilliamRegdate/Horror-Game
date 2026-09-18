@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dw4sij72kcbir"]
+
+[ext_resource type="Texture2D" uid="uid://cdna63e8dbqcu" path="res://Assets/Textures/Chalk.png" id="1_u4piv"]
+[ext_resource type="Texture2D" uid="uid://dti601nikuij" path="res://Assets/Textures/ChalkNormal.png" id="2_qo5gu"]
+
+[resource]
+albedo_texture = ExtResource("1_u4piv")
+normal_enabled = true
+normal_texture = ExtResource("2_qo5gu")

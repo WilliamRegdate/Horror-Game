@@ -7,23 +7,22 @@
 [ext_resource type="Script" uid="uid://n4m0vbc6yu6p" path="res://PlayerSpawner.cs" id="8_j5wjh"]
 [ext_resource type="Shader" uid="uid://c6eh4ntm5vtc8" path="res://Scripts/Shaders/vhs.gdshader" id="9_vef74"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_681nw"]
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ryrav"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
 ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
 
-[sub_resource type="Sky" id="Sky_hve3p"]
-sky_material = SubResource("ProceduralSkyMaterial_681nw")
+[sub_resource type="Sky" id="Sky_ulcgi"]
+sky_material = SubResource("ProceduralSkyMaterial_ryrav")
 radiance_size = 0
 
-[sub_resource type="Environment" id="Environment_nu2kt"]
+[sub_resource type="Environment" id="Environment_eow3j"]
 background_mode = 1
-background_color = Color(1, 1, 1, 1)
+background_color = Color(0.114897, 0.114897, 0.114897, 1)
 background_energy_multiplier = 0.0
-sky = SubResource("Sky_hve3p")
+sky = SubResource("Sky_ulcgi")
 sky_rotation = Vector3(-1.775, -0.682424, 0)
-ambient_light_color = Color(1, 1, 1, 1)
 ambient_light_sky_contribution = 0.01
-ambient_light_energy = 0.1
+ambient_light_energy = 0.0
 reflected_light_source = 1
 tonemap_mode = 3
 tonemap_exposure = 2.9
@@ -33,13 +32,13 @@ ssil_enabled = true
 ssil_normal_rejection = 0.3
 glow_enabled = true
 fog_enabled = true
-fog_light_color = Color(0.0148753, 0.0180037, 0.0236408, 1)
+fog_light_color = Color(0, 0, 0, 1)
 fog_light_energy = 0.0
-fog_density = 0.015
+fog_density = 0.02
 
-[sub_resource type="CameraAttributesPhysical" id="CameraAttributesPhysical_kgmex"]
+[sub_resource type="CameraAttributesPhysical" id="CameraAttributesPhysical_j5wjh"]
 
-[sub_resource type="Compositor" id="Compositor_08u7w"]
+[sub_resource type="Compositor" id="Compositor_vef74"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hve3p"]
 shader = ExtResource("9_vef74")
@@ -72,10 +71,10 @@ script = ExtResource("1_mfdv2")
 LevelMaker = ExtResource("2_eow3j")
 _monster = NodePath("Monster")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1220312149]
-environment = SubResource("Environment_nu2kt")
-camera_attributes = SubResource("CameraAttributesPhysical_kgmex")
-compositor = SubResource("Compositor_08u7w")
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=318912376]
+environment = SubResource("Environment_eow3j")
+camera_attributes = SubResource("CameraAttributesPhysical_j5wjh")
+compositor = SubResource("Compositor_vef74")
 
 [node name="Monster" parent="." unique_id=433109594 instance=ExtResource("7_lc2xo")]
 transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, -58.959427, 4.44928, 28.900925)

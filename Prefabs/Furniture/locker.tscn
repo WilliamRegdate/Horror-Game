@@ -2,6 +2,7 @@
 
 [ext_resource type="Material" uid="uid://b4fk1wsfi5mrs" path="res://Assets/Materials/Environment.tres" id="2_sfupo"]
 [ext_resource type="Script" uid="uid://b7r0ggeoebym7" path="res://Scripts/Locker.cs" id="3_j83vq"]
+[ext_resource type="ArrayMesh" uid="uid://dwtkv3rmg3pb2" path="res://Assets/Models/Clutter/Batteries.obj" id="3_tnbha"]
 
 [sub_resource type="Animation" id="Animation_tnbha"]
 resource_name = "Close"
@@ -170,3 +171,7 @@ animation = NodePath("../../AnimationPlayer")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Door/Area3D" unique_id=75895083]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.009543896, -2.2105408, -1.0238192)
 shape = SubResource("BoxShape3D_tnbha")
+
+[node name="Node3D5" type="MeshInstance3D" parent="." unique_id=2119400105 groups=["Clutter"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2990906, -2.4356534, -0.16603372)
+mesh = ExtResource("3_tnbha")

@@ -21,7 +21,7 @@ public partial class PlayerCamera : Camera3D
     private bool soundCooldown;
     public bool IsCrouching { get; set; }
     private float _standHeight;
-    private float _crouchHeight = -0.5f;
+    private float _crouchHeight = -0.4f;
 
     public bool DisableMouse;
 

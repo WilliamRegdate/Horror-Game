@@ -1,12 +1,4 @@
-gui scale slider
-
-chalk
-
-death screen and dying
-sound effects
-
-Ending area & cutscene
-
-fix host
-
+light detction
+Generator
 Controls
+settings

@@ -9,11 +9,14 @@ public partial class Player : CharacterBody3D
 	[Export] private RayCast3D _checkForHead;
 	public float Speed;
 	[Export] public CollisionShape3D Collider;
+	public double BatteryLife;
+	public int Batteries = 5;
+	public int Chalk = 10;
 	private CapsuleShape3D _capsule;
 	[Export] PlayerCamera _camera;
 	[Export] Node3D _playerMesh; 
 	[Export] Node3D _torchNode;
-	private bool debugMode;
+	private bool debugMode = true;
 	[Export] public bool IsCrouched;
 	NetworkHandler _networkHandler;
 
@@ -21,11 +24,9 @@ public partial class Player : CharacterBody3D
     {
 		_networkHandler = GetNode<NetworkHandler>("/root/NetworkHandler");
         _capsule = (CapsuleShape3D)Collider.Shape;
-		_torchNode.Hide();
 		if (!IsMultiplayerAuthority()) return;
 		_playerMesh.Hide();
 		_playerMesh.QueueFree();
-		_torchNode.Show();
     }
 	    public override void _Process(double delta)
     {
@@ -36,7 +37,18 @@ public partial class Player : CharacterBody3D
 	public override void _PhysicsProcess(double delta)
 	{
 
-		if (!IsMultiplayerAuthority()) return;
+		if (!IsMultiplayerAuthority())
+		{
+			if (IsCrouched)
+			{
+				_camera.IsCrouching = true;
+				Speed = BaseSpeed * 0.3f;
+				Collider.Position = new(0, -0.56f, 0);
+				_capsule.Height = 0.88f;
+				_torchNode.Position = new (0.75f, 0, -0.65f);
+			}
+			return;
+		}
 		Vector3 velocity = Velocity;
 
 		if (Input.IsActionJustPressed("debug"))
@@ -122,14 +134,6 @@ public partial class Player : CharacterBody3D
 		Velocity = velocity;
 		MoveAndSlide();
 	}
-	// private void SetOwnerRecursive(Node node, Node ownerRoot)
-	// {
-	// 	foreach (Node child in node.GetChildren())
-	// 	{
-	// 		child.Owner = ownerRoot;
-	// 		SetOwnerRecursive(child, ownerRoot);
-	// 	}
-	// }
 	
 	public void Die()
 	{

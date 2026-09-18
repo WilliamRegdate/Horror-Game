@@ -8,7 +8,7 @@ public partial class NetworkHandler : Node
     public bool JustDisconnectedFromServer = false;
 
     public string IpAddress = "";
-    const int PORT = 23000;
+    public int Port = 23000;
     ENetMultiplayerPeer peer;
     private Upnp _upnp;
 
@@ -87,7 +87,7 @@ public partial class NetworkHandler : Node
         }
 
         peer = new();
-        Error err = peer.CreateServer(PORT, maxPlayers);
+        Error err = peer.CreateServer(Port, maxPlayers);
         if (err != Error.Ok)
         {
             GD.PrintErr($"Failed to create server: {err}");
@@ -98,7 +98,7 @@ public partial class NetworkHandler : Node
         Multiplayer.MultiplayerPeer = peer;
         EmitSignal(SignalName.ServerStarted);
 
-        _ = SetupUpnpAsync(PORT); // best-effort, fire-and-forget — LAN hosting works regardless
+        _ = SetupUpnpAsync(Port); // best-effort, fire-and-forget — LAN hosting works regardless
 
         return true;
     }
@@ -111,7 +111,7 @@ public partial class NetworkHandler : Node
         }
 
         peer = new();
-        Error err = peer.CreateClient(IpAddress, PORT);
+        Error err = peer.CreateClient(IpAddress, Port);
         if (err != Error.Ok)
         {
             GD.PrintErr($"Failed to create client: {err}");
@@ -133,7 +133,7 @@ public partial class NetworkHandler : Node
 
         if (_upnp != null)
         {
-            _upnp.DeletePortMapping(PORT, "UDP");
+            _upnp.DeletePortMapping(Port, "UDP");
             _upnp = null;
         }
 

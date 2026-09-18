@@ -16,6 +16,7 @@
 [ext_resource type="AudioStream" uid="uid://dp5pse2r5yo25" path="res://Assets/Audio/Ambience/Background.wav" id="13_6my2u"]
 [ext_resource type="Script" uid="uid://c62hcyccwsapt" path="res://Scripts/AmbiencePlayer.cs" id="14_32mdr"]
 [ext_resource type="PackedScene" uid="uid://beewlcyd2gcjn" path="res://Assets/Models/Environment/Room objects/door.glb" id="16_0qjwi"]
+[ext_resource type="Texture2D" uid="uid://c4okshawx03ja" path="res://Builds/ex assets/Assets/Models/Environment/Black Rock logo.png" id="16_nwnoc"]
 [ext_resource type="PackedScene" uid="uid://desibgn2su8eg" path="res://Assets/Models/Environment/Room objects/door_Vertical.glb" id="17_nwnoc"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_y8xgx"]
@@ -746,6 +747,11 @@ script = ExtResource("14_32mdr")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.36899, 14.857063)
 volume_db = -5.0
 panning_strength = 0.4
+
+[node name="Decal" type="Decal" parent="WelcomeToFacilityC" unique_id=191710481]
+transform = Transform3D(-1.395, -1.509958e-07, 6.600236e-15, 0, -4.371139e-08, -1, 2.1063914e-07, -1, 4.371139e-08, 0, -2.5, 7.5650005)
+size = Vector3(7, 7, 7)
+texture_albedo = ExtResource("16_nwnoc")
 
 [node name="door" parent="." unique_id=1999691232 instance=ExtResource("16_0qjwi")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.8121586)

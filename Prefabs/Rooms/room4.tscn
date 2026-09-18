@@ -56,7 +56,7 @@ transform = Transform3D(0.5, 0, -1.77636e-15, 0, 0.5, 0, 1.77636e-15, 0, 0.5, 0.
 mesh = SubResource("BoxMesh_v4wn0")
 
 [node name="PropSpawner5" parent="." unique_id=986384125 instance=ExtResource("3_fle40")]
-transform = Transform3D(-4.3711402e-08, 0, 1, 0, 1, 0, -1, 0, -4.3711402e-08, 24.532225, 0, 0.035622835)
+transform = Transform3D(-4.3711402e-08, 0, 1, 0, 1, 0, -1, 0, -4.3711402e-08, 24.305761, 0, -0.23613071)
 script = ExtResource("4_xpxsv")
 _shape = "corner_2x2"
 
