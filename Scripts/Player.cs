@@ -48,7 +48,8 @@ public partial class Player : CharacterBody3D
 		}
 		Vector3 velocity = Velocity;
 
-		if (Input.IsActionJustPressed("debug"))
+		//if (Input.IsActionJustPressed("debug"))
+		if (false)
 		{
 			debugMode = !debugMode;
 			Collider.Disabled = debugMode;
