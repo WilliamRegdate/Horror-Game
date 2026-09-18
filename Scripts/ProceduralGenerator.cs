@@ -928,12 +928,7 @@ public partial class ProceduralGenerator : Node
                     _clutter.Add((type, pos, rot));
                 }
                 item.QueueFree(); // free the temp item
-            }
-            //place clutter
-            int[] ids = _clutter.Select(c => c.Item1).ToArray();
-            Vector3[] positions = _clutter.Select(c => c.Item2).ToArray();
-            Vector3[] rotations = _clutter.Select(c => c.Item3).ToArray();
-            Rpc(nameof(RpcSyncClutter), ids, positions, rotations);      
+            }    
         }
         PlaceClutter();
 

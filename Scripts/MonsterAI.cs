@@ -99,7 +99,7 @@ public partial class MonsterAI : CharacterBody3D
 
 	public override void _PhysicsProcess(double delta)
 	{
-		if (!IsMultiplayerAuthority())
+		if (!Multiplayer.IsServer())
 		{
 			return;
 		}
@@ -137,7 +137,7 @@ public partial class MonsterAI : CharacterBody3D
     public override void _Process(double delta)
     {
 		UpdateChaseAudio(delta);
-		if (_locked || !IsMultiplayerAuthority())
+		if (_locked || !Multiplayer.IsServer())
 			return;
 		if (_startState)
 			GD.Print("set state :", _state);
@@ -167,19 +167,13 @@ public partial class MonsterAI : CharacterBody3D
 				{
 					if (Players[playerToKill].IsDead)
 						continue;
-					GD.Print("Player in range");
-					_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(playerToKill.Collider.GlobalPosition);
-					_checkForPlayer.ForceRaycastUpdate();
-					if (_checkForPlayer.IsColliding())
+					if (CheckPlayerLineOfSight(playerToKill.Collider.GlobalPosition) != null)
 					{
-						if (_checkForPlayer.GetCollider() is Player)
-						{
-							_startState = true;
-							_state = MonsterState.Kill;	
-							playerToKill.Die();
-							Players[playerToKill].IsDead = true;
-							return;
-						}
+						_startState = true;
+						_state = MonsterState.Kill;
+						playerToKill.Die();
+						Players[playerToKill].IsDead = true;
+						return;
 					}
 				}
 			}
@@ -247,21 +241,16 @@ public partial class MonsterAI : CharacterBody3D
 			_secondaryTimer = 15;
 			_agent.TargetPosition = GlobalPosition + new Vector3(GD.RandRange(-30,30), GD.RandRange(-10,10), GD.RandRange(-30,30));
 		}
-		//check for player line of sight
 		foreach (var (player, data) in Players)
 		{
-			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(player.Collider.GlobalPosition);
-			_checkForPlayer.ForceRaycastUpdate();
-			if (_checkForPlayer.IsColliding())
+			Player seen = CheckPlayerLineOfSight(player.Collider.GlobalPosition);
+			if (seen != null)
 			{
-				if (_checkForPlayer.GetCollider() is Player)
-				{
-					_startState = true;
-					_timer = 0.5;
-					_state = MonsterState.Chase;	
-					_currentTarget = (Player)_checkForPlayer.GetCollider();
-					return;
-				}
+				_startState = true;
+				_timer = 0.5;
+				_state = MonsterState.Chase;
+				_currentTarget = seen;
+				return;
 			}
 		}
 		
@@ -286,29 +275,24 @@ public partial class MonsterAI : CharacterBody3D
 		//check for all players
 		foreach (var item in Players)
 		{
-			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(item.Key.Collider.GlobalPosition);
-			_checkForPlayer.ForceRaycastUpdate();
-			if (_checkForPlayer.IsColliding())
+			Player seen = CheckPlayerLineOfSight(item.Key.Collider.GlobalPosition);
+			if (seen != null)
 			{
-				
-				if (_checkForPlayer.GetCollider() is Player)
-				{
-					_startState = true;
-					_state = MonsterState.Chase;	
-					_currentTarget = (Player)_checkForPlayer.GetCollider();
-					_timer = 0f;
-					return;
-				}
+				_startState = true;
+				_state = MonsterState.Chase;
+				_currentTarget = seen;
+				_timer = 0f;
+				return;
 			}
-			//get player sounds and add them to monsters awareness
+
 			item.Value.Awareness += GetSoundLevel(item.Key) * delta;
 			TestLabel.Text += $"Awareness: {item.Value.Awareness}\n";
 			currentDistance = GlobalPosition.DistanceSquaredTo(item.Key.GlobalPosition);
 
-			if (item.Value.Awareness  > 200)
+			if (item.Value.Awareness > 200)
 			{
 				_timer = 20;
-				_agent.TargetPosition = item.Key.Position; // move to target
+				_agent.TargetPosition = item.Key.Position;
 				item.Value.Awareness = 0;
 			}
 		}
@@ -334,29 +318,24 @@ public partial class MonsterAI : CharacterBody3D
 		//check for all players
 		foreach (var item in Players)
 		{
-			_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(item.Key.Collider.GlobalPosition);
-			_checkForPlayer.ForceRaycastUpdate();
-			if (_checkForPlayer.IsColliding())
+			Player seen = CheckPlayerLineOfSight(item.Key.Collider.GlobalPosition);
+			if (seen != null)
 			{
-				
-				if (_checkForPlayer.GetCollider() is Player)
-				{
-					_startState = true;
-					_state = MonsterState.Chase;	
-					_currentTarget = (Player)_checkForPlayer.GetCollider();
-					_agent.TargetDesiredDistance = 1.5f;
-					_timer = 2.5f;
-					return;
-				}
+				_startState = true;
+				_state = MonsterState.Chase;
+				_currentTarget = seen;
+				_agent.TargetDesiredDistance = 1.5f;
+				_timer = 2.5f;
+				return;
 			}
-			//get player sounds and add them to monsters awareness
+
 			item.Value.Awareness += GetSoundLevel(item.Key) * delta;
 			TestLabel.Text += $"Awareness: {item.Value.Awareness}\n";
 			currentDistance = GlobalPosition.DistanceSquaredTo(item.Key.Collider.GlobalPosition);
-			
-			if (item.Value.Awareness  > 100)
+
+			if (item.Value.Awareness > 100)
 			{
-				_agent.TargetPosition = item.Key.Position ;// move to target by 50%
+				_agent.TargetPosition = item.Key.Position;
 				_agent.TargetDesiredDistance = GlobalPosition.DistanceTo(item.Key.GlobalPosition) * 0.5f;
 				item.Value.Awareness = 0;
 			}
@@ -393,14 +372,9 @@ public partial class MonsterAI : CharacterBody3D
 			_timer -= delta;
 			return;
 		}
-		_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(_currentTarget.GlobalPosition);
-		_checkForPlayer.ForceRaycastUpdate();
-		if (_checkForPlayer.IsColliding())
+		if (CheckPlayerLineOfSight(_currentTarget.GlobalPosition) == _currentTarget)
 		{
-			if (_checkForPlayer.GetCollider() == _currentTarget)
-			{
-				_secondaryTimer = 2;
-			}
+			_secondaryTimer = 2;
 		}
 		_agent.TargetPosition = _currentTarget.GlobalPosition;
 		_secondaryTimer -= delta;
@@ -433,6 +407,24 @@ public partial class MonsterAI : CharacterBody3D
 	public void Taunt(double delta)
 	{
 		
+	}
+	private Player CheckPlayerLineOfSight(Vector3 targetGlobalPosition)
+	{
+		_checkForPlayer.TargetPosition = _checkForPlayer.ToLocal(targetGlobalPosition);
+		_checkForPlayer.ForceRaycastUpdate();
+
+		if (!_checkForPlayer.IsColliding())
+			return null;
+
+		var collider = _checkForPlayer.GetCollider();
+
+		if (collider is Player player)
+			return player;
+
+		if (collider is VisibilityRadius visibilityRadius)
+			return visibilityRadius.Player;
+
+		return null;
 	}
 
 	private void SetSpeed(MonsterSpeed num)

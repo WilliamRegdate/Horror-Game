@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://couumywvtfcbg"]
 
 [ext_resource type="Script" uid="uid://b6340n7xwoor0" path="res://Scripts/Player.cs" id="1_08u7w"]
+[ext_resource type="Script" uid="uid://cmrui1sppd6lv" path="res://Prefabs/VisibilityRadius.cs" id="2_6gc6r"]
 [ext_resource type="Script" uid="uid://c7fx1oeba2x8b" path="res://Scripts/PlayerCamera.cs" id="2_kgmex"]
 [ext_resource type="AudioStream" uid="uid://cnirbxtoxrhli" path="res://Assets/Audio/Footsteps/footstep_w0.wav" id="3_kgmex"]
 [ext_resource type="AudioStream" uid="uid://dvn01mi5etkhq" path="res://Assets/Audio/Footsteps/footstep_w1.wav" id="4_4qbli"]
@@ -24,6 +25,9 @@
 [ext_resource type="Texture2D" uid="uid://doyspnm4qe061" path="res://Assets/Textures/Icons/crosshair.png" id="20_405c5"]
 [ext_resource type="PackedScene" uid="uid://b3p2ackoe8oaa" path="res://Prefabs/Clutter/Cross.tscn" id="23_evqxc"]
 [ext_resource type="Texture2D" uid="uid://yquhv7ya5fjt" path="res://Assets/Textures/ChalkCross.png" id="24_evqxc"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_y8xgx"]
+radius = 3.0
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_degqt"]
 
@@ -130,6 +134,17 @@ _camera = NodePath("PlayerCamera")
 _playerMesh = NodePath("Model")
 _torchNode = NodePath("PlayerCamera/Torch")
 metadata/Player = true
+
+[node name="VisibilityRadius" type="Area3D" parent="." unique_id=578218396 node_paths=PackedStringArray("_torch", "Player", "_collider")]
+transform = Transform3D(0.6666667, 0, 0, 0, 0.6666667, 0, 0, 0, 0.6666667, 0, 0, 0)
+collision_layer = 2
+script = ExtResource("2_6gc6r")
+_torch = NodePath("../PlayerCamera/Torch")
+Player = NodePath("..")
+_collider = NodePath("CollisionShape3D")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="VisibilityRadius" unique_id=459926976]
+shape = SubResource("SphereShape3D_y8xgx")
 
 [node name="PlayerCamera" type="Camera3D" parent="." unique_id=1300668449 node_paths=PackedStringArray("_audioPlayer")]
 transform = Transform3D(0.6666667, 0, 0, 0, 0.6666667, 0, 0, 0, 0.6666668, 0, 0.851249, 0)

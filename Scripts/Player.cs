@@ -16,7 +16,7 @@ public partial class Player : CharacterBody3D
 	[Export] PlayerCamera _camera;
 	[Export] Node3D _playerMesh; 
 	[Export] Node3D _torchNode;
-	private bool debugMode = true;
+	private bool debugMode = false;
 	[Export] public bool IsCrouched;
 	NetworkHandler _networkHandler;
 

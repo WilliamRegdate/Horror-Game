@@ -135,7 +135,6 @@ public partial class MainMenu : Node3D
 		ipTextBox.Visible = false;
 		_playMenu.Visible = false;
 
-
 		//load the Game manager but dont do anything as the host server does that
 		PackedScene packed = ResourceLoader.Load(GameScenePath) as PackedScene;
         _worldInstance = packed.Instantiate() as GameManager;

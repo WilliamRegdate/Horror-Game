@@ -1,4 +1,3 @@
-light detction
 Generator
 Controls
 settings
