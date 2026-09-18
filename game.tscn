@@ -18,7 +18,7 @@ radiance_size = 0
 [sub_resource type="Environment" id="Environment_eow3j"]
 background_mode = 1
 background_color = Color(0.114897, 0.114897, 0.114897, 1)
-background_energy_multiplier = 0.0
+background_energy_multiplier = 0.01
 sky = SubResource("Sky_ulcgi")
 sky_rotation = Vector3(-1.775, -0.682424, 0)
 ambient_light_sky_contribution = 0.01

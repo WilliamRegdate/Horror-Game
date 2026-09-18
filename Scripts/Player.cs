@@ -24,6 +24,7 @@ public partial class Player : CharacterBody3D
 
     public override void _Ready()
     {
+		
 		_networkHandler = GetNode<NetworkHandler>("/root/NetworkHandler");
         _capsule = (CapsuleShape3D)Collider.Shape;
 		if (!IsMultiplayerAuthority()) return;
@@ -33,7 +34,6 @@ public partial class Player : CharacterBody3D
     }
 	public override void _PhysicsProcess(double delta)
 	{
-
 		if (!IsMultiplayerAuthority())
 		{
 			if (IsCrouched)

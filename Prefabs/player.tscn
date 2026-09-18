@@ -118,7 +118,7 @@ node_connections = [&"output", 0, &"Add2 2", &"TimeScale", 0, &"BlendSpace1D", &
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mx3nr"]
 
-[node name="Player" type="CharacterBody3D" unique_id=959927640 node_paths=PackedStringArray("_checkForHead", "Collider", "_camera", "_playerMesh", "_torchNode", "_listener") groups=["Player"]]
+[node name="Player" type="CharacterBody3D" unique_id=959927640 node_paths=PackedStringArray("_checkForHead", "Collider", "_camera", "_playerMesh", "_torchNode", "_listener", "_label") groups=["Player"]]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
 collision_layer = 2
 floor_constant_speed = true
@@ -134,6 +134,7 @@ _camera = NodePath("PlayerCamera")
 _playerMesh = NodePath("Model")
 _torchNode = NodePath("PlayerCamera/Torch")
 _listener = NodePath("PlayerCamera/AudioListener3D")
+_label = NodePath("")
 metadata/Player = true
 
 [node name="VisibilityRadius" type="Area3D" parent="." unique_id=578218396 node_paths=PackedStringArray("_torch", "Player", "_collider")]

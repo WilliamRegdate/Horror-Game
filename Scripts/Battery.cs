@@ -8,7 +8,7 @@ public partial class Battery : Area3D, IInteractable
 		Node3D parent = GetParent() as Node3D;
 		parent.Hide();
 		_shape.Disabled = true;
-		player.Batteries += 2;
+		player.Batteries += 1;
 		Rpc(nameof(Remove));
 	}
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]

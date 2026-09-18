@@ -83,7 +83,6 @@ public partial class MonsterAI : CharacterBody3D
 	{
 		if (node is Player player)
 			Players.Remove(player);
-		GD.Print("player removed");
 		int largestAwareness = 0;
 		foreach((Player currentPlayer, PlayerTracker playerData) in Players)
 		{
@@ -208,9 +207,13 @@ public partial class MonsterAI : CharacterBody3D
 
 	public void Start(double delta)
 	{
+		_startState = false;
 		_agent.TargetPosition = GlobalPosition;
 		if (_timer < 0)
+		{
+			_startState = true;
 			_state = MonsterState.Search;
+		}
 		_timer -= delta;
 	}
 

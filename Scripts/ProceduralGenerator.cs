@@ -134,6 +134,12 @@ public partial class ProceduralGenerator : Node
         LinkClusters();
 
         //close leftover doors
+       TryCloseDoors();
+        GD.Print($"Generate() finished — total placements: {Placements.Count}");
+    }
+    private void TryCloseDoors()
+    {
+        float stageCompletion; 
         foreach (var cluster in _roomClusters)
         {
             int i = 0;
@@ -142,11 +148,85 @@ public partial class ProceduralGenerator : Node
 
             foreach(var door in cluster.Doors)
             {
+                GD.Print($"DoorPos:{door.Position}");
+                DrawDebug(door.Position, door.Position, new(255,255,255));
+                if (HasOpenFacingPartner(door))
+                {
+                    continue;
+                }
                 CloseDoor(door);
             }
             Progress =  90 + (stageCompletion * 10);
         }
-        GD.Print($"Generate() finished — total placements: {Placements.Count}");
+    }
+    private bool HasOpenFacingPartner(DoorData door)
+    {
+        foreach (var cluster in _roomClusters)
+        {
+            foreach (DoorData other in cluster.Doors)
+            {
+                if (other.Position.IsEqualApprox(door.Position)) continue; // don't match against itself
+                if (DoorsOverlap(door, other))
+                    return true;
+            }
+        }
+        return false;
+    }
+    private bool DoorsOverlap(DoorData a, DoorData b)
+    {
+        const float distEpsilon = 0.2f;
+        const float angleEpsilon = 10f;
+        a.Position = a.Position.Round();
+        b.Position = b.Position.Round();
+        float dist = a.Position.DistanceTo(b.Position);
+
+        if (a.Position.Y != b.Position.Y)
+            return false;
+
+        if (Mathf.Abs(dist - GridCellSize) > distEpsilon)
+            return false;
+
+        float angleA = Mathf.Round(Mathf.Wrap(a.Rotation.Y, 0f, 360f));
+        float angleB = Mathf.Round(Mathf.Wrap(b.Rotation.Y, 0f, 360f));
+
+        float rotDiff = Mathf.Wrap(angleA - angleB, 0f, 360f);
+        if (Mathf.Abs(rotDiff - 180f) > angleEpsilon)
+            return false;
+
+        GD.Print($"doors overlap at {a.Position}");
+        DrawDebug(a.Position,b.Position, new(255,255,255));
+        return true;
+    }
+    List<MeshInstance3D> _debugMeshes = new();
+    private void DrawDebug(Vector3 from, Vector3 to, Color color)
+    {
+        if(from.DistanceTo(to) < 4)
+        {
+            var sphere = new SphereMesh { Radius = 0.3f, Height = 0.3f * 2f };
+            var tex = new StandardMaterial3D
+            {
+                ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+                AlbedoColor = color
+            };
+
+            var instance = new MeshInstance3D { Mesh = sphere, MaterialOverride = tex, Position = to };
+            _debugMeshes.Add(instance);
+            return;
+        }
+        var immediateMesh = new ImmediateMesh();
+        var material = new StandardMaterial3D
+        {
+            ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+            AlbedoColor = color
+        };
+
+        immediateMesh.SurfaceBegin(Mesh.PrimitiveType.Lines, material);
+        immediateMesh.SurfaceAddVertex(from);
+        immediateMesh.SurfaceAddVertex(to);
+        immediateMesh.SurfaceEnd();
+
+        var meshInstance = new MeshInstance3D { Mesh = immediateMesh };
+        _debugMeshes.Add(meshInstance);
     }
 
     // Attempts to generate one full cluster (a chain of TotalRooms rooms) at a random,
@@ -162,6 +242,7 @@ public partial class ProceduralGenerator : Node
                 rng.RandiRange(-LevelBounds.Z, LevelBounds.Z) * 5
             );
             List<DoorData> openDoors;
+            List<DoorData> TriedDoors = new();
 
             if (_firstMove)
             {
@@ -208,10 +289,9 @@ public partial class ProceduralGenerator : Node
 
                 if (newRoomBounds == null)
                 {
-                    CloseDoor(parentDoor);
+                    TriedDoors.Add(parentDoor);
                     continue;
                 }
-
                 _placedRoomBounds.Add((Aabb)newRoomBounds);
                 roomsPlaced++;
 
@@ -221,7 +301,8 @@ public partial class ProceduralGenerator : Node
 
             // The cluster's remaining open doors become its external attachment points,
             // used later to connect this cluster to others.
-            return new RoomCluster(openDoors);
+            List<DoorData> combined = openDoors.Concat(TriedDoors).ToList();
+            return new RoomCluster(combined);
         }
 
         // Couldn't find a non-overlapping starting position after several tries.
@@ -242,7 +323,7 @@ public partial class ProceduralGenerator : Node
         {
             int random = GetWeightedIndex();
             RoomData roomTemplate = RoomManager.Rooms[random];
-            List<DoorData> localDoors = new List<DoorData>(roomTemplate.Doors); // truly local copy
+            List<DoorData> localDoors = new List<DoorData>(roomTemplate.Doors);
 
             PlacementRecord _candidateRecord = new PlacementRecord { SceneIndex = random, IsProp = false };
 
