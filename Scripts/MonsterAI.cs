@@ -262,7 +262,7 @@ public partial class MonsterAI : CharacterBody3D
 	{
 		if (_startState)
 		{
-			_timer = 18; // hunt for 30 seconds then give up
+			_timer = 18;
 			_checkPos = _agent.TargetPosition;
 			_agent.TargetPosition = _checkPos;
 			_startState = false;
