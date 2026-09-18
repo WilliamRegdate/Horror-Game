@@ -118,7 +118,7 @@ node_connections = [&"output", 0, &"Add2 2", &"TimeScale", 0, &"BlendSpace1D", &
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mx3nr"]
 
-[node name="Player" type="CharacterBody3D" unique_id=959927640 node_paths=PackedStringArray("_checkForHead", "Collider", "_camera", "_playerMesh", "_torchNode") groups=["Player"]]
+[node name="Player" type="CharacterBody3D" unique_id=959927640 node_paths=PackedStringArray("_checkForHead", "Collider", "_camera", "_playerMesh", "_torchNode", "_listener") groups=["Player"]]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
 collision_layer = 2
 floor_constant_speed = true
@@ -133,6 +133,7 @@ Collider = NodePath("CollisionShape3D")
 _camera = NodePath("PlayerCamera")
 _playerMesh = NodePath("Model")
 _torchNode = NodePath("PlayerCamera/Torch")
+_listener = NodePath("PlayerCamera/AudioListener3D")
 metadata/Player = true
 
 [node name="VisibilityRadius" type="Area3D" parent="." unique_id=578218396 node_paths=PackedStringArray("_torch", "Player", "_collider")]
@@ -149,7 +150,7 @@ shape = SubResource("SphereShape3D_y8xgx")
 [node name="PlayerCamera" type="Camera3D" parent="." unique_id=1300668449 node_paths=PackedStringArray("_audioPlayer")]
 transform = Transform3D(0.6666667, 0, 0, 0, 0.6666667, 0, 0, 0, 0.6666668, 0, 0.851249, 0)
 script = ExtResource("2_kgmex")
-MouseSensitivity = 0.1
+MouseSensitivity = 1.0
 BobFrequency = 2.0
 BobHeight = 0.06
 BobSway = 0.08
@@ -195,13 +196,12 @@ transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, -10)
 [node name="TorchNode" type="Node3D" parent="PlayerCamera" unique_id=4276694]
 transform = Transform3D(0.31699282, 0.30788293, 0.897064, -0.3199304, -0.85569274, 0.4067367, 0.8928383, -0.41593066, -0.1727473, 0, 0, 0)
 
-[node name="Draw" type="RayCast3D" parent="PlayerCamera" unique_id=2093300820 node_paths=PackedStringArray("_player", "_showColor", "_label")]
+[node name="Draw" type="RayCast3D" parent="PlayerCamera" unique_id=2093300820 node_paths=PackedStringArray("_player", "_showColor")]
 target_position = Vector3(0, 0, -5)
 script = ExtResource("11_qjulh")
 _cross = ExtResource("23_evqxc")
 _player = NodePath("../..")
 _showColor = NodePath("../../HUD/Crosshair/Cross")
-_label = NodePath("../../Label")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=140627627]
 visible = false
@@ -214,13 +214,6 @@ shape = SubResource("CapsuleShape3D_yifnb")
 [node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=96802856]
 light_energy = 0.01
 omni_range = 2.4265654
-
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=832386445]
-
-[node name="Label" type="Label" parent="CanvasLayer" unique_id=1602461363]
-offset_right = 40.0
-offset_bottom = 23.0
-text = "sound level:"
 
 [node name="CheckFloor" type="RayCast3D" parent="." unique_id=2135286830]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
@@ -458,21 +451,28 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 color = Color(0, 0, 0, 0.39215687)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PauseMenu/ColorRect2" unique_id=639192090]
+[node name="MarginContainer" type="MarginContainer" parent="PauseMenu/ColorRect2" unique_id=636412868]
 layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.148
-anchor_bottom = 0.165
-offset_right = 0.5039978
-offset_bottom = -40.920006
-size_flags_horizontal = 3
-size_flags_vertical = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PauseMenu/ColorRect2/MarginContainer" unique_id=639192090]
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 2
 mouse_filter = 0
 theme = ExtResource("13_m62uw")
 theme_override_constants/separation = 4
 metadata/_edit_use_anchors_ = true
 
-[node name="Menu" type="Label" parent="PauseMenu/ColorRect2/VBoxContainer" unique_id=1442090859]
+[node name="Menu" type="Label" parent="PauseMenu/ColorRect2/MarginContainer/VBoxContainer" unique_id=1442090859]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
@@ -480,17 +480,17 @@ theme_override_font_sizes/font_size = 32
 text = "<Menu>"
 horizontal_alignment = 1
 
-[node name="Resume" type="Button" parent="PauseMenu/ColorRect2/VBoxContainer" unique_id=2021764043]
+[node name="Resume" type="Button" parent="PauseMenu/ColorRect2/MarginContainer/VBoxContainer" unique_id=2021764043]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "<RESUME>"
 
-[node name="Quit" type="Button" parent="PauseMenu/ColorRect2/VBoxContainer" unique_id=1552998162]
+[node name="Quit" type="Button" parent="PauseMenu/ColorRect2/MarginContainer/VBoxContainer" unique_id=1552998162]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "<Quit>"
 
-[node name="HUD" type="CanvasLayer" parent="." unique_id=1775121594 node_paths=PackedStringArray("_batteryFillAmount", "_chalkImage", "_chalkColor", "_batteryLabel", "_chalkLabel", "_torch", "_player", "_label")]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1775121594 node_paths=PackedStringArray("_batteryFillAmount", "_chalkImage", "_chalkColor", "_batteryLabel", "_chalkLabel", "_torch", "_player")]
 script = ExtResource("16_405c5")
 _batteryFillAmount = NodePath("VBoxContainer/BatteryAmount")
 _chalkImage = NodePath("VBoxContainer/Chalk")
@@ -499,7 +499,6 @@ _batteryLabel = NodePath("VBoxContainer/BatteryAmount/BatteryAmount")
 _chalkLabel = NodePath("VBoxContainer/Chalk/ChalkAmount")
 _torch = NodePath("../PlayerCamera/Torch")
 _player = NodePath("..")
-_label = NodePath("../Label")
 
 [node name="VBoxContainer" type="HBoxContainer" parent="HUD" unique_id=15874215]
 anchors_preset = 3
@@ -590,19 +589,7 @@ size_flags_vertical = 4
 size_flags_stretch_ratio = 0.0
 texture = ExtResource("24_evqxc")
 
-[node name="Label" type="Label" parent="." unique_id=197270711]
-anchors_preset = -1
-anchor_top = 0.035
-anchor_right = 0.001
-anchor_bottom = 0.128
-offset_left = 1.0
-offset_top = 30.32
-offset_right = 38.848
-offset_bottom = -6.9440002
-text = "Chalk Color:
-Chalk index:"
-
-[connection signal="pressed" from="PauseMenu/ColorRect2/VBoxContainer/Resume" to="PauseMenu" method="OnResumePressed"]
-[connection signal="pressed" from="PauseMenu/ColorRect2/VBoxContainer/Quit" to="PauseMenu" method="OnQuitPressed"]
+[connection signal="pressed" from="PauseMenu/ColorRect2/MarginContainer/VBoxContainer/Resume" to="PauseMenu" method="OnResumePressed"]
+[connection signal="pressed" from="PauseMenu/ColorRect2/MarginContainer/VBoxContainer/Quit" to="PauseMenu" method="OnQuitPressed"]
 
 [editable path="Model"]

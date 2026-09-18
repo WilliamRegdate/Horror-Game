@@ -11,7 +11,7 @@ public partial class Hud : CanvasLayer
 	[Export] Torch _torch;
 	[Export] Player _player;
 
-	[Export] Label _label;
+
 
 	public override void _Ready()
 	{
@@ -30,6 +30,5 @@ public partial class Hud : CanvasLayer
 		_chalkLabel.Text = $"{_player.Chalk}";
 		_batteryFillAmount.Value = _torch.CurrentPowerLevel;
 		_chalkImage.Modulate = _chalkColor.Colors[_chalkColor.CurrentIndex];
-		_label.Text += $"\n chalk image color:{_chalkImage.Modulate}";
 	}
 }

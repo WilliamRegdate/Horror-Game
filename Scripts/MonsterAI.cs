@@ -39,8 +39,6 @@ public partial class MonsterAI : CharacterBody3D
 	[Export] private Monster _monster;
 	[Export] private NavigationAgent3D _agent;
 	public Dictionary<Player, PlayerTracker> Players { get; private set; } = new();
-
-	[Export] public Label TestLabel;
 	private Player _currentTarget;
 	bool _locked = true;
 	private Vector3 _levelMiddle = new(0,0,0);
@@ -153,9 +151,7 @@ public partial class MonsterAI : CharacterBody3D
 			data.CurrentSpeed = Mathf.Lerp(data.CurrentSpeed, instant, 0.2f);
 			player.SoundLevel = Mathf.Abs(data.CurrentSpeed * 0.2) < 0.9 ? 0f : data.CurrentSpeed  * 0.2f;
 		}
-		TestLabel.Text = $"state: {_state}\n";
-		TestLabel.Text += $"timer 1: {_timer}\n";
-		TestLabel.Text += $"timer 2: {_secondaryTimer}\n";
+
 
 		//try kill player
 		if (_killZone.HasOverlappingBodies())
@@ -286,7 +282,6 @@ public partial class MonsterAI : CharacterBody3D
 			}
 
 			item.Value.Awareness += GetSoundLevel(item.Key) * delta;
-			TestLabel.Text += $"Awareness: {item.Value.Awareness}\n";
 			currentDistance = GlobalPosition.DistanceSquaredTo(item.Key.GlobalPosition);
 
 			if (item.Value.Awareness > 200)
@@ -330,7 +325,6 @@ public partial class MonsterAI : CharacterBody3D
 			}
 
 			item.Value.Awareness += GetSoundLevel(item.Key) * delta;
-			TestLabel.Text += $"Awareness: {item.Value.Awareness}\n";
 			currentDistance = GlobalPosition.DistanceSquaredTo(item.Key.Collider.GlobalPosition);
 
 			if (item.Value.Awareness > 100)

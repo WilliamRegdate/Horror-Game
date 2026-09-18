@@ -71,7 +71,7 @@ script = ExtResource("1_mfdv2")
 LevelMaker = ExtResource("2_eow3j")
 _monster = NodePath("Monster")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=318912376]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1678508591]
 environment = SubResource("Environment_eow3j")
 camera_attributes = SubResource("CameraAttributesPhysical_j5wjh")
 compositor = SubResource("Compositor_vef74")

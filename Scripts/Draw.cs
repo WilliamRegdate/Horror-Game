@@ -5,7 +5,6 @@ public partial class Draw : RayCast3D
 	[Export] PackedScene _cross;
 	[Export] Player _player;
 	[Export] TextureRect _showColor;
-	[Export] Label _label;
 
 	public Color[] Colors =
 	[
@@ -29,7 +28,6 @@ public partial class Draw : RayCast3D
 	public override void _Process(double delta)
 	{
 		if (!IsMultiplayerAuthority()) return;
-		_label.Text = $"Chalk Color:{Colors[CurrentIndex]} \nCurrentIndex: {CurrentIndex}";
 
 
 		if (Input.IsActionPressed("draw"))

@@ -28,5 +28,7 @@ public partial class GeneratorSwitch : Area3D, IInteractable
 			return;
 			_player.Play("turnOn");
 		_isOn = true;
+		GameManager gameManager = GetNode<GameManager>("/root/GameManager");
+		gameManager.GeneratorsOn++;
 	}
 }

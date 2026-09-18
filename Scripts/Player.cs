@@ -1,4 +1,5 @@
 using Godot;
+using System.Linq;
 
 public partial class Player : CharacterBody3D
 {
@@ -19,6 +20,7 @@ public partial class Player : CharacterBody3D
 	private bool debugMode = false;
 	[Export] public bool IsCrouched;
 	NetworkHandler _networkHandler;
+	[Export] private AudioListener3D _listener;
 
     public override void _Ready()
     {
@@ -27,13 +29,8 @@ public partial class Player : CharacterBody3D
 		if (!IsMultiplayerAuthority()) return;
 		_playerMesh.Hide();
 		_playerMesh.QueueFree();
+		_listener.MakeCurrent();
     }
-	    public override void _Process(double delta)
-    {
-		
-    }
-
-
 	public override void _PhysicsProcess(double delta)
 	{
 
@@ -55,10 +52,15 @@ public partial class Player : CharacterBody3D
 		{
 			debugMode = !debugMode;
 			Collider.Disabled = debugMode;
+
+			GetViewport().DebugDraw = debugMode
+				? Viewport.DebugDrawEnum.Unshaded
+				: Viewport.DebugDrawEnum.Disabled;
 		}
 
 		if (debugMode)
 		{
+
 			//creative mode flight
 			if (Input.IsActionPressed("game_jump"))
 			{
@@ -118,7 +120,7 @@ public partial class Player : CharacterBody3D
 			}
 		}
 
-		Vector2 inputDir = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
+		Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_up", "move_down");
 		Vector3 direction = (Transform.Basis * new Vector3(inputDir.X * 0.6f, 0, inputDir.Y)).Normalized();
 		if (direction != Vector3.Zero)
 		{

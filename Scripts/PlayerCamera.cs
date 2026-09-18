@@ -39,6 +39,14 @@ public partial class PlayerCamera : Camera3D
         _player = GetParent<Player>();
         _originalPosition = Position;
         _standHeight = Position.Y;
+
+        //load sensitivity
+        var config = new ConfigFile();
+        if (config.Load("user://settings.cfg") != Error.Ok)
+            return; 
+
+        if (config.HasSectionKey("Controls", "sensitivity"))
+            MouseSensitivity = (float)config.GetValue("Controls", "sensitivity");
     }
 
     public override void _Input(InputEvent @event)
@@ -55,9 +63,9 @@ public partial class PlayerCamera : Camera3D
         if (!IsMultiplayerAuthority()) return;
         float deltaTime = (float)delta;
         
-        _rotationX = Mathf.Clamp(_rotationX - _mouseDelta.Y * MouseSensitivity, -90f, 90f);
+        _rotationX = Mathf.Clamp(_rotationX - _mouseDelta.Y * MouseSensitivity * 0.1f, -90f, 90f);
         RotationDegrees = new Vector3(_rotationX, RotationDegrees.Y, 0);
-        _player.RotationDegrees -= new Vector3(0, _mouseDelta.X * MouseSensitivity, 0);
+        _player.RotationDegrees -= new Vector3(0, _mouseDelta.X * MouseSensitivity * 0.1f, 0);
         _mouseDelta = Vector2.Zero;
         
         HandleViewBobbing(deltaTime);

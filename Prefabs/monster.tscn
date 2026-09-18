@@ -42,7 +42,7 @@ script = ExtResource("1_7jf71")
 _checkForPlayer = NodePath("PlayerChecker")
 _monster = NodePath("monster_2")
 _agent = NodePath("NavigationAgent3D")
-TestLabel = NodePath("Label")
+TestLabel = NodePath("")
 _chaseAudioA = NodePath("ScreamerA")
 _chaseAudioB = NodePath("ScreamerB")
 _chaseSounds = Array[AudioStream]([ExtResource("2_ql6sb"), ExtResource("3_1pl3i"), ExtResource("4_2ioap"), ExtResource("5_2n8pp"), ExtResource("6_mu2cd"), ExtResource("7_f7tcx"), ExtResource("8_pfmso"), ExtResource("9_gghos"), ExtResource("10_iaqix")])
@@ -221,17 +221,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0278655, -0.0014418066, 1.9
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1433022182]
 replication_config = SubResource("SceneReplicationConfig_7jf71")
-
-[node name="Label" type="Label" parent="." unique_id=2118002149]
-visible = false
-anchors_preset = -1
-anchor_top = 0.035
-anchor_right = 0.001
-anchor_bottom = 0.128
-offset_left = 1.0
-offset_top = 30.32
-offset_right = 38.848
-offset_bottom = -6.9440002
 
 [node name="ScreamerA" type="AudioStreamPlayer3D" parent="." unique_id=311328793]
 unit_size = 30.0

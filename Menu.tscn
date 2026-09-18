@@ -6,10 +6,14 @@
 [ext_resource type="FontFile" uid="uid://c45rhuei47ung" path="res://Assets/Fonts/Teletactile-3zavL.ttf" id="3_cx167"]
 [ext_resource type="PackedScene" uid="uid://df7hfxwmhlttd" path="res://Prefabs/Rooms/drill.tscn" id="3_ylpcl"]
 [ext_resource type="Theme" uid="uid://87sp4rn4eiee" path="res://MenuTheme.tres" id="5_n4eug"]
+[ext_resource type="Script" uid="uid://k41p7tayi518" path="res://SensitivitySlider.cs" id="7_xucoo"]
 [ext_resource type="Script" uid="uid://c7f35gv5pu4rs" path="res://Scripts/OptionsMenu.cs" id="8_1igrg"]
 [ext_resource type="Script" uid="uid://vyajwa84ndrp" path="res://Scripts/ResolutionChanger.cs" id="8_5p1lm"]
+[ext_resource type="Script" uid="uid://chsnn8yc1cv5v" path="res://VolumeSlider.cs" id="8_ktlje"]
 [ext_resource type="Script" uid="uid://bw0iecjc28v3v" path="res://Scripts/Menu/EnableFullscreen.cs" id="9_1igrg"]
-[ext_resource type="Script" uid="uid://br3orqjaa8l6l" path="res://Scripts/ChangePLayerName.cs" id="10_1igrg"]
+[ext_resource type="Script" uid="uid://bkw13ubnjqoqf" path="res://Scripts/ChangePlayerName.cs" id="10_1igrg"]
+[ext_resource type="Script" uid="uid://cadlqvk0jtkcm" path="res://Scripts/KeyMapping.cs" id="10_v0s1l"]
+[ext_resource type="Script" uid="uid://bba73drvg6e4i" path="res://GuiScaleSlider.cs" id="12_ktlje"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_cx167"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -81,7 +85,7 @@ _errorMessage = NodePath("ErrorLayer/ColorRect/VBoxContainer/ErrorMessage")
 _errorBox = NodePath("ErrorLayer")
 _ipInput = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer/InputIp")
 _portInput = NodePath("CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer/InputPort")
-_nameInput = NodePath("CanvasLayer2/HSplitContainer/Party Menu/LineEdit")
+_nameInput = NodePath("CanvasLayer2/HSplitContainer/Party Menu/NameInput")
 _playerList = NodePath("CanvasLayer2/HSplitContainer/Party Menu/Players/PlayerList")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=871504934]
@@ -105,7 +109,10 @@ mouse_filter = 2
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="CanvasLayer" unique_id=1973478868]
 stream = ExtResource("2_ylpcl")
+volume_db = -3.0
 autoplay = true
+max_distance = 10000000.0
+attenuation = 0.0
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=897591210]
 transform = Transform3D(-0.70918965, -0.20480582, -0.6746145, -0.053411126, 0.96973336, -0.23825236, 0.7029917, -0.13293412, -0.69866383, -35.780144, 9.377, -113.84337)
@@ -245,48 +252,126 @@ text = "OK
 [node name="OptionsMenu" type="TabContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer" unique_id=803791236]
 layout_mode = 2
 theme = ExtResource("5_n4eug")
-current_tab = 0
+current_tab = 1
 
-[node name="Display" type="TabBar" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu" unique_id=1457509678]
+[node name="General" type="TabBar" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu" unique_id=2002358587]
+visible = false
 layout_mode = 2
 theme = ExtResource("5_n4eug")
 metadata/_tab_index = 0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display" unique_id=16106007]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General" unique_id=1282867889]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -0.09649658
-offset_top = 0.33333334
-offset_right = -0.09649658
-offset_bottom = 0.33332825
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer" unique_id=2094134272 node_paths=PackedStringArray("_options")]
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer" unique_id=1934686390]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer" unique_id=210086717]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("5_n4eug")
+theme_override_constants/separation = 10
+
+[node name="ApplyOptions" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer" unique_id=298233070]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Apply
+"
+
+[node name="FullscreenCheckbox2" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer" unique_id=478768771]
+layout_mode = 2
+
+[node name="Resolution" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox2" unique_id=1050628162]
+layout_mode = 2
+text = "Sensitivity"
+
+[node name="SensitivitySlider" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox2" unique_id=266989714]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.1
+max_value = 2.0
+step = 0.1
+value = 1.0
+scrollable = false
+tick_count = 20
+script = ExtResource("7_xucoo")
+
+[node name="Reset" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox2" unique_id=1518667720]
+layout_mode = 2
+text = "Reset"
+
+[node name="FullscreenCheckbox" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1157922485]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox" unique_id=1623840486]
+layout_mode = 2
+text = "Volume"
+
+[node name="VolumeSlider" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox" unique_id=701652518]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.5
+step = 0.01
+value = 1.0
+script = ExtResource("8_ktlje")
+
+[node name="Reset" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox" unique_id=345121767]
+layout_mode = 2
+text = "Reset"
+
+[node name="Display" type="TabBar" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu" unique_id=1457509678]
+layout_mode = 2
+theme = ExtResource("5_n4eug")
+metadata/_tab_index = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display" unique_id=166598665]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer" unique_id=16106007]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer" unique_id=2094134272 node_paths=PackedStringArray("_options")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("5_n4eug")
 theme_override_constants/separation = 10
 script = ExtResource("8_1igrg")
-_options = [NodePath("FullscreenCheckbox2/ResolutionOptions"), NodePath("FullscreenCheckbox/FullscreenOptions")]
+_options = [NodePath("FullscreenCheckbox2/ResolutionOptions"), NodePath("FullscreenCheckbox/FullscreenOptions"), NodePath("../../../../Controls/MarginContainer/ScrollContainer/VBoxContainer/move_left"), NodePath("../../../../Controls/MarginContainer/ScrollContainer/VBoxContainer/move_right"), NodePath("../../../../Controls/MarginContainer/ScrollContainer/VBoxContainer/move_up"), NodePath("../../../../Controls/MarginContainer/ScrollContainer/VBoxContainer/move_down"), NodePath("../../../../Controls/MarginContainer/ScrollContainer/VBoxContainer/game_sprint"), NodePath("../../../../Controls/MarginContainer/ScrollContainer/VBoxContainer/game_crouch"), NodePath("../../../../Controls/MarginContainer/ScrollContainer/VBoxContainer/game_jump"), NodePath("../../../../Controls/MarginContainer/ScrollContainer/VBoxContainer/interact"), NodePath("../../../../Controls/MarginContainer/ScrollContainer/VBoxContainer/torch_toggle"), NodePath("../../../../Controls/MarginContainer/ScrollContainer/VBoxContainer/draw"), NodePath("GuiScale/scale slider"), NodePath("../../../../General/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox2/SensitivitySlider"), NodePath("../../../../General/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox/VolumeSlider")]
 
-[node name="ApplyOptions" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer" unique_id=1173574795]
+[node name="ApplyOptions" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1173574795]
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Apply
 "
 
-[node name="FullscreenCheckbox2" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer" unique_id=1776508712]
+[node name="FullscreenCheckbox2" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1776508712]
 layout_mode = 2
 
-[node name="Resolution" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer/FullscreenCheckbox2" unique_id=1798828556]
+[node name="Resolution" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox2" unique_id=1798828556]
 layout_mode = 2
 text = "Resolution"
 
-[node name="ResolutionOptions" type="OptionButton" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer/FullscreenCheckbox2" unique_id=446952947]
+[node name="ResolutionOptions" type="OptionButton" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox2" unique_id=446952947]
 layout_mode = 2
 item_count = 6
 popup/item_0/text = "1920x1080"
@@ -303,14 +388,14 @@ popup/item_5/text = "256x144"
 popup/item_5/id = 5
 script = ExtResource("8_5p1lm")
 
-[node name="FullscreenCheckbox" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer" unique_id=1245424379]
+[node name="FullscreenCheckbox" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1245424379]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer/FullscreenCheckbox" unique_id=247723179]
+[node name="Label" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox" unique_id=247723179]
 layout_mode = 2
 text = "Fullscreen"
 
-[node name="FullscreenOptions" type="OptionButton" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer/FullscreenCheckbox" unique_id=1790741881]
+[node name="FullscreenOptions" type="OptionButton" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox" unique_id=1790741881]
 layout_mode = 2
 item_count = 3
 popup/item_0/text = "Windowed"
@@ -321,78 +406,357 @@ popup/item_2/text = "Fullscreen"
 popup/item_2/id = 2
 script = ExtResource("9_1igrg")
 
+[node name="GuiScale" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer" unique_id=68176623]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer/GuiScale" unique_id=2041850182]
+layout_mode = 2
+text = "Gui scale"
+
+[node name="scale slider" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer/GuiScale" unique_id=263098493]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.5
+max_value = 2.0
+step = 0.25
+value = 1.0
+tick_count = 7
+script = ExtResource("12_ktlje")
+
+[node name="reset" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer/GuiScale" unique_id=879861431]
+layout_mode = 2
+text = "Reset"
+
 [node name="Controls" type="TabBar" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu" unique_id=476812439]
 visible = false
 layout_mode = 2
 theme = ExtResource("5_n4eug")
-metadata/_tab_index = 1
+metadata/_tab_index = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls" unique_id=60023678]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls" unique_id=1854968328]
+custom_minimum_size = Vector2(10, 10)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer" unique_id=282240092]
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer" unique_id=60023678]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer" unique_id=282240092]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("5_n4eug")
 theme_override_constants/separation = 10
 
-[node name="HSlider" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1832668699]
+[node name="ApplyOptions" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer" unique_id=143220671]
 layout_mode = 2
-theme = ExtResource("5_n4eug")
+size_flags_horizontal = 0
+text = "Apply
+"
 
-[node name="HSlider2" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=911653867]
+[node name="move_left" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer" unique_id=305225657 node_paths=PackedStringArray("_currentKeyName")]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-theme = ExtResource("5_n4eug")
+script = ExtResource("10_v0s1l")
+_currentKeyName = NodePath("MarginContainer/HBoxContainer/Key name")
+_actionName = "move_left"
 
-[node name="HSlider3" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1382122295]
-layout_mode = 2
-theme = ExtResource("5_n4eug")
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_left" unique_id=790568812]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
 
-[node name="HSlider4" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1470194202]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_left/MarginContainer" unique_id=2112383262]
 layout_mode = 2
-theme = ExtResource("5_n4eug")
 
-[node name="HSlider5" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1812634272]
+[node name="Action name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_left/MarginContainer/HBoxContainer" unique_id=1716134452]
 layout_mode = 2
-theme = ExtResource("5_n4eug")
+text = "move left"
 
-[node name="HSlider6" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=527553657]
+[node name="Key name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_left/MarginContainer/HBoxContainer" unique_id=127618758]
 layout_mode = 2
-theme = ExtResource("5_n4eug")
+size_flags_horizontal = 10
+text = "INput Key"
 
-[node name="HSlider7" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1210539284]
+[node name="move_right" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1035399878 node_paths=PackedStringArray("_currentKeyName")]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-theme = ExtResource("5_n4eug")
+script = ExtResource("10_v0s1l")
+_currentKeyName = NodePath("MarginContainer/HBoxContainer/Key name")
+_actionName = "move_right"
 
-[node name="HSlider8" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=821820927]
-layout_mode = 2
-theme = ExtResource("5_n4eug")
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_right" unique_id=1232680075]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
 
-[node name="HSlider9" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1353941221]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_right/MarginContainer" unique_id=935857027]
 layout_mode = 2
-theme = ExtResource("5_n4eug")
 
-[node name="HSlider10" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1668015800]
+[node name="Action name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_right/MarginContainer/HBoxContainer" unique_id=1794791741]
 layout_mode = 2
-theme = ExtResource("5_n4eug")
+text = "move right"
 
-[node name="HSlider11" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=261490041]
+[node name="Key name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_right/MarginContainer/HBoxContainer" unique_id=1870983536]
 layout_mode = 2
-theme = ExtResource("5_n4eug")
+size_flags_horizontal = 10
+text = "INput Key"
 
-[node name="HSlider12" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=2089298393]
+[node name="move_up" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer" unique_id=538806371 node_paths=PackedStringArray("_currentKeyName")]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-theme = ExtResource("5_n4eug")
+script = ExtResource("10_v0s1l")
+_currentKeyName = NodePath("MarginContainer/HBoxContainer/Key name")
+_actionName = "move_up"
 
-[node name="HSlider13" type="HSlider" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/ScrollContainer/VBoxContainer" unique_id=1295620863]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_up" unique_id=1092029763]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_up/MarginContainer" unique_id=2045409503]
 layout_mode = 2
-theme = ExtResource("5_n4eug")
+
+[node name="Action name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_up/MarginContainer/HBoxContainer" unique_id=570587046]
+layout_mode = 2
+text = "move up"
+
+[node name="Key name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_up/MarginContainer/HBoxContainer" unique_id=982659783]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "INput Key"
+
+[node name="move_down" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1411394530 node_paths=PackedStringArray("_currentKeyName")]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+script = ExtResource("10_v0s1l")
+_currentKeyName = NodePath("MarginContainer/HBoxContainer/Key name")
+_actionName = "move_down"
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_down" unique_id=2061527737]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_down/MarginContainer" unique_id=1836981894]
+layout_mode = 2
+
+[node name="Action name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_down/MarginContainer/HBoxContainer" unique_id=2048132005]
+layout_mode = 2
+text = "move down"
+
+[node name="Key name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/move_down/MarginContainer/HBoxContainer" unique_id=483655]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "INput Key"
+
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer" unique_id=547584935]
+layout_mode = 2
+
+[node name="game_sprint" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1880731910 node_paths=PackedStringArray("_currentKeyName")]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+script = ExtResource("10_v0s1l")
+_currentKeyName = NodePath("MarginContainer/HBoxContainer/Key name")
+_actionName = "game_sprint"
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/game_sprint" unique_id=549616225]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/game_sprint/MarginContainer" unique_id=1152712923]
+layout_mode = 2
+
+[node name="Action name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/game_sprint/MarginContainer/HBoxContainer" unique_id=871704438]
+layout_mode = 2
+text = "Sprint"
+
+[node name="Key name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/game_sprint/MarginContainer/HBoxContainer" unique_id=1836945435]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "INput Key"
+
+[node name="game_crouch" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer" unique_id=873198049 node_paths=PackedStringArray("_currentKeyName")]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+script = ExtResource("10_v0s1l")
+_currentKeyName = NodePath("MarginContainer/HBoxContainer/Key name")
+_actionName = "game_crouch"
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/game_crouch" unique_id=694606133]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/game_crouch/MarginContainer" unique_id=1365969578]
+layout_mode = 2
+
+[node name="Action name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/game_crouch/MarginContainer/HBoxContainer" unique_id=844617410]
+layout_mode = 2
+text = "crouch"
+
+[node name="Key name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/game_crouch/MarginContainer/HBoxContainer" unique_id=372135523]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "INput Key"
+
+[node name="game_jump" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer" unique_id=2073578654 node_paths=PackedStringArray("_currentKeyName")]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+script = ExtResource("10_v0s1l")
+_currentKeyName = NodePath("MarginContainer/HBoxContainer/Key name")
+_actionName = "game_jump"
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/game_jump" unique_id=1920185592]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/game_jump/MarginContainer" unique_id=63933307]
+layout_mode = 2
+
+[node name="Action name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/game_jump/MarginContainer/HBoxContainer" unique_id=1371825679]
+layout_mode = 2
+text = "jump"
+
+[node name="Key name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/game_jump/MarginContainer/HBoxContainer" unique_id=193557322]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "INput Key"
+
+[node name="HSeparator2" type="HSeparator" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer" unique_id=2136810010]
+layout_mode = 2
+
+[node name="interact" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer" unique_id=2107776797 node_paths=PackedStringArray("_currentKeyName")]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+script = ExtResource("10_v0s1l")
+_currentKeyName = NodePath("MarginContainer/HBoxContainer/Key name")
+_actionName = "interact"
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/interact" unique_id=1366019536]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/interact/MarginContainer" unique_id=1946902844]
+layout_mode = 2
+
+[node name="Action name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/interact/MarginContainer/HBoxContainer" unique_id=1908750493]
+layout_mode = 2
+text = "interact"
+
+[node name="Key name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/interact/MarginContainer/HBoxContainer" unique_id=175058871]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "INput Key"
+
+[node name="torch_toggle" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer" unique_id=2144180186 node_paths=PackedStringArray("_currentKeyName")]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+script = ExtResource("10_v0s1l")
+_currentKeyName = NodePath("MarginContainer/HBoxContainer/Key name")
+_actionName = "torch_toggle"
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/torch_toggle" unique_id=773112190]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/torch_toggle/MarginContainer" unique_id=144954010]
+layout_mode = 2
+
+[node name="Action name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/torch_toggle/MarginContainer/HBoxContainer" unique_id=395995182]
+layout_mode = 2
+text = "toggle torch"
+
+[node name="Key name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/torch_toggle/MarginContainer/HBoxContainer" unique_id=935942284]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "INput Key"
+
+[node name="draw" type="Button" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer" unique_id=1248659306 node_paths=PackedStringArray("_currentKeyName")]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+script = ExtResource("10_v0s1l")
+_currentKeyName = NodePath("MarginContainer/HBoxContainer/Key name")
+_actionName = "draw"
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/draw" unique_id=1102685119]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/draw/MarginContainer" unique_id=1918953589]
+layout_mode = 2
+
+[node name="Action name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/draw/MarginContainer/HBoxContainer" unique_id=995717258]
+layout_mode = 2
+text = "draw"
+
+[node name="Key name" type="Label" parent="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/draw/MarginContainer/HBoxContainer" unique_id=77297721]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "INput Key"
 
 [node name="Party Menu" type="VBoxContainer" parent="CanvasLayer2/HSplitContainer" unique_id=236164692]
 layout_mode = 2
@@ -455,7 +819,7 @@ layout_mode = 2
 size_flags_vertical = 10
 text = "Player:"
 
-[node name="LineEdit" type="LineEdit" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=1817843678]
+[node name="NameInput" type="LineEdit" parent="CanvasLayer2/HSplitContainer/Party Menu" unique_id=1817843678]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 8
@@ -466,7 +830,7 @@ placeholder_text = "Input Name"
 layout_mode = 2
 text = "Change Name"
 script = ExtResource("10_1igrg")
-_text = NodePath("../LineEdit")
+_text = NodePath("../NameInput")
 
 [node name="ErrorLayer" type="CanvasLayer" parent="." unique_id=1663550498]
 
@@ -516,7 +880,12 @@ text = "OKAY"
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/Host" to="." method="PressedHostSignal"]
 [connection signal="toggled" from="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/Join" to="." method="ToggledJoinSignal"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/PlayMenu/HBoxContainer/Button" to="." method="PressedJoinSignal"]
-[connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer/ApplyOptions" to="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/ScrollContainer/VBoxContainer" method="ApplySettings"]
+[connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer/ApplyOptions" to="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer" method="ApplySettings"]
+[connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox2/Reset" to="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox2/SensitivitySlider" method="Reset"]
+[connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox/Reset" to="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/General/MarginContainer/ScrollContainer/VBoxContainer/FullscreenCheckbox/VolumeSlider" method="Reset"]
+[connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer/ApplyOptions" to="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer" method="ApplySettings"]
+[connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer/GuiScale/reset" to="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer/GuiScale/scale slider" method="Reset"]
+[connection signal="pressed" from="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Controls/MarginContainer/ScrollContainer/VBoxContainer/ApplyOptions" to="CanvasLayer2/HSplitContainer/VSplitContainer/OptionsMenu/Display/MarginContainer/ScrollContainer/VBoxContainer" method="ApplySettings"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/Party Menu/LeaveGroup" to="." method="PressedLeaveGroupSignal"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/Party Menu/StartButton" to="." method="PressedStartGameSignal"]
 [connection signal="pressed" from="CanvasLayer2/HSplitContainer/Party Menu/Change PLayer Name" to="CanvasLayer2/HSplitContainer/Party Menu/Change PLayer Name" method="OnPressed"]

@@ -1,3 +1,5 @@
-Generator
-Controls
-settings
+Generators
+
+wall  thickness
+doors closing when they shouldn't
+ending section
