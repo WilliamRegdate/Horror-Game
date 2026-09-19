@@ -23,23 +23,24 @@ public partial class MainMenu : Node3D
 
 	private NetworkHandler _networkHandler;
     public override void _Ready()
-    {
+	{
 		_networkHandler = GetNode<NetworkHandler>("/root/NetworkHandler");
 		_networkHandler.NetworkStopped += _partyMenu.Hide;
 		_networkHandler.UpdatePlayerNames += UpdatePlayerList;
 		Multiplayer.ConnectedToServer += AddPlayerName;
 		Multiplayer.PeerDisconnected += RemovePlayerName;
 
-        _optionsMenu.Visible = false;
+		_optionsMenu.Visible = false;
 		_playMenu.Visible = false;
 		_partyMenu.Visible = false;
 		_startGameButton.Visible = false;
 		_loadProgress.Visible = true;
 		_errorBox.Visible = false;
 
-		
 		Input.MouseMode = Input.MouseModeEnum.Visible;
-    }
+
+		LoadNetworkSettings();
+	}
 
 	public override void _Process(double delta)
     {
@@ -129,6 +130,8 @@ public partial class MainMenu : Node3D
 			return;
 		}
 
+		SaveNetworkSettings();
+
 		_partyMenu.Visible = true;
 		_loadProgress.Visible = false;
 		CanvasItem ipTextBox = _playMenu.GetChild(2) as CanvasItem;
@@ -196,6 +199,32 @@ public partial class MainMenu : Node3D
 	public void RemovePlayerName(long id)
 	{
 		_networkHandler.RemovePlayerName((int)id);
+	}
+	private const string SettingsPath = "user://settings.cfg";
+	private const string NetworkSection = "Network";
+	private const string IpKey = "last_ip";
+	private const string PortKey = "last_port";
+
+	private void LoadNetworkSettings()
+	{
+		var config = new ConfigFile();
+		if (config.Load(SettingsPath) != Error.Ok)
+			return; // no file yet — leave fields empty/default
+
+		if (config.HasSectionKey(NetworkSection, IpKey))
+			_ipInput.Text = (string)config.GetValue(NetworkSection, IpKey);
+
+		if (config.HasSectionKey(NetworkSection, PortKey))
+			_portInput.Text = (string)config.GetValue(NetworkSection, PortKey);
+	}
+
+	private void SaveNetworkSettings()
+	{
+		var config = new ConfigFile();
+		config.Load(SettingsPath); // ok to ignore Error — missing file just means we start fresh
+		config.SetValue(NetworkSection, IpKey, _ipInput.Text);
+		config.SetValue(NetworkSection, PortKey, _portInput.Text);
+		config.Save(SettingsPath);
 	}
 }
 

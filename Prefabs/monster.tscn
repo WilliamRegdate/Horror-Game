@@ -32,7 +32,7 @@ properties/1/replication_mode = 1
 [sub_resource type="SphereShape3D" id="SphereShape3D_f7tcx"]
 radius = 5.0
 
-[node name="Monster" type="CharacterBody3D" unique_id=433109594 node_paths=PackedStringArray("_checkForPlayer", "_monster", "_agent", "TestLabel", "_chaseAudioA", "_chaseAudioB", "_killZone", "_death")]
+[node name="Monster" type="CharacterBody3D" unique_id=433109594 node_paths=PackedStringArray("_checkForPlayer", "_monster", "_agent", "_chaseAudioA", "_chaseAudioB", "_killZone", "_death")]
 wall_min_slide_angle = 0.0
 floor_constant_speed = true
 floor_max_angle = 0.80285144
@@ -42,7 +42,6 @@ script = ExtResource("1_7jf71")
 _checkForPlayer = NodePath("PlayerChecker")
 _monster = NodePath("monster_2")
 _agent = NodePath("NavigationAgent3D")
-TestLabel = NodePath("")
 _chaseAudioA = NodePath("ScreamerA")
 _chaseAudioB = NodePath("ScreamerB")
 _chaseSounds = Array[AudioStream]([ExtResource("2_ql6sb"), ExtResource("3_1pl3i"), ExtResource("4_2ioap"), ExtResource("5_2n8pp"), ExtResource("6_mu2cd"), ExtResource("7_f7tcx"), ExtResource("8_pfmso"), ExtResource("9_gghos"), ExtResource("10_iaqix")])
@@ -246,7 +245,8 @@ debug_shape_thickness = 1
 [node name="StepPlayer" type="AudioStreamPlayer3D" parent="." unique_id=730579448]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5074267, 0)
 attenuation_model = 1
-unit_size = 2.5
+volume_db = 1.5
+unit_size = 3.5
 
 [node name="KillZone" type="Area3D" parent="." unique_id=1464178497]
 collision_mask = 2

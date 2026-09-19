@@ -6,7 +6,7 @@ public partial class Torch : SpotLight3D
 	[Export] Player _player;
 	bool _powerOut;
 	bool _activated;
-	const int BATTERY_LIFE = 60;
+	const int BATTERY_LIFE = 90;
 	public double CurrentPowerLevel = BATTERY_LIFE;
 
     public override void _Ready()

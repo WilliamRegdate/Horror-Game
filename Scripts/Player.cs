@@ -117,7 +117,7 @@ public partial class Player : CharacterBody3D
 			}
 			else if (Input.IsActionPressed("game_sprint"))
 			{
-				Speed = BaseSpeed * 2f;
+				Speed = BaseSpeed * 2.1f;
 			}
 		}
 

@@ -69,7 +69,7 @@ public partial class MonsterAI : CharacterBody3D
 		_checkForPlayer.AddException(this);
 		_currentTarget = new();
 		_timer = 180;
-		_timer = 10;
+		_timer = 60;
 		_activeChasePlayer = _chaseAudioA;
 		_inactiveChasePlayer = _chaseAudioB;
     }
